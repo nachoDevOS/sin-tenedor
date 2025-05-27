@@ -17,7 +17,16 @@ class ItemSaleController extends Controller
     public function index()
     {
         $this->custom_authorize('browse_item_sales');
-        return view('parameters.item-sales.browse');
+        
+        $category = ItemSale::with(['category'])
+            ->where('deleted_at', null)
+            ->select('category_id')
+            ->groupBy('category_id')
+            ->get();
+
+        // return $category;
+
+        return view('parameters.item-sales.browse', compact('category'));
     }
 
     public function list(){
@@ -26,6 +35,7 @@ class ItemSaleController extends Controller
 
         $search = request('search') ?? null;
         $paginate = request('paginate') ?? 10;
+        $category_id = request('category') ?? null;
 
         $data = ItemSale::with(['category'])
                         ->where(function($query) use ($search){
@@ -36,7 +46,10 @@ class ItemSaleController extends Controller
                             ->OrWhereRaw($search ? "typeSale like '%$search%'" : 1)
                             ->OrWhereRaw($search ? "name like '%$search%'" : 1);
                         })
-                        ->where('deleted_at', NULL)->orderBy('id', 'DESC')->paginate($paginate);
+                        ->where('deleted_at', NULL)
+                        ->whereRaw($category_id? "category_id = '$category_id'" : 1)
+                        ->orderBy('id', 'DESC')
+                        ->paginate($paginate);
 
         return view('parameters.item-sales.list', compact('data'));
     }

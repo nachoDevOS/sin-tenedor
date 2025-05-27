@@ -34,7 +34,7 @@
                 <div class="panel panel-bordered">
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-sm-10">
+                            <div class="col-sm-7">
                                 <div class="dataTables_length" id="dataTable_length">
                                     <label>Mostrar <select id="select-paginate" class="form-control input-sm">
                                         <option value="10">10</option>
@@ -43,6 +43,14 @@
                                         <option value="100">100</option>
                                     </select> registros</label>
                                 </div>
+                            </div>
+                            <div class="col-sm-3" style="margin-bottom: 10px">
+                                <select id="category" name="category" class="form-control select2">
+                                    <option value="" selected>Todos</option>
+                                    @foreach ($category as $item)
+                                        <option value="{{$item->category_id}}">{{$item->category->name}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-sm-2" style="margin-bottom: 10px">
                                 <input type="text" id="input-search" placeholder="🔍 Buscar..." class="form-control">
@@ -82,6 +90,10 @@
         var countPage = 10, order = 'id', typeOrder = 'desc';
         $(document).ready(() => {
             list();
+
+            $('#category').change(function(){
+                list();
+            });
             
             $('#input-search').on('keyup', function(e){
                 if(e.keyCode == 13) {
@@ -102,10 +114,12 @@
             // let url = '{{ route("voyager.item-sales.index", ["country" => "country_id"]) }}'.replace('country_id', country);
             let url = '{{ url("admin/item-sales/ajax/list") }}';
             let search = $('#input-search').val() ? $('#input-search').val() : '';
+            let category =$("#category").val();
+            
 
             $.ajax({
                 // url: `${url}/${search}?paginate=${countPage}&page=${page}`,
-                url: `${url}?search=${search}&paginate=${countPage}&page=${page}`,
+                url: `${url}?search=${search}&paginate=${countPage}&page=${page}&category=${category}`,
 
                 type: 'get',
                 
