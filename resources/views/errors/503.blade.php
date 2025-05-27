@@ -21,14 +21,14 @@
     <body>
         <div class="d-flex align-items-center justify-content-center vh-100">
             <div class="text-center">
-                <h1 class="display-1 fw-bold">403</h1>
+                <h1 class="display-1 fw-bold">503</h1>
                 <p class="fs-3"> <span class="text-danger">Aviso!</span> Sistema en mantenimiento.</p>
                 <p class="lead">
                     {{-- En estos momentos el sistema se encuentra en mantenimiento, por favor intente más tarde. --}}
                     En estos momentos el sistema se encuentra en mantenimiento, por favor intente mas tardes <br>Gracias por su comprensión
 
                 </p>
-                <img src="{{asset('images/errors/503.gif')}}" width="250" height="200" border="0">
+                <img src="{{asset('image/errors/503.gif')}}" width="250" height="200" border="0">
                 <br>
 
                 <a href="{{ url('/') }}" class="btn btn-primary">Volver a intentar</a>
