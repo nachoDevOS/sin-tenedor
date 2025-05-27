@@ -4,11 +4,11 @@
             <thead>
                 <tr>
                     <th style="text-align: center; width: 3%">ID</th>
-                    <th style="text-align: center; width: 20%">Artículos / Items</th>
-                    <th style="text-align: center; width: 15%">Detalles</th>                    
+                    <th style="text-align: center; width: 30%">Artículos / Items</th>
+                    <th style="text-align: center; width: 20%">Detalles</th>                    
                     <th style="text-align: center">Descripción</th>
                     <th style="text-align: center; width: 5%">Estado</th>
-                    <th style="text-align: center">Acciones</th>
+                    <th style="text-align: center; width: 5%">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,7 +24,7 @@
                                 }
                             @endphp
                             <tr>
-                                <td rowspan="2"><img src="{{ $image }}" alt="{{ $item->name }} " style="width: 90px; height: 110px; border-radius: 0px; margin-right: 10px"></td>
+                                <td rowspan="2"><img src="{{ $image }}" alt="{{ $item->name }} " style="width: 80px; height: 80px; border-radius: 40px; margin-right: 0px"></td>
                                 <td>
                                     {{ strtoupper($item->name) }}
                                 </td>
@@ -54,7 +54,15 @@
                             <tr>
                                 <th>Stock</th>
                                 <td>
-                                    {{-- {{$item->typeSale}} --}}
+                                    @if ($item->typeSale=='Venta Con Stock')
+                                        @if ($item->itemSalestocks->sum('stock') == 0)
+                                            <del style="color: red">{{number_format($item->itemSalestocks->sum('stock'), 2, ',', '.')}}</del>
+                                        @else
+                                            {{ number_format($item->itemSalestocks->sum('stock'), 2, ',', '.') }}
+                                        @endif
+                                    @else
+                                        {{$item->typeSale}}
+                                    @endif
                                 </td>
                             </tr>
                         </table>

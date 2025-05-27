@@ -37,7 +37,9 @@ class ItemSaleController extends Controller
         $paginate = request('paginate') ?? 10;
         $category_id = request('category') ?? null;
 
-        $data = ItemSale::with(['category'])
+        $data = ItemSale::with(['category', 'itemSalestocks'=>function($q){
+                            $q->where('deleted_at', null);
+                        }])
                         ->where(function($query) use ($search){
                             $query->OrwhereHas('category', function($query) use($search){
                                 $query->whereRaw($search ? "name like '%$search%'" : 1);
