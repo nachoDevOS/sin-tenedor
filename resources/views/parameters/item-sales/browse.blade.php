@@ -84,8 +84,14 @@
 
 @section('css')
     <style>
-
+    .image-expandable {
+        transition: transform 0.5s ease; /* Suaviza la animación */
+        width: 200px; /* Tamaño inicial */
+    }
     
+    .image-expandable:hover {
+        transform: scale(2); /* Aumenta un 20% el tamaño */
+    }
     </style>
 @stop
 
