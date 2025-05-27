@@ -79,7 +79,7 @@ class SettingsTableSeeder extends Seeder
                 'id' => 6,
                 'key' => 'admin.title',
                 'display_name' => 'Título del administrador',
-                'value' => 'Voyager',
+                'value' => 'FAST FOOD',
                 'details' => '',
                 'type' => 'text',
                 'order' => 1,

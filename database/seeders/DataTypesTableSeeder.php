@@ -75,24 +75,6 @@ class DataTypesTableSeeder extends Seeder
             ),
             3 => 
             array (
-                'id' => 4,
-                'name' => 'categories',
-                'slug' => 'categories',
-                'display_name_singular' => 'Category',
-                'display_name_plural' => 'Categories',
-                'icon' => 'voyager-categories',
-                'model_name' => 'TCG\\Voyager\\Models\\Category',
-                'policy_name' => NULL,
-                'controller' => '',
-                'description' => '',
-                'generate_permissions' => 1,
-                'server_side' => 0,
-                'details' => NULL,
-                'created_at' => '2024-10-18 14:28:45',
-                'updated_at' => '2024-10-18 14:28:45',
-            ),
-            4 => 
-            array (
                 'id' => 5,
                 'name' => 'posts',
                 'slug' => 'posts',
@@ -109,7 +91,7 @@ class DataTypesTableSeeder extends Seeder
                 'created_at' => '2024-10-18 14:28:45',
                 'updated_at' => '2024-10-18 14:28:45',
             ),
-            5 => 
+            4 => 
             array (
                 'id' => 6,
                 'name' => 'pages',
@@ -127,7 +109,7 @@ class DataTypesTableSeeder extends Seeder
                 'created_at' => '2024-10-18 14:28:45',
                 'updated_at' => '2024-10-18 14:28:45',
             ),
-            6 => 
+            5 => 
             array (
                 'id' => 8,
                 'name' => 'people',
@@ -144,6 +126,42 @@ class DataTypesTableSeeder extends Seeder
                 'details' => '{"order_column":null,"order_display_column":null,"order_direction":"asc","default_search_key":null,"scope":null}',
                 'created_at' => '2025-04-07 09:43:00',
                 'updated_at' => '2025-04-07 10:25:25',
+            ),
+            6 => 
+            array (
+                'id' => 10,
+                'name' => 'categories',
+                'slug' => 'categories',
+                'display_name_singular' => 'Categoría',
+                'display_name_plural' => 'Categorías',
+                'icon' => 'fa-solid fa-layer-group',
+                'model_name' => 'App\\Models\\Category',
+                'policy_name' => NULL,
+                'controller' => NULL,
+                'description' => NULL,
+                'generate_permissions' => 1,
+                'server_side' => 0,
+                'details' => '{"order_column":null,"order_display_column":null,"order_direction":"asc","default_search_key":null,"scope":null}',
+                'created_at' => '2025-05-26 18:01:28',
+                'updated_at' => '2025-05-26 18:07:36',
+            ),
+            7 => 
+            array (
+                'id' => 11,
+                'name' => 'item_sales',
+                'slug' => 'item-sales',
+                'display_name_singular' => 'Productos en Venta',
+                'display_name_plural' => 'Productos en Ventas',
+                'icon' => 'voyager-bag',
+                'model_name' => 'App\\Models\\ItemSale',
+                'policy_name' => NULL,
+                'controller' => NULL,
+                'description' => NULL,
+                'generate_permissions' => 1,
+                'server_side' => 0,
+                'details' => '{"order_column":null,"order_display_column":null,"order_direction":"asc","default_search_key":null,"scope":null}',
+                'created_at' => '2025-05-26 18:20:09',
+                'updated_at' => '2025-05-26 22:23:34',
             ),
         ));
         
