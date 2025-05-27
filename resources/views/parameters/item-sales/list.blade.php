@@ -24,7 +24,7 @@
                                 }
                             @endphp
                             <tr>
-                                <td rowspan="2"><img src="{{ $image }}" alt="{{ $item->name }} " style="width: 80px; height: 80px; border-radius: 40px; margin-right: 0px"></td>
+                                <td rowspan="2"><img src="{{ $image }}" alt="{{ $item->name }} " style="width: 60px; height: 60px; border-radius: 50px; margin-right: 0px"></td>
                                 <td>
                                     {{ strtoupper($item->name) }}
                                 </td>
