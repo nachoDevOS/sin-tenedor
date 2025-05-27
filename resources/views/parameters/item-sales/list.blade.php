@@ -25,7 +25,7 @@
                             @endphp
                             <tr>
                                 <td rowspan="2">
-                                    <img src="{{ $image }}" alt="{{ $item->name }}"  class="image-expandable" style="width: 50px; height: 50px; border-radius: 0px; margin-right: 0px">
+                                    <img src="{{ $image }}" alt="{{ $item->name }}"  class="image-expandable" style="width: 50px; height: 50px; border-radius: 30px; margin-right: 0px">
                                 </td>
                                 <td>
                                     {{ strtoupper($item->name) }}
