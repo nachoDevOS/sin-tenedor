@@ -24,7 +24,6 @@
         </div>
     </div>
 @stop
-
 @section('content')
     <div class="page-content edit-add container-fluid">
         <form id="form-sale" action="{{ route('sales.store') }}" method="post">
