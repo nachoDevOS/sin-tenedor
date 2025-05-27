@@ -54,6 +54,26 @@ class PermissionsTableSeeder extends Seeder
         Permission::generateFor('categories');
         Permission::generateFor('pages');
 
+
+        // Ventas
+
+        $permissions = [
+            'browse_sales' => 'Ver lista de ventas',
+            'read_sales' => 'Ver detalles de una venta',
+            'edit_sales' => 'Editar información de ventas',
+            'add_sales' => 'Agregar nuevas ventas',
+            'delete_sales' => 'Eliminar ventas',
+        ];
+
+        foreach ($permissions as $key => $description) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'keyDescription'=> $description,
+                'table_name' => 'sales',
+                'tableDescription'=>'Ventas'
+            ]);
+        }
+
         
 
         // Administracion
