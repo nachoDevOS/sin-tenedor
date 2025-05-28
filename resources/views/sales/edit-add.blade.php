@@ -24,32 +24,85 @@
         </div>
     </div>
 @stop
+
 @section('content')
     <div class="page-content edit-add container-fluid">
         <form id="form-sale" action="{{ route('sales.store') }}" method="post">
             @csrf
             <div class="row">
-                @if (setting('ventas.cashier_required') && !$cashier)
-                    <div class="col-md-12" style="margin-bottom: 5px">
-                        <div class="panel panel-bordered" style="border-left: 5px solid #CB4335">
-                            <div class="panel-body" style="padding: 10px">
-                                <div class="col-md-12">
-                                    <h5 class="text-danger">Advertencia</h5>
-                                    <h4>Debe abrir caja antes de registrar ventas. &nbsp; <a href="{{ route('cashiers.create') }}?redirect=admin/sales/create" class="btn btn-success">Abrir ahora <i class="voyager-plus"></i></a></h4>
+                <div class="col-md-7">
+                    <div class="panel panel-bordered">
+                        <div class="panel-body" style="padding: 0px">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active">
+                                    <a href="#tab-all" aria-controls="tab-all" role="tab" data-toggle="tab">Todos</a>
+                                </li>
+                                @foreach ($categories as $category)
+                                    <li role="presentation">
+                                        <a href="#tab-{{ $category->id }}" aria-controls="tab-{{ $category->id }}" role="tab" data-toggle="tab">
+                                            {{ $category->name }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+            
+                            <div class="tab-content" style="padding: 15px">
+                                <!-- Tab Todos los productos -->
+                                <div role="tabpanel" class="tab-pane active" id="tab-all">
+                                    <div class="row">
+                                        @foreach ($categories as $category)
+                                            @foreach ($category->itemSales as $product)
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="product-card" data-product-id="{{ $product->id }}" ondblclick="addToCart({{ $product->id }}, true)">
+                                                        @if($product->image)
+                                                            <img src="{{ asset('storage/'.$product->image) }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
+                                                        @else
+                                                            <div class="text-center" style="height: 100px; background: #eee; display: flex; align-items: center; justify-content: center">
+                                                                <i class="voyager-image" style="font-size: 30px"></i>
+                                                            </div>
+                                                        @endif
+                                                        <div class="product-info">
+                                                            <h5>{{ $product->name }}</h5>
+                                                            <p class="text-success">Bs. {{ number_format($product->price, 2) }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @endforeach
+                                    </div>
                                 </div>
+            
+                                <!-- Tabs por categoría -->
+                                @foreach ($categories as $category)
+                                    <div role="tabpanel" class="tab-pane" id="tab-{{ $category->id }}">
+                                        <div class="row">
+                                            @foreach ($category->itemSales as $product)
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="product-card" data-product-id="{{ $product->id }}" ondblclick="addToCart({{ $product->id }}, true)">
+                                                        @if($product->image)
+                                                            <img src="{{ asset('storage/'.$product->image) }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
+                                                        @else
+                                                            <div class="text-center" style="height: 100px; background: #eee; display: flex; align-items: center; justify-content: center">
+                                                                <i class="voyager-image" style="font-size: 30px"></i>
+                                                            </div>
+                                                        @endif
+                                                        <div class="product-info">
+                                                            <h5>{{ $product->name }}</h5>
+                                                            <p class="text-success">Bs. {{ number_format($product->price, 2) }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
-                @endif
-                <div class="col-md-8">
+                </div>
+                <div class="col-md-5">
                     <div class="panel panel-bordered">
-                        <div class="panel-body">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="product_id">Buscar producto</label>
-                                    <select class="form-control" id="select-product_id"></select>
-                                </div>
-                            </div>
+                        <div class="panel-body" style="padding: 10px 0px">
                             <div class="col-md-12" style="height: 300px; max-height: 300px; overflow-y: auto">
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-bordered table-hover">
@@ -57,7 +110,6 @@
                                             <tr>
                                                 <th style="width: 30px">N&deg;</th>
                                                 <th>Detalles</th>
-                                                <th style="text-align: center; width:10%">Stock<br>Disponible</th>
                                                 <th style="text-align: center; width:15%">Precio</th>
                                                 <th style="text-align: center; width:12%">Cantidad</th>
                                                 <th style="text-align: center; width:10%">Subtotal</th>
@@ -77,15 +129,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="form-group col-md-12">
-                                <textarea name="observation" class="form-control" rows="2" placeholder="Observaciones"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-bordered">
-                        <div class="panel-body" style="padding: 10px 0px">
+
                             <div class="form-group col-md-12">
                                 <label for="person_id">Cliente</label>
                                 <div class="input-group">
@@ -101,14 +145,7 @@
                                 <label for="date">NIT/CI</label>
                                 <input type="text" name="dni" id="input-dni" disabled value="" class="form-control" placeholder="NIT/CI">
                             </div>
-                            <div class="form-group col-md-12">
-                                <label for="date">Tipo de Venta</label>
-                                <select class="form-control select2" name="typeSale" id="typeSale" onchange="funtion_typeSale()" required>
-                                    <option value="" disabled selected>--Selecione una opción--</option>
-                                    <option value="Contado">Venta al Contado</option>
-                                    <option value="Credito">Venta al Credito</option>
-                                </select>
-                            </div>
+                           
                             <div class="form-group col-md-6">
                                 <label for="date">Monto recibido</label>
                                 <input type="number" name="amountReceived" id="input-amount" style="text-align: right" min="0" value="0" step="0.01" class="form-control" placeholder="Monto recibo Bs." required>
@@ -120,10 +157,6 @@
                             <div class="form-group col-md-6">
                                 <label for="date">Fecha de venta</label>
                                 <input type="datetime" name="dateSale" value="{{ date('Y-m-d H:m:s') }}" class="form-control" readonly required>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="next_payment">Próximo pago</label>
-                                <input type="date" name="next_payment" id="next_payment" min="{{ date('Y-m-d') }}" required class="form-control">
                             </div>
                             <div class="form-group col-md-6">
                             </div>
@@ -141,288 +174,346 @@
                 </div>
             </div>
 
-        
-                <div class="modal fade" data-backdrop="static" id="modal-confirm" role="dialog">
-                    <div class="modal-dialog modal-primary">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" style="color:rgb(255, 255, 255) !important"><i class="fa-solid fa-cart-shopping"></i> ¿Estás seguro que quieres registrar?</h4>
+            <!-- Modal de confirmación -->
+            <div class="modal fade" data-backdrop="static" id="modal-confirm" role="dialog">
+                <div class="modal-dialog modal-primary">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" style="color:rgb(255, 255, 255) !important"><i class="fa-solid fa-cart-shopping"></i> ¿Estás seguro que quieres registrar?</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="payment_type">Método de pago</label>
+                                <select name="payment_type" id="select-payment_type" class="form-control" required>
+                                    <option value="" disabled selected>Seleccionar método de pago</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Qr">Qr/Transferencia</option>
+                                </select>
                             </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="payment_type">Método de pago</label>
-                                    <select name="payment_type" id="select-payment_type" class="form-control" required>
-                                        <option value="" disabled selected>Seleccionar método de pago</option>
-                                        <option value="Efectivo">Efectivo</option>
-                                        <option value="Qr">Qr/Transferencia</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                <input type="submit" class="btn btn-primary btn-confirm" id="btn-confirm" value="Confirmar">
-                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <input type="submit" class="btn btn-primary btn-confirm" id="btn-confirm" value="Confirmar">
                         </div>
                     </div>
                 </div>
-          
+            </div>
         </form>
     </div>
 
-    {{-- Popup para imprimir el recibo --}}
-    <div id="popup-button">
-        <div class="col-md-12" style="padding-top: 5px">
-            <h4 class="text-muted">Desea imprimir el recibo?</h4>
-        </div>
-        <div class="col-md-12 text-right">
-            <button onclick="javascript:$('#popup-button').fadeOut('fast')" class="btn btn-default">Cerrar</button>
-            <a id="btn-print" href="#" target="_blank" title="Imprimir" class="btn btn-danger">Imprimir <i class="glyphicon glyphicon-print"></i></a>
-        </div>
-    </div>
 
-    {{-- Modal crear cliente --}}
+
+    <!-- Modal crear cliente -->
     @include('partials.modal-registerPerson')
 @stop
 
 @section('css')
     <style>
-        .form-group{
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            border-color: #3c8dbc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .product-info {
+            padding: 10px 0;
+        }
+
+        .product-info h5 {
+            margin: 5px 0;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-info p {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .nav-tabs {
+            background: #f5f5f5;
+            padding-left: 15px;
+        }
+
+        .nav-tabs > li > a {
+            border-radius: 0;
+            border: none;
+            color: #555;
+            padding: 12px 20px;
+            font-weight: 600;
+        }
+
+        .nav-tabs > li.active > a {
+            background: #fff;
+            color: #3c8dbc;
+            border-bottom: 2px solid #3c8dbc;
+        }
+
+        .form-group {
             margin-bottom: 10px !important;
         }
-        .label-description{
-            cursor: pointer;
-        }
-        #popup-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 400px;
-            height: 100px;
-            background-color: white;
-            box-shadow: 5px 5px 15px grey;
-            z-index: 1000;
 
-            /* Mostrar/ocultar popup */
-            @if(session('sale_id'))
-            animation: show-animation 1s;
-            @else
-            right: -500px;
-            @endif
+
+
+        .input-price, .input-quantity {
+            width: 80px;
+            margin: 0 auto;
+            text-align: right;
         }
 
-        @keyframes show-animation {
-            0% {
-                right: -500px;
-            }
-            100% {
-                right: 20px;
-            }
+        .subtotal {
+            font-weight: bold;
         }
     </style>
-@endsection
+@stop
 
 @section('javascript')
-
     <script src="{{ asset('js/include/person-select.js') }}"></script>
     <script src="{{ asset('js/include/person-register.js') }}"></script>
+    {{-- <script src="{{ asset('js/sale.js') }}"></script> --}}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/es.min.js"></script>
-
-
-
-    <script src="{{ asset('vendor/tippy/popper.min.js') }}"></script>
-    <script src="{{ asset('vendor/tippy/tippy-bundle.umd.min.js') }}"></script>
     <script>
-        var productSelected, customerSelected;
- 
+        // Objeto para almacenar los productos en el carrito
+        let cart = {};
+
         $(document).ready(function(){
-            $('#select-product_id').select2({
-                placeholder: '<i class="fa fa-search"></i> Buscar...',
-                escapeMarkup : function(markup) {
-                    return markup;
-                },
-                language: {
-                    inputTooShort: function (data) {
-                        return `Por favor ingrese ${data.minimum - data.input.length} o más caracteres`;
-                    },
-                    noResults: function () {
-                        return `<i class="far fa-frown"></i> No hay resultados encontrados`;
-                    }
-                },
-                quietMillis: 250,
-                minimumInputLength: 2,
-                
-                ajax: {
-                    url: "{{ url('admin/inventories/item/stock/ajax') }}",      
-
-                    processResults: function (data) {
-                        let results = [];
-                        data.map(data =>{
-                            results.push({
-                                ...data,
-                                disabled: false
-                            });
-                        });
-                        return {
-                            results
-                        };
-                    },
-                    cache: true
-                },
-                templateResult: formatResultProducts,
-                templateSelection: (opt) => {
-                    productSelected = opt;
-                    return opt.name;
-                }
-            }).change(function(){
-                if($('#select-product_id option:selected').val()){
-                    let product = productSelected;
-                    if($('.table').find(`#tr-item-${product.id}`).val() === undefined){
-                        $('#table-body').append(`
-                            <tr class="tr-item" id="tr-item-${product.id}">
-                                <td class="td-item"></td>
-                                <td>
-                                    <b class="label-description" id="description-${product.id}">${product.item.name}<br>
-                                    <small> ${product.item.unit_type.name} - ${product.item.unit_type.shape} | ${product.item.item_category.name} a Bs. ${product.price}</small>
-                                    <input type="hidden" name="product_id[]" value="${product.id}" />
-                                    <input type="hidden" name="item[]" value="${product.item.id}" />
-                                </td>
-                                <td style="text-align: right">
-                                    <h4 class="label-stock" id="label-stock-${product.id}">${product.stock}</h4>
-                                </td>
-                                <td width="150px">
-                                    <input type="number" style="text-align: right" name="price[]" class="form-control" id="input-price-${product.id}" onkeyup="getSubtotal(${product.id})" onchange="getSubtotal(${product.id})" value="${product.priceSale}" min="0.1" step="0.01" required/>
-                                </td>
-                                <td width="100px">
-                                    <input type="number" name="quantity[]" style="text-align: right" class="form-control" id="input-quantity-${product.id}" onkeyup="getSubtotal(${product.id})" onchange="getSubtotal(${product.id})" value="1" min="1" max="${product.stock}" step="1" required/>
-                                </td>
-                                <td width="120px" class="text-right">
-                                    <h4 class="label-subtotal" id="label-subtotal-${product.id}">${product.price}</h4>
-                                    <input type="hidden" name="subTotal[]" id="subTotal-${product.id}" value="${product.item.id}" />
-
-                                </td>
-                                <td width="50px" class="text-right"><button type="button" onclick="removeTr(${product.id})" class="btn btn-link"><i class="voyager-trash text-danger"></i></button></td>
-                            </tr>
-                        `);
-
-                        setNumber();
-                        getSubtotal(product.id);
-                        $(`#select-price-${product.id}`).select2({tags: true});
-                    }else{
-                        toastr.info('EL producto ya está agregado', 'Información')
-                    }
-
-                    $('#select-product_id').val('').trigger('change');
-                }
+            // Configurar eventos de clic para los productos
+            $('.product-card').on('click', function() {
+                const productId = $(this).data('product-id');
+                addToCart(productId);
             });
 
+            // Configurar Select2 para clientes
+            $('#select-person_id').select2({
+                // ... (tu configuración actual de select2 para clientes)
+            });
 
-            
-
-       
-
+            // Configurar eventos del formulario
             $('#form-sale').submit(function(e){
                 $('.btn-confirm').val('Guardando...');
                 $('.btn-confirm').attr('disabled', true);
             });
 
-
-
-            $('#input-discount').keyup(function(){
-                getTotal();
+            $('#input-discount').on('keyup change', function(){
+                calculateTotal();
             });
-
-            $('#input-discount').change(function(){
-                getTotal();
-            });
-
-           
-
-           
         });
 
-        function getSubtotal(id){
-            let price = $(`#input-price-${id}`).val() ? parseFloat($(`#input-price-${id}`).val()) : 0;
-            let quantity = $(`#input-quantity-${id}`).val() ? parseFloat($(`#input-quantity-${id}`).val()) : 0;
-
-            $(`#label-subtotal-${id}`).text((price * quantity).toFixed(2));
-            $(`#subTotal-${id}`).val((price * quantity).toFixed(2));
-
-            getTotal();
+        // Función para agregar productos al carrito (simplificada)
+        function addToCart(productId) {
+            // Obtener información del producto
+            const product = getProductById(productId);
+            
+            if(!product) return;
+            
+            // Si el producto ya está en el carrito, aumentar cantidad
+            if(cart[productId]) {
+                cart[productId].quantity += 1;
+            } else {
+                // Si es nuevo en el carrito, agregarlo con cantidad 1
+                cart[productId] = {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    image: product.image
+                };
+            }
+            
+            // Mostrar feedback visual
+            showAddToCartFeedback(productId);
+            
+            // Actualizar la tabla del carrito
+            updateCartTable();
         }
 
+        // Función para mostrar feedback visual al agregar producto
+        // function showAddToCartFeedback(productId) {
+        //     const $productCard = $(`.product-card[data-product-id="${productId}"]`);
+            
+        //     // Efecto visual
+        //     $productCard.css('background-color', '#e8f4fc');
+        //     setTimeout(() => {
+        //         $productCard.css('background-color', '');
+        //     }, 300);
+            
+        //     // Mostrar notificación toast
+        //     toastr.success(`+1 ${cart[productId].name}`, 'Producto agregado', {
+        //         timeOut: 1000,
+        //         positionClass: 'toast-top-right'
+        //     });
+        // }
 
-        function funtion_typeSale() {
-            let typeSale = $('#typeSale').val();
-            $('#next_payment').attr('disabled', typeSale=='Credito'?false:true);
-            $('#input-amount').attr('readonly', typeSale=='Credito'?false:true);
-
-            getTotal();
-
+        function showAddToCartFeedback(productId) {
+            const $productCard = $(`.product-card[data-product-id="${productId}"]`);
+            
+            // Efecto visual
+            $productCard.css('background-color', '#e8f4fc');
+            setTimeout(() => {
+                $productCard.css('background-color', '');
+            }, 300);
+            
+            // Configurar toastr para posición inferior derecha
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-bottom-right", // Esta es la línea clave
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "1000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+            
+            // Mostrar notificación toast
+            toastr.success(`+1 ${cart[productId].name}`, 'Producto agregado');
         }
 
-        function getTotal(){
+        
+
+        // Función para actualizar la tabla del carrito (igual que antes)
+        function updateCartTable() {
+            const $tableBody = $('#table-body');
+            $tableBody.empty();
+            
+            if(Object.keys(cart).length === 0) {
+                $tableBody.append(`
+                    <tr id="tr-empty">
+                        <td colspan="7" style="height: 240px">
+                            <h4 class="text-center text-muted" style="margin-top: 50px">
+                                <i class="glyphicon glyphicon-shopping-cart" style="font-size: 50px"></i> <br><br>
+                                Lista de venta vacía
+                            </h4>
+                        </td>
+                    </tr>
+                `);
+            } else {
+                let counter = 1;
+                let total = 0;
+                
+                for(const productId in cart) {
+                    const product = cart[productId];
+                    const subtotal = product.price * product.quantity;
+                    total += subtotal;
+                    
+                    $tableBody.append(`
+                        <tr class="tr-item" id="tr-item-${productId}">
+                            <td class="td-item">${counter++}</td>
+                            <td>
+                                <b>${product.name}</b>
+                                <input type="hidden" name="products[${productId}][id]" value="${productId}">
+                                <input type="hidden" name="products[${productId}][name]" value="${product.name}">
+                            </td>
+                            <td style="text-align: right">
+                                <input type="number" name="products[${productId}][price]" class="form-control input-price" readonly
+                                    value="${product.price.toFixed(2)}" min="0.01" step="0.01" required>
+                            </td>
+                            <td>
+                                <input type="number" name="products[${productId}][quantity]" class="form-control input-quantity" 
+                                    value="${product.quantity}" min="1" step="1" required>
+                            </td>
+                            <td class="text-right subtotal">${subtotal.toFixed(2)}</td>
+                            <td class="text-right">
+                                <button type="button" onclick="removeFromCart(${productId})" class="btn btn-link">
+                                    <i class="voyager-trash text-danger"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+                }
+                
+                // Configurar eventos para actualizar subtotales
+                $('.input-price, .input-quantity').on('change keyup', function() {
+                    updateSubtotal($(this).closest('tr'));
+                    calculateTotal();
+                });
+            }
+            
+            // Actualizar el total
+            calculateTotal();
+        }
+
+        // Resto de funciones se mantienen igual que en la versión anterior
+        function updateSubtotal($row) {
+            const price = parseFloat($row.find('.input-price').val()) || 0;
+            const quantity = parseInt($row.find('.input-quantity').val()) || 0;
+            const subtotal = price * quantity;
+            
+            $row.find('.subtotal').text(subtotal.toFixed(2));
+            
+            // Actualizar también en el objeto cart
+            const productId = $row.attr('id').replace('tr-item-', '');
+            if(cart[productId]) {
+                cart[productId].price = price;
+                cart[productId].quantity = quantity;
+            }
+        }
+
+        function calculateTotal() {
             let total = 0;
-            let discount = $('#input-discount').val() ? parseFloat($('#input-discount').val()) : 0;
-            $(".label-subtotal").each(function(index) {
+            const discount = parseFloat($('#input-discount').val()) || 0;
+            
+            $('.subtotal').each(function() {
                 total += parseFloat($(this).text());
             });
+            
             $('#input-discount').attr('max', total.toFixed(2));
-
-            $('#label-total').text((total - discount).toFixed(2));
-            $('#amountTotalSale').val((total - discount).toFixed(2));
-
-            $('#input-amount').val((total - discount).toFixed(2));
-            $('#input-amount').attr('max', (total - discount).toFixed(2));
+            const finalTotal = total - discount;
+            
+            $('#label-total').text(finalTotal.toFixed(2));
+            $('#amountTotalSale').val(finalTotal.toFixed(2));
+            $('#input-amount').val(finalTotal.toFixed(2));
+            $('#input-amount').attr('max', finalTotal.toFixed(2));
         }
 
-        function setNumber(){
-
-            var length = 0;
-            $(".td-item").each(function(index) {
-                $(this).text(index +1);
-                length++;
-            });
-
-            if(length > 0){
-                $('#tr-empty').css('display', 'none');
-            }else{
-                $('#tr-empty').fadeIn('fast');
+        function removeFromCart(productId) {
+            if(cart[productId]) {
+                delete cart[productId];
+                updateCartTable();
+                toastr.info('Producto eliminado del carrito', '', {timeOut: 1000});
             }
         }
+    
 
-        function removeTr(id){
-            $(`#tr-item-${id}`).remove();
-            $('#select-product_id').val("").trigger("change");
-            setNumber();
-            getTotal();
+        function getProductById(productId) {
+            // Obtener el elemento del producto
+            const $productCard = $(`.product-card[data-product-id="${productId}"]`);
+            
+            // Limpiar el nombre eliminando posibles duplicados
+            let productName = $productCard.find('h5').text().trim();
+            
+            // Si el nombre parece estar duplicado (contiene el mismo texto dos veces)
+            const middle = Math.floor(productName.length / 2);
+            if (productName.substring(0, middle) === productName.substring(middle)) {
+                productName = productName.substring(0, middle);
+            }
+            
+            return {
+                id: productId,
+                name: productName,
+                price: parseFloat($productCard.find('.text-success').text().replace('Bs. ', '')),
+                image: $productCard.find('img').attr('src') || null
+            };
         }
 
-        function formatResultProducts(option){
-            // Si está cargando mostrar texto de carga
-            if (option.loading) {
-                return '<span class="text-center"><i class="fas fa-spinner fa-spin"></i> Buscando...</span>';
-            }
-            let image = window.defaultImage;
-            if(option.item.image){
-                image = "{{ asset('storage') }}/"+option.item.image.replace('.', '-cropped.');
-            }
-
-            // Mostrar las opciones encontradas
-            return $(`  <div style="display: flex">
-                            <div style="margin: 0px 10px">
-                                <img src="${image}" width="60px" />
-                            </div>
-                            <div>
-                                <b style="font-size: 16px">${option.item.name} a <small>Bs. ${option.priceSale}</small>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span><b>Stock</b>: ${option.stock}</span></b><br>
-                                <span><b>Fecha Expiración</b>: ${option.expirationDate? moment(option.expirationDate).format('DD/MM/YYYY'):"Sin Datos"}</span><br>
-                                <span><b>Descripción</b>: ${option.item.description}</span>
-                            </div>
-                        </div>`);
-
-                        
-        }
+        
     </script>
 @stop

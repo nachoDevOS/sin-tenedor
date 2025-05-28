@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\ItemSale;
 use Illuminate\Http\Request;
 
 class SaleController extends Controller
@@ -19,6 +21,17 @@ class SaleController extends Controller
 
     public function create()
     {
-        return view('sales.edit-add');
+        $category = ItemSale::with(['category'])
+            ->where('deleted_at', null)
+            ->select('category_id')
+            ->groupBy('category_id')
+            ->get();
+
+
+
+        $categories = Category::with(['itemSales' => function($query) {
+                $query->where('deleted_at', null); // Solo productos activos
+            }])->get();
+        return view('sales.edit-add', compact('categories'));
     }
 }

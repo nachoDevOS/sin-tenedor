@@ -26,4 +26,9 @@ class Category extends Model
         'deleteObservation',
     ];
 
+    public function itemSales()
+    {
+        return $this->hasMany(ItemSale::class, 'category_id');
+    }
+
 }
