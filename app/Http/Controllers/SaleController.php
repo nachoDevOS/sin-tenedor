@@ -21,16 +21,11 @@ class SaleController extends Controller
 
     public function create()
     {
-        $category = ItemSale::with(['category'])
-            ->where('deleted_at', null)
-            ->select('category_id')
-            ->groupBy('category_id')
-            ->get();
-
-
-
         $categories = Category::with(['itemSales' => function($query) {
-                $query->where('deleted_at', null); // Solo productos activos
+                $query->where('deleted_at', null) // Solo productos en ventas activos
+                    ->with(['itemSalestocks'=>function($q){
+                        $q->where('deleted_at', null);
+                    }]);
             }])->get();
         return view('sales.edit-add', compact('categories'));
     }

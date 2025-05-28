@@ -52,7 +52,10 @@
                                     <div class="row">
                                         @foreach ($categories as $category)
                                             @foreach ($category->itemSales as $product)
-                                                <div class="col-md-3 mb-3">
+                                                @php
+                                                    $cantStock = $product->itemSalestocks->sum('stock');
+                                                @endphp
+                                                <div class="col-md-3 mb-3" @if ($product->typeSale == 'Venta Con Stock' &&  $cantStock==0) style="opacity: 0.5; pointer-events: none;" @endif>
                                                     <div class="product-card" data-product-id="{{ $product->id }}" ondblclick="addToCart({{ $product->id }}, true)">
                                                         @if($product->image)
                                                             <img src="{{ asset('storage/'.$product->image) }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
@@ -63,7 +66,16 @@
                                                         @endif
                                                         <div class="product-info">
                                                             <h5>{{ $product->name }}</h5>
-                                                            <p class="text-success">Bs. {{ number_format($product->price, 2) }}</p>
+                                                            <p class="text-success">Bs. {{ number_format($product->price, 2, ',', '.') }}</p>
+                                                            @if ($product->typeSale == 'Venta Con Stock')                                                                
+                                                                @if ($cantStock==0)
+                                                                    Stock: <small style="color: red !important"> {{ number_format($cantStock, 2,',','.') }}</small>
+                                                                @else
+                                                                    Stock: <small> {{ number_format($cantStock, 2,',','.') }}</small>
+                                                                @endif
+                                                            @else
+                                                                {{$product->typeSale}}
+                                                            @endif                                                            
                                                         </div>
                                                     </div>
                                                 </div>
@@ -77,7 +89,10 @@
                                     <div role="tabpanel" class="tab-pane" id="tab-{{ $category->id }}">
                                         <div class="row">
                                             @foreach ($category->itemSales as $product)
-                                                <div class="col-md-3 mb-3">
+                                                @php
+                                                    $cantStock = $product->itemSalestocks->sum('stock');
+                                                @endphp
+                                                <div class="col-md-3 mb-3" @if ($product->typeSale == 'Venta Con Stock' &&  $cantStock==0) style="opacity: 0.5; pointer-events: none;" @endif>
                                                     <div class="product-card" data-product-id="{{ $product->id }}" ondblclick="addToCart({{ $product->id }}, true)">
                                                         @if($product->image)
                                                             <img src="{{ asset('storage/'.$product->image) }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
@@ -88,7 +103,16 @@
                                                         @endif
                                                         <div class="product-info">
                                                             <h5>{{ $product->name }}</h5>
-                                                            <p class="text-success">Bs. {{ number_format($product->price, 2) }}</p>
+                                                            <p class="text-success">Bs. {{ number_format($product->price, 2, ',', '.') }}</p>
+                                                            @if ($product->typeSale == 'Venta Con Stock')                                                                
+                                                                @if ($cantStock==0)
+                                                                    Stock: <small style="color: red !important"> {{ number_format($cantStock, 2,',','.') }}</small>
+                                                                @else
+                                                                    Stock: <small> {{ number_format($cantStock, 2,',','.') }}</small>
+                                                                @endif
+                                                            @else
+                                                                {{$product->typeSale}}
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -135,9 +159,6 @@
                                 <div class="input-group">
                                     <select name="person_id" id="select-person_id" class="form-control"></select>
                                     <span class="input-group-btn">
-                                        {{-- <button href="#"  title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
-                                            <i class="voyager-trash"></i>
-                                        </button> --}}
                                         <button id="trash-person" class="btn btn-danger" title="Quitar Clientes" data-toggle="modal" style="margin: 0px" type="button">
                                             <i class="voyager-trash"></i>
                                         </button>
@@ -151,15 +172,11 @@
                                 <label for="date">NIT/CI</label>
                                 <input type="text" name="dni" id="input-dni" disabled value="" class="form-control" placeholder="NIT/CI">
                             </div>
-                           
-
 
                             <div class="form-group col-md-6">
                                 <label for="date">Monto recibido</label>
                                 <input type="number" name="amountReceived" id="input-amount" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto recibo Bs." required>
-                                {{-- <small id="change-message" class="text-success" style="display: none;">Cambio: Bs. <span id="change-amount">0.00</span></small> --}}
                             </div>
-
 
                             <div class="form-group col-md-6">
                                 <label for="date">Fecha de venta</label>
@@ -210,8 +227,6 @@
             </div>
         </form>
     </div>
-
-
 
     <!-- Modal crear cliente -->
     @include('partials.modal-registerPerson')
@@ -273,8 +288,6 @@
             margin-bottom: 10px !important;
         }
 
-
-
         .input-price, .input-quantity {
             width: 80px;
             margin: 0 auto;
@@ -284,21 +297,12 @@
         .subtotal {
             font-weight: bold;
         }
-
-
-        /* #change-message {
-            display: block;
-            margin-top: 5px;
-            font-weight: bold;
-            text-align: right;
-        } */
     </style>
 @stop
 
 @section('javascript')
     <script src="{{ asset('js/include/person-select.js') }}"></script>
     <script src="{{ asset('js/include/person-register.js') }}"></script>
-    {{-- <script src="{{ asset('js/sale.js') }}"></script> --}}
 
     <script>
         // Objeto para almacenar los productos en el carrito
@@ -330,7 +334,7 @@
                 "debug": false,
                 "newestOnTop": false,
                 "progressBar": true,
-                "positionClass": "toast-bottom-right", // Esta es la línea clave
+                "positionClass": "toast-bottom-right",
                 "preventDuplicates": false,
                 "onclick": null,
                 "showDuration": "300",
@@ -343,27 +347,50 @@
                 "hideMethod": "fadeOut"
             };
             
-            // Mostrar notificación toast
             toastr.success('Cliente eliminado', 'Eliminado');
-
         });
+
         $('#input-amount').on('click', function () {
             $('#input-amount').val('');
         });
 
+        // Función para obtener el stock disponible de un producto
+        function getStock(productId) {
+            const $productCard = $(`.product-card[data-product-id="${productId}"]`);
+            const stockText = $productCard.find('small').text().trim();
+            
+            // Extraer el número de stock del texto (ej: "Stock: 5.00")
+            const stockMatch = stockText.match(/[\d.]+/);
+            return stockMatch ? parseFloat(stockMatch[0]) : 0;
+        }
 
-        // Función para agregar productos al carrito (simplificada)
-        function addToCart(productId) {
-            // Obtener información del producto
+        // Función para agregar productos al carrito con validación de stock
+        function addToCart(productId, silent = false) {
+            // Obtener información del producto y stock disponible
             const product = getProductById(productId);
+            const availableStock = getStock(productId);
             
             if(!product) return;
             
-            // Si el producto ya está en el carrito, aumentar cantidad
+            // Si el producto ya está en el carrito
             if(cart[productId]) {
+                // Verificar que no exceda el stock
+                if(cart[productId].quantity >= availableStock) {
+                    if(!silent) {
+                        toastr.error(`No hay suficiente stock. Disponible: ${availableStock}`, 'Stock insuficiente');
+                    }
+                    return;
+                }
                 cart[productId].quantity += 1;
             } else {
-                // Si es nuevo en el carrito, agregarlo con cantidad 1
+                // Verificar que haya stock disponible para agregar nuevo producto
+                if(availableStock <= 0) {
+                    if(!silent) {
+                        toastr.error('Producto sin stock disponible', 'Stock agotado');
+                    }
+                    return;
+                }
+                
                 cart[productId] = {
                     id: product.id,
                     name: product.name,
@@ -374,30 +401,28 @@
             }
             
             // Mostrar feedback visual
-            showAddToCartFeedback(productId);
+            if(!silent) {
+                showAddToCartFeedback(productId);
+            }
             
             // Actualizar la tabla del carrito
             updateCartTable();
         }
 
-
-
         function showAddToCartFeedback(productId) {
             const $productCard = $(`.product-card[data-product-id="${productId}"]`);
             
-            // Efecto visual
             $productCard.css('background-color', '#e8f4fc');
             setTimeout(() => {
                 $productCard.css('background-color', '');
             }, 300);
             
-            // Configurar toastr para posición inferior derecha
             toastr.options = {
                 "closeButton": true,
                 "debug": false,
                 "newestOnTop": false,
                 "progressBar": true,
-                "positionClass": "toast-bottom-right", // Esta es la línea clave
+                "positionClass": "toast-bottom-right",
                 "preventDuplicates": false,
                 "onclick": null,
                 "showDuration": "300",
@@ -410,13 +435,10 @@
                 "hideMethod": "fadeOut"
             };
             
-            // Mostrar notificación toast
             toastr.success(`+1 ${cart[productId].name}`, 'Producto agregado');
         }
 
-        
-
-        // Función para actualizar la tabla del carrito (igual que antes)
+        // Función para actualizar la tabla del carrito
         function updateCartTable() {
             const $tableBody = $('#table-body');
             $tableBody.empty();
@@ -438,6 +460,7 @@
                 
                 for(const productId in cart) {
                     const product = cart[productId];
+                    const availableStock = getStock(productId);
                     const subtotal = product.price * product.quantity;
                     total += subtotal;
                     
@@ -455,7 +478,8 @@
                             </td>
                             <td>
                                 <input type="number" name="products[${productId}][quantity]" class="form-control input-quantity" 
-                                    value="${product.quantity}" min="1" step="1" required>
+                                    value="${product.quantity}" min="1" max="${availableStock}" step="1" required>
+                                <small class="text-muted">Disponible: ${availableStock}</small>
                             </td>
                             <td class="text-right subtotal">${subtotal.toFixed(2)}</td>
                             <td class="text-right">
@@ -468,7 +492,16 @@
                 }
                 
                 // Configurar eventos para actualizar subtotales
-                $('.input-price, .input-quantity').on('change keyup', function() {
+                $('.input-quantity').on('change keyup', function() {
+                    const $input = $(this);
+                    const newQuantity = parseInt($input.val()) || 0;
+                    const maxStock = parseInt($input.attr('max')) || 0;
+                    
+                    if (newQuantity > maxStock) {
+                        toastr.error(`No hay suficiente stock. Disponible: ${maxStock}`, 'Stock insuficiente');
+                        $input.val(maxStock);
+                    }
+                    
                     updateSubtotal($(this).closest('tr'));
                     calculateTotal();
                 });
@@ -478,8 +511,10 @@
             calculateTotal();
         }
 
-        // Resto de funciones se mantienen igual que en la versión anterior
+        // Función para actualizar subtotal con validación de stock
         function updateSubtotal($row) {
+            const productId = $row.attr('id').replace('tr-item-', '');
+            const availableStock = getStock(productId);
             const price = parseFloat($row.find('.input-price').val()) || 0;
             const quantity = parseInt($row.find('.input-quantity').val()) || 0;
             const subtotal = price * quantity;
@@ -487,30 +522,11 @@
             $row.find('.subtotal').text(subtotal.toFixed(2));
             
             // Actualizar también en el objeto cart
-            const productId = $row.attr('id').replace('tr-item-', '');
             if(cart[productId]) {
                 cart[productId].price = price;
                 cart[productId].quantity = quantity;
             }
         }
-
-        // function calculateTotal() {
-        //     let total = 0;
-        //     const discount = parseFloat($('#input-discount').val()) || 0;
-            
-        //     $('.subtotal').each(function() {
-        //         total += parseFloat($(this).text());
-        //     });
-            
-        //     $('#input-discount').attr('max', total.toFixed(2));
-        //     const finalTotal = total - discount;
-            
-        //     $('#label-total').text(finalTotal.toFixed(2));
-        //     $('#amountTotalSale').val(finalTotal.toFixed(2));
-        //     $('#input-amount').val(finalTotal.toFixed(2));
-        //     $('#input-amount').attr('max', finalTotal.toFixed(2));
-        // }
-
 
         // Función para calcular y mostrar el cambio
         function calculateChange() {
@@ -519,7 +535,6 @@
             
             if (amountReceived >= total) {
                 const change = amountReceived - total;
-                // alert(change);
                 $('#change-message-error').hide();
                 $('#change-message').show();
                 $('#change-amount').text(change.toFixed(2));
@@ -527,46 +542,10 @@
             else {
                 $('#change-message').hide();
                 $('#change-message-error').show();
-
             }
         }
 
-        // Validar el monto recibido
-        function validateAmount() {
-            const amountReceived = parseFloat($('#input-amount').val()) || 0;
-            const total = parseFloat($('#amountTotalSale').val()) || 0;
-            
-            if (amountReceived < total) {
-                toastr.error(`El monto recibido no puede ser menor al total (Bs. ${total.toFixed(2)})`);
-                $('#input-amount').val(total.toFixed(2));
-                calculateChange();
-                return false;
-            }
-            return true;
-        }
-
-        // Evento para el input de monto recibido
-        $('#input-amount').on('change keyup', function() {
-            const total = parseFloat($('#amountTotalSale').val()) || 0;
-            const amount = parseFloat($(this).val()) || 0;
-            
-            // Establecer el mínimo como el total
-            $(this).attr('min', total.toFixed(2));
-            
-            calculateChange();
-        });
-
-        // Validar antes de enviar el formulario
-        $('#form-sale').submit(function(e) {
-            if (!validateAmount()) {
-                e.preventDefault();
-                return false;
-            }
-            return true;
-        });
-
-
-        // Modificar la función calculateTotal para incluir el cambio
+        // Función para calcular el total
         function calculateTotal() {
             let total = 0;
             const discount = parseFloat($('#input-discount').val()) || 0;
@@ -599,15 +578,10 @@
             }
         }
     
-
         function getProductById(productId) {
-            // Obtener el elemento del producto
             const $productCard = $(`.product-card[data-product-id="${productId}"]`);
-            
-            // Limpiar el nombre eliminando posibles duplicados
             let productName = $productCard.find('h5').text().trim();
             
-            // Si el nombre parece estar duplicado (contiene el mismo texto dos veces)
             const middle = Math.floor(productName.length / 2);
             if (productName.substring(0, middle) === productName.substring(middle)) {
                 productName = productName.substring(0, middle);
@@ -621,6 +595,36 @@
             };
         }
 
-        
+        // Evento para el input de monto recibido
+        $('#input-amount').on('change keyup', function() {
+            const total = parseFloat($('#amountTotalSale').val()) || 0;
+            const amount = parseFloat($(this).val()) || 0;
+            
+            $(this).attr('min', total.toFixed(2));
+            calculateChange();
+        });
+
+        // Validar antes de enviar el formulario
+        $('#form-sale').submit(function(e) {
+            const total = parseFloat($('#amountTotalSale').val()) || 0;
+            const amountReceived = parseFloat($('#input-amount').val()) || 0;
+            
+            if (amountReceived < total) {
+                toastr.error(`El monto recibido no puede ser menor al total (Bs. ${total.toFixed(2)})`);
+                $('#input-amount').val(total.toFixed(2));
+                calculateChange();
+                e.preventDefault();
+                return false;
+            }
+            
+            // Validar que haya productos en el carrito
+            if(Object.keys(cart).length === 0) {
+                toastr.error('Debe agregar al menos un producto al carrito');
+                e.preventDefault();
+                return false;
+            }
+            
+            return true;
+        });
     </script>
 @stop

@@ -90,7 +90,7 @@
                                 <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
                             </a>
                         @endif
-                        @if (auth()->user()->hasPermission('destroy_item_sales'))
+                        @if (auth()->user()->hasPermission('delete_item_sales'))
                             <a href="#" onclick="deleteItem('{{ route('voyager.item-sales.destroy', ['id' => $item->id]) }}')" title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
                                 <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Eliminar</span>
                             </a>
