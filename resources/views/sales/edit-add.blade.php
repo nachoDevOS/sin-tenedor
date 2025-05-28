@@ -135,6 +135,12 @@
                                 <div class="input-group">
                                     <select name="person_id" id="select-person_id" class="form-control"></select>
                                     <span class="input-group-btn">
+                                        {{-- <button href="#"  title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
+                                            <i class="voyager-trash"></i>
+                                        </button> --}}
+                                        <button id="trash-person" class="btn btn-danger" title="Quitar Clientes" data-toggle="modal" style="margin: 0px" type="button">
+                                            <i class="voyager-trash"></i>
+                                        </button>
                                         <button class="btn btn-primary" title="Nuevo cliente" data-target="#modal-create-person" data-toggle="modal" style="margin: 0px" type="button">
                                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                         </button>
@@ -146,14 +152,15 @@
                                 <input type="text" name="dni" id="input-dni" disabled value="" class="form-control" placeholder="NIT/CI">
                             </div>
                            
+
+
                             <div class="form-group col-md-6">
                                 <label for="date">Monto recibido</label>
-                                <input type="number" name="amountReceived" id="input-amount" style="text-align: right" min="0" value="0" step="0.01" class="form-control" placeholder="Monto recibo Bs." required>
+                                <input type="number" name="amountReceived" id="input-amount" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto recibo Bs." required>
+                                {{-- <small id="change-message" class="text-success" style="display: none;">Cambio: Bs. <span id="change-amount">0.00</span></small> --}}
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="date">Descuento</label>
-                                <input type="number" name="discount" id="input-discount" style="text-align: right" min="0" value="0" step="0.01" class="form-control" placeholder="Descuento Bs." required>
-                            </div>
+
+
                             <div class="form-group col-md-6">
                                 <label for="date">Fecha de venta</label>
                                 <input type="datetime" name="dateSale" value="{{ date('Y-m-d H:m:s') }}" class="form-control" readonly required>
@@ -161,7 +168,9 @@
                             <div class="form-group col-md-6">
                             </div>
                             <div class="form-group col-md-6">
-                                <h2 class="text-right"><small>Total: Bs.</small> <b id="label-total">0.00</b></h2>
+                                <h3 class="text-right" id="change-message" style="display: none;"><small>Cambio: Bs.</small> <b id="change-amount">0.00</b></h3>
+                                <h3 class="text-right" id="change-message-error" style="display: none;"><small  style="color: red !important">Ingrese un Monto igual o mayor al total de la venta</small></h3>
+                                <h3 class="text-right"><small>Total a cobrar: Bs.</small> <b id="label-total">0.00</b></h3>
                                 <input type="hidden" id="amountTotalSale" name="amountTotalSale" value="0">
                             </div>
                             <div class="form-group col-md-12 text-center">
@@ -275,6 +284,14 @@
         .subtotal {
             font-weight: bold;
         }
+
+
+        /* #change-message {
+            display: block;
+            margin-top: 5px;
+            font-weight: bold;
+            text-align: right;
+        } */
     </style>
 @stop
 
@@ -294,11 +311,6 @@
                 addToCart(productId);
             });
 
-            // Configurar Select2 para clientes
-            $('#select-person_id').select2({
-                // ... (tu configuración actual de select2 para clientes)
-            });
-
             // Configurar eventos del formulario
             $('#form-sale').submit(function(e){
                 $('.btn-confirm').val('Guardando...');
@@ -309,6 +321,36 @@
                 calculateTotal();
             });
         });
+
+        $('#trash-person').on('click', function () {
+            $('#input-dni').val('');
+            $('#select-person_id').val('').trigger('change');
+             toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-bottom-right", // Esta es la línea clave
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "1000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+            
+            // Mostrar notificación toast
+            toastr.success('Cliente eliminado', 'Eliminado');
+
+        });
+        $('#input-amount').on('click', function () {
+            $('#input-amount').val('');
+        });
+
 
         // Función para agregar productos al carrito (simplificada)
         function addToCart(productId) {
@@ -338,22 +380,7 @@
             updateCartTable();
         }
 
-        // Función para mostrar feedback visual al agregar producto
-        // function showAddToCartFeedback(productId) {
-        //     const $productCard = $(`.product-card[data-product-id="${productId}"]`);
-            
-        //     // Efecto visual
-        //     $productCard.css('background-color', '#e8f4fc');
-        //     setTimeout(() => {
-        //         $productCard.css('background-color', '');
-        //     }, 300);
-            
-        //     // Mostrar notificación toast
-        //     toastr.success(`+1 ${cart[productId].name}`, 'Producto agregado', {
-        //         timeOut: 1000,
-        //         positionClass: 'toast-top-right'
-        //     });
-        // }
+
 
         function showAddToCartFeedback(productId) {
             const $productCard = $(`.product-card[data-product-id="${productId}"]`);
@@ -467,6 +494,79 @@
             }
         }
 
+        // function calculateTotal() {
+        //     let total = 0;
+        //     const discount = parseFloat($('#input-discount').val()) || 0;
+            
+        //     $('.subtotal').each(function() {
+        //         total += parseFloat($(this).text());
+        //     });
+            
+        //     $('#input-discount').attr('max', total.toFixed(2));
+        //     const finalTotal = total - discount;
+            
+        //     $('#label-total').text(finalTotal.toFixed(2));
+        //     $('#amountTotalSale').val(finalTotal.toFixed(2));
+        //     $('#input-amount').val(finalTotal.toFixed(2));
+        //     $('#input-amount').attr('max', finalTotal.toFixed(2));
+        // }
+
+
+        // Función para calcular y mostrar el cambio
+        function calculateChange() {
+            const amountReceived = parseFloat($('#input-amount').val()) || 0;
+            const total = parseFloat($('#amountTotalSale').val()) || 0;
+            
+            if (amountReceived >= total) {
+                const change = amountReceived - total;
+                // alert(change);
+                $('#change-message-error').hide();
+                $('#change-message').show();
+                $('#change-amount').text(change.toFixed(2));
+            }
+            else {
+                $('#change-message').hide();
+                $('#change-message-error').show();
+
+            }
+        }
+
+        // Validar el monto recibido
+        function validateAmount() {
+            const amountReceived = parseFloat($('#input-amount').val()) || 0;
+            const total = parseFloat($('#amountTotalSale').val()) || 0;
+            
+            if (amountReceived < total) {
+                toastr.error(`El monto recibido no puede ser menor al total (Bs. ${total.toFixed(2)})`);
+                $('#input-amount').val(total.toFixed(2));
+                calculateChange();
+                return false;
+            }
+            return true;
+        }
+
+        // Evento para el input de monto recibido
+        $('#input-amount').on('change keyup', function() {
+            const total = parseFloat($('#amountTotalSale').val()) || 0;
+            const amount = parseFloat($(this).val()) || 0;
+            
+            // Establecer el mínimo como el total
+            $(this).attr('min', total.toFixed(2));
+            
+            calculateChange();
+        });
+
+        // Validar antes de enviar el formulario
+        $('#form-sale').submit(function(e) {
+            if (!validateAmount()) {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        });
+
+
+        // Modificar la función calculateTotal para incluir el cambio
         function calculateTotal() {
             let total = 0;
             const discount = parseFloat($('#input-discount').val()) || 0;
@@ -480,8 +580,15 @@
             
             $('#label-total').text(finalTotal.toFixed(2));
             $('#amountTotalSale').val(finalTotal.toFixed(2));
-            $('#input-amount').val(finalTotal.toFixed(2));
-            $('#input-amount').attr('max', finalTotal.toFixed(2));
+            
+            // Si el monto recibido actual es menor que el nuevo total, actualizarlo
+            const currentAmount = parseFloat($('#input-amount').val()) || 0;
+            if (currentAmount < finalTotal) {
+                $('#input-amount').val(finalTotal.toFixed(2));
+            }
+            
+            // Calcular el cambio nuevamente
+            calculateChange();
         }
 
         function removeFromCart(productId) {
