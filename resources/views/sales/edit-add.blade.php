@@ -55,15 +55,15 @@
                                                 @php
                                                     $cantStock = $product->itemSalestocks->sum('stock');
                                                 @endphp
-                                                <div class="col-md-3 mb-3" @if ($product->typeSale == 'Venta Con Stock' &&  $cantStock==0) style="opacity: 0.5; pointer-events: none;" @endif>
-                                                    <div class="product-card" data-product-id="{{ $product->id }}" ondblclick="addToCart({{ $product->id }}, true)">
-                                                        @if($product->image)
-                                                            <img src="{{ asset('storage/'.$product->image) }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
-                                                        @else
-                                                            <div class="text-center" style="height: 100px; background: #eee; display: flex; align-items: center; justify-content: center">
-                                                                <i class="voyager-image" style="font-size: 30px"></i>
-                                                            </div>
-                                                        @endif
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="product-card" data-product-id="{{ $product->id }}" data-type-sale="{{ $product->typeSale }}" ondblclick="addToCart({{ $product->id }}, true)">
+                                                        @php
+                                                            $image = asset('images/default.jpg');
+                                                            if($product->image){
+                                                                $image = asset('storage/'.$product->image);
+                                                            }
+                                                        @endphp
+                                                        <img src="{{ $image }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
                                                         <div class="product-info">
                                                             <h5>{{ $product->name }}</h5>
                                                             <p class="text-success">Bs. {{ number_format($product->price, 2, ',', '.') }}</p>
@@ -74,7 +74,7 @@
                                                                     Stock: <small> {{ number_format($cantStock, 2,',','.') }}</small>
                                                                 @endif
                                                             @else
-                                                                {{$product->typeSale}}
+                                                                <small class="type-sale" style="display: none">Venta Sin Stock</small>
                                                             @endif                                                            
                                                         </div>
                                                     </div>
@@ -92,15 +92,15 @@
                                                 @php
                                                     $cantStock = $product->itemSalestocks->sum('stock');
                                                 @endphp
-                                                <div class="col-md-3 mb-3" @if ($product->typeSale == 'Venta Con Stock' &&  $cantStock==0) style="opacity: 0.5; pointer-events: none;" @endif>
-                                                    <div class="product-card" data-product-id="{{ $product->id }}" ondblclick="addToCart({{ $product->id }}, true)">
-                                                        @if($product->image)
-                                                            <img src="{{ asset('storage/'.$product->image) }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
-                                                        @else
-                                                            <div class="text-center" style="height: 100px; background: #eee; display: flex; align-items: center; justify-content: center">
-                                                                <i class="voyager-image" style="font-size: 30px"></i>
-                                                            </div>
-                                                        @endif
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="product-card" data-product-id="{{ $product->id }}" data-type-sale="{{ $product->typeSale }}" ondblclick="addToCart({{ $product->id }}, true)">
+                                                        @php
+                                                            $image = asset('images/default.jpg');
+                                                            if($product->image){
+                                                                $image = asset('storage/'.$product->image);
+                                                            }
+                                                        @endphp
+                                                        <img src="{{ $image }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
                                                         <div class="product-info">
                                                             <h5>{{ $product->name }}</h5>
                                                             <p class="text-success">Bs. {{ number_format($product->price, 2, ',', '.') }}</p>
@@ -111,7 +111,7 @@
                                                                     Stock: <small> {{ number_format($cantStock, 2,',','.') }}</small>
                                                                 @endif
                                                             @else
-                                                                {{$product->typeSale}}
+                                                                <small class="type-sale" style="display: none">Venta Sin Stock</small>
                                                             @endif
                                                         </div>
                                                     </div>
@@ -169,7 +169,7 @@
                                 </div>
                             </div>
                             <div class="form-group col-md-12">
-                                <label for="date">NIT/CI</label>
+                                <label for="input-dni">NIT/CI</label>
                                 <input type="text" name="dni" id="input-dni" disabled value="" class="form-control" placeholder="NIT/CI">
                             </div>
 
@@ -183,6 +183,12 @@
                                 <input type="datetime" name="dateSale" value="{{ date('Y-m-d H:m:s') }}" class="form-control" readonly required>
                             </div>
                             <div class="form-group col-md-6">
+                                <label for="typeSale">Tipo de venta</label>
+                                <select name="typeSale" id="typeSale" class="form-control select2" required>
+                                    <option value="" disabled selected>--Seleccione una opción--</option>
+                                    <option value="Mesa">Para Mesa</option>
+                                    <option value="Llevar">Para LLevar</option>
+                                </select>
                             </div>
                             <div class="form-group col-md-6">
                                 <h3 class="text-right" id="change-message" style="display: none;"><small>Cambio: Bs.</small> <b id="change-amount">0.00</b></h3>
@@ -329,7 +335,7 @@
         $('#trash-person').on('click', function () {
             $('#input-dni').val('');
             $('#select-person_id').val('').trigger('change');
-             toastr.options = {
+            toastr.options = {
                 "closeButton": true,
                 "debug": false,
                 "newestOnTop": false,
@@ -357,54 +363,82 @@
         // Función para obtener el stock disponible de un producto
         function getStock(productId) {
             const $productCard = $(`.product-card[data-product-id="${productId}"]`);
-            const stockText = $productCard.find('small').text().trim();
             
-            // Extraer el número de stock del texto (ej: "Stock: 5.00")
+            // Si es "Venta Sin Stock", devolver un número grande
+            if($productCard.data('type-sale') === "Venta Sin Stock") {
+                return 9999; // Número alto para que siempre se pueda agregar
+            }
+            
+            // Para "Venta Con Stock", obtener el valor real
+            const stockText = $productCard.find('small').text().trim();
             const stockMatch = stockText.match(/[\d.]+/);
             return stockMatch ? parseFloat(stockMatch[0]) : 0;
         }
 
         // Función para agregar productos al carrito con validación de stock
         function addToCart(productId, silent = false) {
-            // Obtener información del producto y stock disponible
+            // Obtener información del producto
             const product = getProductById(productId);
-            const availableStock = getStock(productId);
-            
             if(!product) return;
-            
+
+            // Obtener el tipo de venta y stock del producto
+            const $productCard = $(`.product-card[data-product-id="${productId}"]`);
+            const typeSale = $productCard.data('type-sale');
+            const availableStock = typeSale === "Venta Con Stock" ? getStock(productId) : 9999;
+
+            // Configurar toastr
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-bottom-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "1000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            // Validación para productos con stock
+            if(typeSale === "Venta Con Stock" && availableStock <= 0) {
+                if(!silent) {
+                    toastr.error('Producto sin stock disponible', 'Stock agotado');
+                }
+                return;
+            }
+
             // Si el producto ya está en el carrito
             if(cart[productId]) {
-                // Verificar que no exceda el stock
-                if(cart[productId].quantity >= availableStock) {
+                // Verificar que no exceda el stock (solo para productos con stock)
+                if(typeSale === "Venta Con Stock" && cart[productId].quantity >= availableStock) {
                     if(!silent) {
-                        toastr.error(`No hay suficiente stock. Disponible: ${availableStock}`, 'Stock insuficiente');
+                        toastr.warning(`No hay suficiente stock. Disponible: ${availableStock}`, 'Stock insuficiente');
                     }
                     return;
                 }
                 cart[productId].quantity += 1;
             } else {
-                // Verificar que haya stock disponible para agregar nuevo producto
-                if(availableStock <= 0) {
-                    if(!silent) {
-                        toastr.error('Producto sin stock disponible', 'Stock agotado');
-                    }
-                    return;
-                }
-                
                 cart[productId] = {
                     id: product.id,
                     name: product.name,
                     price: product.price,
                     quantity: 1,
-                    image: product.image
+                    image: product.image,
+                    typeSale: typeSale // Guardamos el tipo de venta para referencia
                 };
             }
-            
+
             // Mostrar feedback visual
             if(!silent) {
                 showAddToCartFeedback(productId);
             }
-            
+
             // Actualizar la tabla del carrito
             updateCartTable();
         }
@@ -460,7 +494,7 @@
                 
                 for(const productId in cart) {
                     const product = cart[productId];
-                    const availableStock = getStock(productId);
+                    const availableStock = product.typeSale === "Venta Con Stock" ? getStock(productId) : 9999;
                     const subtotal = product.price * product.quantity;
                     total += subtotal;
                     
@@ -471,6 +505,7 @@
                                 <b>${product.name}</b>
                                 <input type="hidden" name="products[${productId}][id]" value="${productId}">
                                 <input type="hidden" name="products[${productId}][name]" value="${product.name}">
+                                <input type="hidden" name="products[${productId}][typeSale]" value="${product.typeSale}">
                             </td>
                             <td style="text-align: right">
                                 <input type="number" name="products[${productId}][price]" class="form-control input-price" readonly
@@ -479,7 +514,8 @@
                             <td>
                                 <input type="number" name="products[${productId}][quantity]" class="form-control input-quantity" 
                                     value="${product.quantity}" min="1" max="${availableStock}" step="1" required>
-                                <small class="text-muted">Disponible: ${availableStock}</small>
+                                ${product.typeSale === "Venta Con Stock" ? 
+                                    `<small class="text-muted">Disponible: ${availableStock}</small>` : ''}
                             </td>
                             <td class="text-right subtotal">${subtotal.toFixed(2)}</td>
                             <td class="text-right">
@@ -498,7 +534,7 @@
                     const maxStock = parseInt($input.attr('max')) || 0;
                     
                     if (newQuantity > maxStock) {
-                        toastr.error(`No hay suficiente stock. Disponible: ${maxStock}`, 'Stock insuficiente');
+                        toastr.warning(`No hay suficiente stock. Disponible: ${maxStock}`, 'Stock insuficiente');
                         $input.val(maxStock);
                     }
                     
@@ -514,7 +550,6 @@
         // Función para actualizar subtotal con validación de stock
         function updateSubtotal($row) {
             const productId = $row.attr('id').replace('tr-item-', '');
-            const availableStock = getStock(productId);
             const price = parseFloat($row.find('.input-price').val()) || 0;
             const quantity = parseInt($row.find('.input-quantity').val()) || 0;
             const subtotal = price * quantity;

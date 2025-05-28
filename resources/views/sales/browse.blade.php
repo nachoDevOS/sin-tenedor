@@ -34,7 +34,7 @@
                 <div class="panel panel-bordered">
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-sm-10">
+                            <div class="col-sm-6">
                                 <div class="dataTables_length" id="dataTable_length">
                                     <label>Mostrar <select id="select-paginate" class="form-control input-sm">
                                         <option value="10">10</option>
@@ -43,6 +43,21 @@
                                         <option value="100">100</option>
                                     </select> registros</label>
                                 </div>
+                            </div>
+
+                            <div class="col-sm-2" style="margin-bottom: 10px">
+                                <select id="status" name="status" class="form-control select2">
+                                    <option value="" selected>Todos</option>
+                                    <option value="Pendiente">Pendientes</option>
+                                    <option value="Entregado">Entregados</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2" style="margin-bottom: 10px">
+                                <select id="typeSale" name="typeSale" class="form-control select2">
+                                    <option value="" selected>Todos</option>
+                                    <option value="Llevar">Para LLevar</option>
+                                    <option value="Mesa">Para Mesa</option>
+                                </select>
                             </div>
                             <div class="col-sm-2" style="margin-bottom: 10px">
                                 <input type="text" id="input-search" placeholder="🔍 Buscar..." class="form-control">
@@ -82,6 +97,14 @@
         var countPage = 10, order = 'id', typeOrder = 'desc';
         $(document).ready(() => {
             list();
+
+            $('#status').change(function(){
+                list();
+            });
+
+            $('#typeSale').change(function(){
+                list();
+            });
             
             $('#input-search').on('keyup', function(e){
                 if(e.keyCode == 13) {
@@ -101,10 +124,13 @@
 
             let url = '{{ url("admin/sales/ajax/list") }}';
             let search = $('#input-search').val() ? $('#input-search').val() : '';
+            let status =$("#status").val();
+            let typeSale =$("#typeSale").val();
+
 
             $.ajax({
                 // url: `${url}/${search}?paginate=${countPage}&page=${page}`,
-                url: `${url}?search=${search}&paginate=${countPage}&page=${page}`,
+                url: `${url}?search=${search}&paginate=${countPage}&page=${page}&status=${status}&typeSale=${typeSale}`,
 
                 type: 'get',
                 

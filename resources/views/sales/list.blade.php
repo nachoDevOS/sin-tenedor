@@ -3,11 +3,11 @@
         <table id="dataTable" class="table table-bordered table-hover">
             <thead>
                 <tr>
-                    <th style="text-align: center">ID</th>
-                    <th style="text-align: center">CI/Pasaporte</th>
-                    <th style="text-align: center">Nombre completo</th>                    
-                    <th style="text-align: center">Fecha nac.</th>
-                    <th style="text-align: center">Telefono/Celular</th>
+                    <th style="text-align: center; width: 15%">Codigo</th>
+                    <th style="text-align: center">Cliente</th>
+                    <th style="text-align: center">Monto de Venta</th>     
+                    <th style="text-align: center">Ticket</th>
+                    <th style="text-align: center">Fecha Venta</th>
                     <th style="text-align: center">Estado</th>
                     <th style="text-align: center">Acciones</th>
                 </tr>
@@ -15,45 +15,56 @@
             <tbody>
                 @forelse ($data as $item)
                 <tr>
-                    <td>{{ $item->id }}</td>
-                    <td>{{ $item->ci }}</td>
+                    <td>{{ $item->code }}</td>
                     <td>
-                        <table>
-                            @php
-                                $image = asset('images/default.jpg');
-                                if($item->image){
-                                    $image = asset('storage/'.str_replace('.', '-cropped.', $item->image));
-                                }
-                                $now = \Carbon\Carbon::now();
-                                $birthday = new \Carbon\Carbon($item->birth_date);
-                                $age = $birthday->diffInYears($now);
-                            @endphp
-                            <tr>
-                                <td><img src="{{ $image }}" alt="{{ $item->first_name }} " style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px"></td>
-                                <td>
-                                    {{ strtoupper($item->first_name) }} {{ $item->middle_name??strtoupper($item->middle_name) }} {{ strtoupper($item->paternal_surname) }}  {{ strtoupper($item->maternal_surname) }} 
-                                </td>
-                            </tr>
-                        </table>
+                        @if ($item->person)
+                            <table>
+                                @php
+                                    $image = asset('images/default.jpg');
+                                    if($item->person->image){
+                                        $image = asset('storage/'.str_replace('.', '-cropped.', $item->person->image));
+                                    }
+                                @endphp
+                                <tr>
+                                    <td><img src="{{ $image }}" alt="{{ $item->person->first_name }} " style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px"></td>
+                                    <td>
+                                        {{ strtoupper($item->person->first_name) }} {{ $item->person->middle_name??strtoupper($item->person->middle_name) }} {{ strtoupper($item->person->paternal_surname) }}  {{ strtoupper($item->person->maternal_surname) }} 
+                                    </td>
+                                </tr>
+                            </table>
+                        @else
+                            Sin Datos 
+                        @endif                        
+                    </td>
+                    <td style="text-align: right">
+                        Bs. {{ number_format($item->amount, 2, ',', '.') }}
+                    </td>
+                    <td style="text-align: center">{{ $item->ticket }}</td>
+
+                    <td style="text-align: center">
+                        Registrado por {{$item->register->name}} <br>
+                        {{date('d/m/Y h:i:s a', strtotime($item->dateSale))}}<br><small>{{\Carbon\Carbon::parse($item->dateSale)->diffForHumans()}}
                     </td>
                     <td style="text-align: center">
-                        @if ($item->birth_date)
-                            {{ date('d/m/Y', strtotime($item->birth_date)) }} <br> <small>{{ $age }} años</small>
+                        @if ($item->status!='Pendiente')  
+                            <label class="label label-success">Entregado</label>
                         @else
-                            Sin Datos                            
-                        @endif
-                    </td>
-                    <td style="text-align: center">{{ $item->phone?$item->phone:'SN' }}</td>
-                    <td style="text-align: center">
-                        @if ($item->status==1)  
-                            <label class="label label-success">Activo</label>
-                        @else
-                            <label class="label label-warning">Inactivo</label>
+                            <label class="label label-warning">Pendiente</label>
                         @endif
 
                         
                     </td>
                     <td style="width: 18%" class="no-sort no-click bread-actions text-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-print"></span> Impresión <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank"><i class="fa-solid fa-print"></i> Ticket</a></li>
+                                <li><a href="{{route('sales-comanda.print', ['id'=>$item->id])}}" target="_blank"><i class="fa-solid fa-print"></i> Comanda</a></li>
+                                
+                            </ul>
+                        </div>
                         @if (auth()->user()->hasPermission('read_people'))
                             <a href="{{ route('voyager.people.show', ['id' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">
                                 <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>
