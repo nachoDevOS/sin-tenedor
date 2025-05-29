@@ -110,7 +110,6 @@
                                 </h4>
                             </div>
                             <div class="col-sm-6 text-right">
-                  
                             </div>  
                         </div>
                         <div class="row" id="div-results" style="min-height: 120px">
