@@ -116,6 +116,25 @@ class PermissionsTableSeeder extends Seeder
      
 
 
+        // ######################################           PARAMETROS DEL ALMACEN             ###################
+
+        $permissions = [
+            'browse_category_inventories' => 'Ver lista de categorías del almacén',
+            'read_category_inventories' => 'Ver detalles de categorías del almacén',
+            'edit_category_inventories' => 'Editar información de categorías del almacén',
+            'add_category_inventories' => 'Agregar nuevas categorías del almacén',
+            'delete_category_inventories' => 'Eliminar categorías del almacén',
+        ];
+
+        foreach ($permissions as $key => $description) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'keyDescription'=> $description,
+                'table_name' => 'category_inventories',
+                'tableDescription'=>'Categorías del Almacén'
+            ]);
+        }
+
 
         
         

@@ -163,6 +163,24 @@ class DataTypesTableSeeder extends Seeder
                 'created_at' => '2025-05-26 18:20:09',
                 'updated_at' => '2025-05-26 22:23:34',
             ),
+            8 => 
+            array (
+                'id' => 12,
+                'name' => 'category_inventories',
+                'slug' => 'category-inventories',
+                'display_name_singular' => 'Categorías del Almacén',
+                'display_name_plural' => 'Categorías del Almacén',
+                'icon' => 'fa-solid fa-layer-group',
+                'model_name' => 'App\\Models\\CategoryInventory',
+                'policy_name' => NULL,
+                'controller' => NULL,
+                'description' => NULL,
+                'generate_permissions' => 1,
+                'server_side' => 0,
+                'details' => '{"order_column":null,"order_display_column":null,"order_direction":"asc","default_search_key":null,"scope":null}',
+                'created_at' => '2025-05-29 17:34:21',
+                'updated_at' => '2025-05-29 17:35:28',
+            ),
         ));
         
         

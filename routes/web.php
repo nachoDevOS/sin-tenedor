@@ -78,5 +78,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
 // Clear cache
 Route::get('/admin/clear-cache', function() {
     Artisan::call('optimize:clear');
+
+    Artisan::call('db:seed', ['--class' => 'UpdateBreadSeeder']);
+    Artisan::call('db:seed', ['--class' => 'UpdatePermissionsSeeder']);
+
     return redirect('/admin/profile')->with(['message' => 'Cache eliminada.', 'alert-type' => 'success']);
 })->name('clear.cache');
