@@ -91,6 +91,15 @@
                             </div>
                             <hr style="margin:0;">
                         </div>
+                        <div class="col-md-4">
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">Detalle / Observación</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                <p>{{$sale->observation?$sale->observation:'Sin observación'}}</p>
+                            </div>
+                            <hr style="margin:0;">
+                        </div>
 
                        
                         
