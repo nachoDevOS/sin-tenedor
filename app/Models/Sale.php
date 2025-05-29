@@ -50,9 +50,11 @@ class Sale extends Model
      */
     public static function generateCode(): string
     {
-        $date = now()->format('Ymd');
+        $date = now()->format('Ym');
         $lastSale = self::withTrashed()
-                        ->whereDate('created_at', today())
+                        // ->whereDate('created_at', today())
+                        ->whereYear('created_at', now()->year)
+                        ->whereMonth('created_at', now()->month)
                         ->orderBy('id', 'desc')
                         ->first();
         
@@ -60,7 +62,7 @@ class Sale extends Model
             (int) substr($lastSale->code, -5) + 1 : 
             1;
             
-        return 'VENT-' . $date . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
+        return 'VTA-' . $date . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
     }
 
 

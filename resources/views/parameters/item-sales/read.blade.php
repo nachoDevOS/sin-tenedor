@@ -104,10 +104,10 @@
                                         <thead>
                                             <tr>
                                                 <th style="width:5px">N&deg;</th>
-                                                {{-- <th style="text-align: center; width:15%">Tipo</th> --}}
                                                 <th style="text-align: center; width:15%">Cant. Ingresada</th>
                                                 <th style="text-align: center; width:15%">Cant. Disponible</th>
                                                 <th style="text-align: center">Detalles</th>                     
+                                                <th style="text-align: center; width:10%">Estado</th>
                                                 <th style="text-align: center; width:10%">Acciones</th>
 
                                             </tr>
@@ -117,49 +117,48 @@
                                                 $i=1;
                                             @endphp 
                                             @forelse ($item->itemSalestocks as $value)
-                                            <tr>
-                                                <td>{{ $i }}</td>
-                                                <td style="text-align: right">                                                    
-                                                    {{-- @if ($item->deleted_at)
-                                                        <del style="color: red">{{number_format($item->quantity, 2, ',', '.')}}</del>
-                                                    @else
-                                                        {{number_format($item->quantity, 2, ',', '.')}}
-                                                    @endif --}}
-                                                    {{number_format($value->quantity, 2, ',', '.')}}
-                                                </td>
-                                                <td style="text-align: right">    
-                                                    {{number_format($value->stock, 2, ',', '.')}}
-                                                </td>
-                                             
-                                                <td>                                                    
-                                                    {{$value->observation}}
-                                                </td>
-
-                                                <td style="text-align: center">                                                   
-                                                    @if ($value->deleted_at)
-                                                        <span style="color: red">Eliminado</span>
-                                                    @else
-                                                        @if ($value->quantity == $value->stock)
-                                                            <a href="#" onclick="deleteItem('{{ route('item-sales-stock.destroy', ['id' => $item->id, 'stock'=>$value->id]) }}')" title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
-                                                                <i class="voyager-trash"></i>
-                                                            </a>
+                                                <tr>
+                                                    <td>{{ $i }}</td>
+                                                    <td style="text-align: right">                                                    
+                                                        {{-- @if ($item->deleted_at)
+                                                            <del style="color: red">{{number_format($item->quantity, 2, ',', '.')}}</del>
                                                         @else
-                                                            <label class="label label-danger">Agotado</label>                            
+                                                            {{number_format($item->quantity, 2, ',', '.')}}
+                                                        @endif --}}
+                                                        {{number_format($value->quantity, 2, ',', '.')}}
+                                                    </td>
+                                                    <td style="text-align: right">    
+                                                        {{number_format($value->stock, 2, ',', '.')}}
+                                                    </td>
+                                                
+                                                    <td>                                                    
+                                                        {{$value->observation}}
+                                                    </td>
+                                                    <td style="text-align: center">
+                                                        @if ($value->stock==0)
+                                                            <label class="label label-danger">Stock Agotado</label> 
+                                                        @else
+                                                            <label class="label label-success">Stock Disponible</label> 
                                                         @endif
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            {{-- @php
-                                                $cant ++;
-                                                if (!$item->deleted_at) {
-                                                    $price +=$item->price;
-                                                    $priceSale += $item->priceSale;
-                                                    $quantity += $item->quantity;
-                                                    $subTotal += $item->subTotal;
-                                                    $subTotalsale +=$item->subTotalSale;
-                                                    $stock += $item->stock;
-                                                }
-                                            @endphp --}}
+                                                    </td>
+
+                                                    <td style="text-align: center">                                                   
+                                                        @if ($value->deleted_at)
+                                                            <span style="color: red">Eliminado</span>
+                                                        @else
+                                                            @if ($value->quantity == $value->stock)
+                                                                <a href="#" onclick="deleteItem('{{ route('item-sales-stock.destroy', ['id' => $item->id, 'stock'=>$value->id]) }}')" title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
+                                                                    <i class="voyager-trash"></i>
+                                                                </a>                         
+                                                            @endif
+
+                                                            
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                @php
+                                                    $i++;
+                                                @endphp
                                             @empty
                                                 <tr>
                                                     <td colspan="5">

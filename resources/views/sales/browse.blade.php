@@ -47,8 +47,8 @@
 
                             <div class="col-sm-2" style="margin-bottom: 10px">
                                 <select id="status" name="status" class="form-control select2">
-                                    <option value="" selected>Todos</option>
-                                    <option value="Pendiente">Pendientes</option>
+                                    <option value="">Todos</option>
+                                    <option value="Pendiente" selected>Pendientes</option>
                                     <option value="Entregado">Entregados</option>
                                 </select>
                             </div>
@@ -73,9 +73,7 @@
 
 
     @include('partials.modal-delete')
-
-
-
+    @include('partials.modal-success')
 
 
 
@@ -142,9 +140,18 @@
 
         }
 
+        $('.success_form').submit(function(e){
+                $('.btn-form-submit').attr('disabled', true);
+                $('.btn-form-submit').val('Entregando...');
+        });
+
 
         function deleteItem(url){
             $('#delete_form').attr('action', url);
+        }
+
+        function successItem(url){
+            $('#success_form').attr('action', url);
         }
        
 

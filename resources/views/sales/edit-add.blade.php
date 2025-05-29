@@ -56,7 +56,7 @@
                                                     $cantStock = $product->itemSalestocks->sum('stock');
                                                 @endphp
                                                 <div class="col-md-3 mb-3">
-                                                    <div class="product-card" data-product-id="{{ $product->id }}" data-type-sale="{{ $product->typeSale }}" ondblclick="addToCart({{ $product->id }}, true)">
+                                                    <div class="product-card" data-product-id="{{ $product->id }}" data-type-sale="{{ $product->typeSale }}">
                                                         @php
                                                             $image = asset('images/default.jpg');
                                                             if($product->image){
@@ -74,7 +74,7 @@
                                                                     Stock: <small> {{ number_format($cantStock, 2,',','.') }}</small>
                                                                 @endif
                                                             @else
-                                                                <small class="type-sale" style="display: none">Venta Sin Stock</small>
+                                                                <small class="type-sale">Venta Sin Stock</small>
                                                             @endif                                                            
                                                         </div>
                                                     </div>
@@ -93,7 +93,7 @@
                                                     $cantStock = $product->itemSalestocks->sum('stock');
                                                 @endphp
                                                 <div class="col-md-3 mb-3">
-                                                    <div class="product-card" data-product-id="{{ $product->id }}" data-type-sale="{{ $product->typeSale }}" ondblclick="addToCart({{ $product->id }}, true)">
+                                                    <div class="product-card" data-product-id="{{ $product->id }}" data-type-sale="{{ $product->typeSale }}">
                                                         @php
                                                             $image = asset('images/default.jpg');
                                                             if($product->image){
@@ -111,7 +111,7 @@
                                                                     Stock: <small> {{ number_format($cantStock, 2,',','.') }}</small>
                                                                 @endif
                                                             @else
-                                                                <small class="type-sale" style="display: none">Venta Sin Stock</small>
+                                                                <small class="type-sale">Venta Sin Stock</small>
                                                             @endif
                                                         </div>
                                                     </div>
@@ -152,6 +152,10 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="input-dni">Detalle / Observación</label>
+                                <textarea name="observation" id="observation" class="form-control" rows="3"></textarea>
                             </div>
 
                             <div class="form-group col-md-12">
@@ -313,10 +317,16 @@
     <script>
         // Objeto para almacenar los productos en el carrito
         let cart = {};
+        let lastClickTime = 0;
+        const CLICK_DELAY = 300; // 300ms de delay entre clicks
 
         $(document).ready(function(){
             // Configurar eventos de clic para los productos
             $('.product-card').on('click', function() {
+                const now = Date.now();
+                if (now - lastClickTime < CLICK_DELAY) return;
+                lastClickTime = now;
+                
                 const productId = $(this).data('product-id');
                 addToCart(productId);
             });

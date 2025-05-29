@@ -5,6 +5,7 @@ use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ItemSaleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TableController;
@@ -48,12 +49,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
     // Route::get('sales', [SaleController::class, 'index'])->name('sales.index');
     Route::resource('sales', SaleController::class);
     Route::get('sales/ajax/list', [SaleController::class, 'list']);
+    Route::get('sales/{id}/status', [SaleController::class, 'saleSuccess'])->name('sales-status.success');
     Route::get('sales/{id}/ticket', [SaleController::class, 'printTicket'])->name('sales-ticket.print');
     Route::get('sales/{id}/comanda', [SaleController::class, 'printComanda'])->name('sales-comanda.print');
 
 
 
-    Route::get('table-client', [TableController::class, 'indexClient'])->name('table-client.index');
+    // Route::get('table-client', [TableController::class, 'indexClient'])->name('table-client.index');
+    Route::get('boards/kitchen', [BoardController::class, 'index'])->name('boards-kitchen.index');
 
 
 

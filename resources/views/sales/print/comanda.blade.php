@@ -92,26 +92,27 @@
 </head>
 <body>
     <div class="comanda">
-        <div class="timestamp">Impreso: {{ date('d/m/Y H:i:s') }}</div>
+        <div class="timestamp">Impreso: {{ date('d/m/Y h:i:s a') }}</div>
         
         <div class="header">
             <div class="restaurant-name">COMANDA DE COCINA</div>
-            <div>** PARA PREPARACIÓN **</div>
+            <div>
+                ** PARA PREPARACIÓN ** <br>
+                <h3 style="border-bottom: 1px solid #000; display: inline-block; padding-bottom: 5px;">Para {{$sale->typeSale}}</h3>
+            </div>
         </div>
         
         <div class="comanda-info">
-            <div>Orden: #{{ $sale->ticket }}</div>
-            <div>Mesa: {{ $sale->table ?? 'N/A' }}</div>
+            <div>Orden: # {{ $sale->ticket }}</div>
+            <div>Fecha: {{ date('d/m/Y h:i a', strtotime($sale->dateSale)) }}</div>
         </div>
         
         <div class="comanda-info">
-            <div>Hora: {{ date('H:i', strtotime($sale->dateSale)) }}</div>
-            <div>Comensales: {{ $sale->customers ?? 1 }}</div>
+            <div>Codigo: {{$sale->code}}</div>
         </div>
         
         <div class="comanda-info">
             <div>Registrado por: {{ $sale->register->name }}</div>
-            <div>Tipo: {{ ucfirst($sale->type) }}</div>
         </div>
         
         <!-- PLATOS PRINCIPALES -->
@@ -206,8 +207,8 @@
         @endif
         
         <div class="footer">
-            Hora de entrega estimada: {{ date('H:i', strtotime('+30 minutes', strtotime($sale->dateSale))) }}<br>
-            {{ setting('admin.title') }} v2.0
+            Hora de entrega estimada: {{ date('h:i a', strtotime('+30 minutes', strtotime($sale->dateSale))) }}<br>
+            {{ setting('admin.title') }} v1.0
         </div>
     </div>
 </body>

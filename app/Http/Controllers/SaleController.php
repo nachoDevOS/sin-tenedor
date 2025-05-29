@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\ItemSale;
+use App\Models\ItemSaleStock;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use Carbon\Carbon;
@@ -35,14 +36,11 @@ class SaleController extends Controller
         $data = Sale::with(['person','register', 'saleDetails'=>function($q){
                             $q->where('deleted_at', null);
                         }])
-                        // ->where(function($query) use ($search){
-                        //     $query->OrwhereHas('category', function($query) use($search){
-                        //         $query->whereRaw($search ? "name like '%$search%'" : 1);
-                        //     })
-                        //     ->OrWhereRaw($search ? "id = '$search'" : 1)
-                        //     ->OrWhereRaw($search ? "typeSale like '%$search%'" : 1)
-                        //     ->OrWhereRaw($search ? "name like '%$search%'" : 1);
-                        // })
+                        ->where(function($query) use ($search){
+                            $query->OrWhereRaw($search ? "id = '$search'" : 1)
+                            ->OrWhereRaw($search ? "code like '%$search%'" : 1)
+                            ->OrWhereRaw($search ? "ticket like '%$search%'" : 1);
+                        })
                         ->where('deleted_at', NULL)
                         ->whereRaw($typeSale? "typeSale = '$typeSale'" : 1)
                         ->whereRaw($status? "status = '$status'" : 1)
@@ -78,16 +76,73 @@ class SaleController extends Controller
     public function store(Request $request)
     {
         // return $request;
+        $this->custom_authorize('add_sales');
+
         if ($request->amountTotalSale > $request->amountReceived) {
             return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
+        $ok = false;
 
-        $this->custom_authorize('add_sales');
+        foreach ($request->products as $key => $value) {
+            if ($value['typeSale'] == "Venta Con Stock") {
+                $cant = ItemSaleStock::where('itemSale_id', $value['id'])
+                        ->where('deleted_at', null)
+                        ->where('stock', '>', 0)
+                        ->get()->sum('stock');
+                if($value['quantity'] > $cant)
+                {
+                    $ok=true;
+                }
+            }
+        }
+        if ($ok) {
+            return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        }
+
+        
+
         DB::beginTransaction();
         try {
 
 
-            // return $this->ticket($request->typeSale);
+            foreach ($request->products as $key => $value) {
+                if ($value['typeSale'] == "Venta Con Stock") {
+                    $aux = $value['quantity'];
+                    $cant = ItemSaleStock::where('itemSale_id', $value['id'])
+                            ->where('deleted_at', null)
+                            ->where('stock', '>', 0)
+                            ->orderBy('id', 'ASC')
+                            ->get();
+                    foreach ($cant as  $item) {
+                        dump($item->stock);
+                        if($item->stock >= $aux)
+                        {
+                            $item->decrement('stock', $aux);
+                            $aux=0;
+                        }
+                        else
+                        {
+                            $aux = $aux-$item->stock;
+                            $item->update([
+                                'stock'=>0
+                            ]);
+                        }
+
+                        if($aux == 0)
+                        {
+                            break;
+                        }
+
+                    }
+                    dump('#########################');
+
+                    
+                }
+            }
+
+            // return 1;
+
+
 
 
             $sale = Sale::create([
@@ -98,10 +153,11 @@ class SaleController extends Controller
                 'amountChange'=>$request->amountReceived - $request->amountTotalSale,
                 'dateSale'=>Carbon::now(),
                 'amount'=>$request->amountTotalSale,
+                'observation'=>$request->observation,
+                'status'=>'Entregado'
             ]);
 
             foreach ($request->products as $key => $value) {
-                // dump($value['name']);
                 $saleDetail = SaleDetail::create([
                     'sale_id'=>$sale->id,
                     'item_id'=>$value['id'],
@@ -127,6 +183,24 @@ class SaleController extends Controller
 
     }
 
+    public function saleSuccess($id)
+    {
+        $this->custom_authorize('add_sales');
+        $sale=Sale::where('id', $id)->first();
+        DB::beginTransaction();
+        try {
+            $sale->update([
+                'status'=>'Entregado'
+            ]);
+            DB::commit();
+            return redirect()->route('sales.index')->with(['message' => 'Entregado exitosamente.', 'alert-type' => 'success']);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return 0;
+            return redirect()->route('sales.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        }
+    }
+
 
     public function printTicket($id)
     {
@@ -139,18 +213,6 @@ class SaleController extends Controller
 
         return view('sales.print.ticket',compact('sale'));
     }
-
-    // public function printComanda($id)
-    // {
-    //     $sale = Sale::with(['person', 'register', 'saleDetails' => function($q){
-    //             $q->where('deleted_at', null)
-    //             ->with(['itemSale.category']);
-    //         }])
-    //         ->where('id',$id)
-    //         ->first();
-    //     return view('sales.print.ticket',compact('sale'));
-    // }
-
     public function printComanda($id)
     {
         $sale = Sale::with([

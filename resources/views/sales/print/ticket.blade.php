@@ -107,7 +107,7 @@
         </div>
         
         <div class="ticket-info">
-            {{-- <div>Mesa: 5</div> --}}
+            <div>Codigo: {{$sale->code}}</div>
             <div>Atendido por: {{$sale->register->name}}</div>
         </div>
         
@@ -163,13 +163,12 @@
                         $qrContent .= "- {$item->itemSale->name} x{$item->quantity} Bs.{$item->price}\n";
                     }
                     $qrContent .= "TOTAL: Bs." . number_format($total, 2, ',', '.') . "\n";
-                    $qrContent .= "ATENDIDO POR: {$sale->register->name}";
                 @endphp
                 {!! QrCode::size(80)->generate($qrContent) !!}
             </div>
             <div>
                 Escanea para verificar tu compra <br>
-                <small>{{ date('d/M/Y H:i:s') }}</small>
+                <small>{{ date('d/M/Y h:i:s a') }}</small>
             </div>
         </div>
         
