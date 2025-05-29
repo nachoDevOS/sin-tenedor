@@ -7,6 +7,7 @@ use App\Models\ItemSale;
 use App\Models\ItemSaleStock;
 use App\Models\Sale;
 use App\Models\SaleDetail;
+use App\Models\SaleDetailItemSaleStock;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -82,7 +83,6 @@ class SaleController extends Controller
             return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
         $ok = false;
-
         foreach ($request->products as $key => $value) {
             if ($value['typeSale'] == "Venta Con Stock") {
                 $cant = ItemSaleStock::where('itemSale_id', $value['id'])
@@ -103,46 +103,6 @@ class SaleController extends Controller
 
         DB::beginTransaction();
         try {
-
-
-            foreach ($request->products as $key => $value) {
-                if ($value['typeSale'] == "Venta Con Stock") {
-                    $aux = $value['quantity'];
-                    $cant = ItemSaleStock::where('itemSale_id', $value['id'])
-                            ->where('deleted_at', null)
-                            ->where('stock', '>', 0)
-                            ->orderBy('id', 'ASC')
-                            ->get();
-                    foreach ($cant as  $item) {
-                        dump($item->stock);
-                        if($item->stock >= $aux)
-                        {
-                            $item->decrement('stock', $aux);
-                            $aux=0;
-                        }
-                        else
-                        {
-                            $aux = $aux-$item->stock;
-                            $item->update([
-                                'stock'=>0
-                            ]);
-                        }
-
-                        if($aux == 0)
-                        {
-                            break;
-                        }
-
-                    }
-                    dump('#########################');
-
-                    
-                }
-            }
-
-            // return 1;
-
-
 
 
             $sale = Sale::create([
@@ -166,11 +126,47 @@ class SaleController extends Controller
                     'quantity'=>$value['quantity'],
                     'amount'=>$value['quantity'] * $value['price']
                 ]);
+
+                if ($value['typeSale'] == "Venta Con Stock") 
+                {
+                    $aux = $value['quantity'];
+                    $cant = ItemSaleStock::where('itemSale_id', $value['id'])
+                            ->where('deleted_at', null)
+                            ->where('stock', '>', 0)
+                            ->orderBy('id', 'ASC')
+                            ->get();
+
+                    foreach ($cant as  $item) {
+                        if($item->stock >= $aux)
+                        {
+                            SaleDetailItemSaleStock::create([
+                                'saleDetail_id'=>$saleDetail->id,
+                                'itemSaleStock_id'=>$item->id,
+                                'quantity'=>$aux
+                            ]);
+                            $item->decrement('stock', $aux);
+                            $aux=0;                        
+                        }
+                        else
+                        {
+                            
+                            $aux = $aux-$item->stock;
+                            SaleDetailItemSaleStock::create([
+                                'saleDetail_id'=>$saleDetail->id,
+                                'itemSaleStock_id'=>$item->id,
+                                'quantity'=>$aux
+                            ]);
+                            $item->update([
+                                'stock'=>0
+                            ]);
+                        }
+                        if($aux == 0)
+                        {
+                            break;
+                        }
+                    } 
+                }
             }
-
-            // return 1;
-
-
             
 
             DB::commit();
