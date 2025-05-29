@@ -38,5 +38,10 @@ class SaleDetail extends Model
         return $this->belongsTo(ItemSale::class, 'item_id');
     }
 
+    public function saleDetailItemSaleStock()
+    {
+        return $this->hasMany(SaleDetailItemSaleStock::class, 'saleDetail_id');
+    }
+
 
 }

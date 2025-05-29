@@ -88,9 +88,7 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        // return $request;
         $this->custom_authorize('add_sales');
-
         if ($request->amountTotalSale > $request->amountReceived) {
             return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
@@ -110,13 +108,8 @@ class SaleController extends Controller
         if ($ok) {
             return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
-
-        
-
         DB::beginTransaction();
         try {
-
-
             $sale = Sale::create([
                 'typeSale'=>$request->typeSale,
                 'ticket' => $this->ticket($request->typeSale),
@@ -160,13 +153,12 @@ class SaleController extends Controller
                             $aux=0;                        
                         }
                         else
-                        {
-                            
+                        {                            
                             $aux = $aux-$item->stock;
                             SaleDetailItemSaleStock::create([
                                 'saleDetail_id'=>$saleDetail->id,
                                 'itemSaleStock_id'=>$item->id,
-                                'quantity'=>$aux
+                                'quantity'=>$item->stock
                             ]);
                             $item->update([
                                 'stock'=>0
@@ -179,7 +171,6 @@ class SaleController extends Controller
                     } 
                 }
             }
-            
 
             DB::commit();
             return redirect()->route('sales.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
@@ -189,6 +180,34 @@ class SaleController extends Controller
             return redirect()->route('sales.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
 
+    }
+
+
+    public function destroy($id)
+    {
+        $sale = Sale::with(['saleDetails' => function($q){
+                $q->where('deleted_at', null)
+                    ->where('typeSaleItem', 'Venta Con Stock')
+                    ->with(['saleDetailItemSaleStock']);
+            }])
+            ->where('id',$id)
+            ->first();
+     
+        DB::beginTransaction();
+        try {        
+            foreach ($sale->saleDetails as $detail) {
+                foreach ($detail->saleDetailItemSaleStock as $item) {
+                    $itemSale = ItemSaleStock::where('id', $item->itemSaleStock_id)->first();
+                    $itemSale->increment('stock', $item->quantity);
+                }
+            }
+            $sale->delete();
+            DB::commit();
+            return redirect()->route('sales.index')->with(['message' => 'Eliminado exitosamente.', 'alert-type' => 'success']);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->route('sales.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        }
     }
 
     public function saleSuccess($id)

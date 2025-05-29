@@ -57,7 +57,8 @@
                     <td style="width: 18%" class="no-sort no-click bread-actions text-right">
                         <div class="btn-group">
                             <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">
-                                <span class="glyphicon glyphicon-print"></span> Impresión <span class="caret"></span>
+                                <span class="glyphicon glyphicon-print">
+                                {{-- </span> Impresión <span class="caret"></span> --}}
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank"><i class="fa-solid fa-print"></i> Ticket</a></li>
@@ -72,15 +73,16 @@
                         @endif
                         @if (auth()->user()->hasPermission('read_sales'))
                             <a href="{{ route('sales.show', ['sale' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">
-                                <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>
+                                <i class="voyager-eye"></i>
+                                {{-- <span class="hidden-xs hidden-sm">Ver</span> --}}
                             </a>
                         @endif
                         
-                        {{-- @if (auth()->user()->hasPermission('delete_people'))
-                            <a href="#" onclick="deleteItem('{{ route('voyager.people.destroy', ['id' => $item->id]) }}')" title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
-                                <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Eliminar</span>
+                        @if (auth()->user()->hasPermission('delete_sales'))
+                            <a href="#" onclick="deleteItem('{{ route('sales.destroy', ['sale' => $item->id]) }}')" title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
+                                <i class="voyager-trash"></i>
                             </a>
-                        @endif --}}
+                        @endif
                     </td>
                 </tr>
                 @empty
