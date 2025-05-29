@@ -122,7 +122,7 @@
                                                 <th style="width: 5%">N&deg;</th>
                                                 <th style="text-align: center">Artículo</th>
                                                 <th style="text-align: center; width:15%">Precio</th>
-                                                <th style="width:15%">Cantidad;</th>
+                                                <th style="width:15%">Cantidad</th>
                                                 <th style="text-align: center; width:15%">Subtotal</th>
 
                                             </tr>
