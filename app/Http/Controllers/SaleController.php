@@ -51,6 +51,18 @@ class SaleController extends Controller
         return view('sales.list', compact('data'));
     }
 
+    public function show($id)
+    {
+        $sale = Sale::with(['person', 'register', 'saleDetails' => function($q){
+                $q->where('deleted_at', null)
+                ->with(['itemSale']);
+            }])
+            ->where('id',$id)
+            ->first();
+
+        return view('sales.read',compact('sale'));
+    }
+
     public function create()
     {
         $this->custom_authorize('add_sales');
