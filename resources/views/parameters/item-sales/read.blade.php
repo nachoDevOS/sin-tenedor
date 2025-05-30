@@ -60,7 +60,7 @@
                                 <h3 class="panel-title">Observación / Descripción</h3>
                             </div>
                             <div class="panel-body" style="padding-top:0;">
-                                <p>{{$item->observation}}</small></p>
+                                <p>{{$item->observation??'Sin Detalles'}}</small></p>
                             </div>
                             <hr style="margin:0;">
                         </div>
@@ -161,7 +161,7 @@
                                                 @endphp
                                             @empty
                                                 <tr>
-                                                    <td colspan="5">
+                                                    <td colspan="6">
                                                         <h5 class="text-center" style="margin-top: 50px">
                                                             <img src="{{ asset('images/empty.png') }}" width="120px" alt="" style="opacity: 0.8">
                                                             <br><br>

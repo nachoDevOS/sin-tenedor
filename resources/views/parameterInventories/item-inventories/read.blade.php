@@ -5,7 +5,7 @@
 @section('page_header')
     <h1 class="page-title">
         <i class="voyager-bag"></i> Productos en Ventas &nbsp;
-        <a href="{{ route('voyager.item-sales.index') }}" class="btn btn-warning">
+        <a href="{{ route('voyager.item-inventories.index') }}" class="btn btn-warning">
             <span class="glyphicon glyphicon-list"></span>&nbsp;
             Volver a la lista
         </a> 
@@ -38,20 +38,10 @@
                         </div>
                         <div class="col-md-4">
                             <div class="panel-heading" style="border-bottom:0;">
-                                <h3 class="panel-title">Precio</h3>
+                                <h3 class="panel-title">Tipo de Dispensación</h3>
                             </div>
                             <div class="panel-body" style="padding-top:0;">
-                                <p>{{ number_format($item->price, 2, ',', '.') }}</p>
-                            </div>
-                            <hr style="margin:0;">
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="panel-heading" style="border-bottom:0;">
-                                <h3 class="panel-title">Tipo de Ventas</h3>
-                            </div>
-                            <div class="panel-body" style="padding-top:0;">
-                                <p>{{$item->typeSale}}</small></p>
+                                <p>{{$item->dispensingType}}</small></p>
                             </div>
                             <hr style="margin:0;">
                         </div>
@@ -60,7 +50,7 @@
                                 <h3 class="panel-title">Observación / Descripción</h3>
                             </div>
                             <div class="panel-body" style="padding-top:0;">
-                                <p>{{$item->observation}}</small></p>
+                                <p>{{$item->observation??'Sin Detalles'}}</small></p>
                             </div>
                             <hr style="margin:0;">
                         </div>
@@ -69,7 +59,7 @@
                                 <h3 class="panel-title">Stock Disponible</h3>
                             </div>
                             <div class="panel-body" style="padding-top:0;">
-                                <p>{{$item->itemSalestocks->where('type','Ingreso')->where('deleted_at', null)->sum('stock')}}</small></p>
+                                <p>{{$item->itemInventoryStocks->where('type','Ingreso')->where('deleted_at', null)->sum('stock')}}</small></p>
                             </div>
                             <hr style="margin:0;">
                         </div>
@@ -116,7 +106,7 @@
                                             @php
                                                 $i=1;
                                             @endphp 
-                                            @forelse ($item->itemSalestocks as $value)
+                                            @forelse ($item->itemInventoryStocks as $value)
                                                 <tr>
                                                     <td>{{ $i }}</td>
                                                     <td style="text-align: right">                                                    
@@ -147,7 +137,7 @@
                                                             <span style="color: red">Eliminado</span>
                                                         @else
                                                             @if ($value->quantity == $value->stock)
-                                                                <a href="#" onclick="deleteItem('{{ route('item-sales-stock.destroy', ['id' => $item->id, 'stock'=>$value->id]) }}')" title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
+                                                                <a href="#" onclick="deleteItem('{{ route('item-inventories-stock.destroy', ['id' => $item->id, 'stock'=>$value->id]) }}')" title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
                                                                     <i class="voyager-trash"></i>
                                                                 </a>                         
                                                             @endif
@@ -161,7 +151,7 @@
                                                 @endphp
                                             @empty
                                                 <tr>
-                                                    <td colspan="5">
+                                                    <td colspan="6">
                                                         <h5 class="text-center" style="margin-top: 50px">
                                                             <img src="{{ asset('images/empty.png') }}" width="120px" alt="" style="opacity: 0.8">
                                                             <br><br>
@@ -193,7 +183,7 @@
     </div>
 
 
-    <form action="{{ route('item-sales-stock.store', ['id' => $item->id]) }}" class="form-submit" method="POST">
+    <form action="{{ route('item-inventories-stock.store', ['id' => $item->id]) }}" class="form-submit" method="POST">
         <div class="modal fade" data-backdrop="static" id="modal-register-stock" role="dialog">
             <div class="modal-dialog modal-success">
                 <div class="modal-content">

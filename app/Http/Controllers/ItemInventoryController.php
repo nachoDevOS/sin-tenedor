@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ItemInventory;
+use App\Models\ItemInventoryStock;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ItemInventoryController extends Controller
 {
@@ -47,5 +49,56 @@ class ItemInventoryController extends Controller
                         ->paginate($paginate);
 
         return view('parameterInventories.item-inventories.list', compact('data'));
+    }
+
+
+    public function show($id)
+    {
+        $this->custom_authorize('read_item_inventories');
+        $item = ItemInventory::with(['category', 'itemInventoryStocks'=>function($q){
+                $q->orderBy('id', 'DESC');
+            }])
+            ->where('id', $id)
+            ->where('deleted_at', null)
+            ->first();
+        return view('parameterInventories.item-inventories.read', compact('item'));
+    }
+
+    public function storeStock(Request $request, $id)
+    {
+        $this->custom_authorize('add_item_inventories');    
+        // return $id;
+        DB::beginTransaction();
+        try {
+            ItemInventoryStock::create([
+                'itemInventory_id' => $id,
+                'quantity' =>  $request->quantity,
+                'stock' => $request->quantity,
+                'type' => 'Ingreso',
+                'observation' => $request->observation,
+            ]);
+            DB::commit();
+            return redirect()->route('voyager.item-inventories.show', ['id'=>$id])->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('voyager.item-inventories.show',  ['id'=>$id])->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        } 
+    }
+
+    public function destroyStock($id, $stock)
+    {
+        $item = ItemInventoryStock::where('id', $stock)
+                ->where('deleted_at', null)
+                ->first();
+        DB::beginTransaction();
+        try {            
+            $item->delete();
+            DB::commit();
+            return redirect()->route('voyager.item-inventories.show', ['id'=>$id])->with(['message' => 'Eliminado exitosamente.', 'alert-type' => 'success']);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->route('voyager.item-inventories.show', ['id'=>$id])->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        }
     }
 }

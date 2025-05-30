@@ -52,13 +52,6 @@
                                     @endforeach
                                 </select>
                             </div>
-                            {{-- <div class="col-sm-2" style="margin-bottom: 10px">
-                                <select id="stock" name="stock" class="form-control select2">
-                                    <option value="" selected>Todos</option>
-                                    <option value="1">Con Stock</option>
-                                    <option value="0">Sin Stock</option>
-                                </select>
-                            </div> --}}
                             <div class="col-sm-2" style="margin-bottom: 10px">
                                 <input type="text" id="input-search" placeholder="🔍 Buscar..." class="form-control">
                             </div>
