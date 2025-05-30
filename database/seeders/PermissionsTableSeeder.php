@@ -134,6 +134,23 @@ class PermissionsTableSeeder extends Seeder
                 'tableDescription'=>'Categorías del Almacén'
             ]);
         }
+        // Item del Almacen
+        $permissions = [
+            'browse_item_inventories' => 'Ver lista de productos del almacén',
+            'read_item_inventories' => 'Ver detalles de productos del almacén',
+            'edit_item_inventories' => 'Editar información de productos del almacén',
+            'add_item_inventories' => 'Agregar nuevas productos del almacén',
+            'delete_item_inventories' => 'Eliminar productos del almacén',
+        ];
+
+        foreach ($permissions as $key => $description) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'keyDescription'=> $description,
+                'table_name' => 'item_inventories',
+                'tableDescription'=>'Producto / Items del Almacén'
+            ]);
+        }
 
 
         
