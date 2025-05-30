@@ -139,7 +139,7 @@ class PermissionsTableSeeder extends Seeder
             'browse_item_inventories' => 'Ver lista de productos del almacén',
             'read_item_inventories' => 'Ver detalles de productos del almacén',
             'edit_item_inventories' => 'Editar información de productos del almacén',
-            'add_item_inventories' => 'Agregar nuevas productos del almacén',
+            'add_item_inventories' => 'Agregar nuevos productos del almacén',
             'delete_item_inventories' => 'Eliminar productos del almacén',
         ];
 
@@ -149,6 +149,24 @@ class PermissionsTableSeeder extends Seeder
                 'keyDescription'=> $description,
                 'table_name' => 'item_inventories',
                 'tableDescription'=>'Producto / Items del Almacén'
+            ]);
+        }
+
+        // Egresos del almacen
+        $permissions = [
+            'browse_egres_inventories' => 'Ver lista de egreso del almacén',
+            'read_egres_inventories' => 'Ver detalles de egreso del almacén',
+            'edit_egres_inventories' => 'Editar información del egreso del almacén',
+            'add_egres_inventories' => 'Agregar nuevo egreso del almacén',
+            'delete_egres_inventories' => 'Eliminar egreso del almacén',
+        ];
+
+        foreach ($permissions as $key => $description) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'keyDescription'=> $description,
+                'table_name' => 'egres_inventories',
+                'tableDescription'=>'Egreso de Almacén'
             ]);
         }
 

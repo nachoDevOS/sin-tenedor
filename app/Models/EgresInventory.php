@@ -7,22 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\RegistersUserEvents;
 
-class Sale extends Model
+class EgresInventory extends Model
 {
     use HasFactory, RegistersUserEvents, SoftDeletes;
 
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'person_id',
         'code',
-        'ticket',
-        'typeSale',
-        'amountReceived',
-        'amountChange',
-        'amount',
+        'dateEgres',
         'observation',
-        'dateSale',
         'status',
 
         'registerUser_id',
@@ -58,23 +52,6 @@ class Sale extends Model
             1;
             
         return 'VTA-' . $date . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
-    }
-
-
-
-    public function person()
-    {
-        return $this->belongsTo(Person::class, 'person_id');
-    }
-
-    public function saleDetails()
-    {
-        return $this->hasMany(SaleDetail::class, 'sale_id');
-    }
-    
-    public function register()
-    {
-        return $this->belongsTo(User::class, 'registerUser_id')->withTrashed();
     }
 
 

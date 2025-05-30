@@ -6,10 +6,13 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\EgresInventoryController;
 use App\Http\Controllers\ItemInventoryController;
 use App\Http\Controllers\ItemSaleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TableController;
+use App\Models\EgresInventory;
+use App\Models\EgresInventoryDetail;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +63,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
     Route::get('sales/{id}/status', [SaleController::class, 'saleSuccess'])->name('sales-status.success');
     Route::get('sales/{id}/ticket', [SaleController::class, 'printTicket'])->name('sales-ticket.print');
     Route::get('sales/{id}/comanda', [SaleController::class, 'printComanda'])->name('sales-comanda.print');
+
+
+    Route::resource('egres-inventories', EgresInventoryController::class);
+    Route::get('egres-inventories/ajax/list', [EgresInventoryController::class, 'list']);
+    Route::get('egres-inventories/stock/ajax', [EgresInventoryController::class, 'stockInventory']);//Para obtener los item que hay disponible en el inventario
+
+
+
 
 
 

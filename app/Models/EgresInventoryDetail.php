@@ -7,17 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\RegistersUserEvents;
 
-class ItemInventoryStock extends Model
+class EgresInventoryDetail extends Model
 {
     use HasFactory, RegistersUserEvents, SoftDeletes;
 
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'itemInventory_id',
+        'egresInventory_id',
+        'item_id',
+        'dispensingType',
         'quantity',
-        'stock',
-        'type',
         'observation',
 
         'registerUser_id',
@@ -28,8 +28,4 @@ class ItemInventoryStock extends Model
         'deleteObservation',
     ];
 
-    public function itemInventory()
-    {
-        return $this->belongsTo(ItemInventory::class, 'itemInventory_id');
-    }
 }
