@@ -6,6 +6,7 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\ItemInventoryController;
 use App\Http\Controllers\ItemSaleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TableController;
@@ -45,6 +46,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
     Route::get('item-sales/{id}', [ItemSaleController::class, 'show'])->name('voyager.item-sales.show');
     Route::post('item-sales/{id}/stock', [ItemSaleController::class, 'storeStock'])->name('item-sales-stock.store');
     Route::delete('item-sales/{id}/stock/{stock}', [ItemSaleController::class, 'destroyStock'])->name('item-sales-stock.destroy');
+
+
+    Route::get('item-inventories', [ItemInventoryController::class, 'index'])->name('voyager.item-inventories.index');
+    Route::get('item-inventories/ajax/list', [ItemInventoryController::class, 'list']);
+    // Route::get('item-sales/{id}', [ItemSaleController::class, 'show'])->name('voyager.item-sales.show');
+    // Route::post('item-sales/{id}/stock', [ItemSaleController::class, 'storeStock'])->name('item-sales-stock.store');
+    // Route::delete('item-sales/{id}/stock/{stock}', [ItemSaleController::class, 'destroyStock'])->name('item-sales-stock.destroy');
 
     // Route::get('sales', [SaleController::class, 'index'])->name('sales.index');
     Route::resource('sales', SaleController::class);
