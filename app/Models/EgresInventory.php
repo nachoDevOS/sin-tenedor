@@ -41,9 +41,6 @@ class EgresInventory extends Model
     {
         $date = now()->format('Ym');
         $lastSale = self::withTrashed()
-                        // ->whereDate('created_at', today())
-                        ->whereYear('created_at', now()->year)
-                        ->whereMonth('created_at', now()->month)
                         ->orderBy('id', 'desc')
                         ->first();
         
@@ -51,7 +48,17 @@ class EgresInventory extends Model
             (int) substr($lastSale->code, -5) + 1 : 
             1;
             
-        return 'VTA-' . $date . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
+        return $date . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
+    }
+
+    public function register()
+    {
+        return $this->belongsTo(User::class, 'registerUser_id')->withTrashed();
+    }
+    
+    public function egresInventoryDetails()
+    {
+        return $this->hasMany(EgresInventoryDetail::class, 'egresInventory_id');
     }
 
 

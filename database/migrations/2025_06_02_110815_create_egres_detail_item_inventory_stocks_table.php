@@ -13,17 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('egres_inventory_details', function (Blueprint $table) {
+        Schema::create('egres_detail_item_inventory_stocks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('egresInventory_id')->nullable()->constrained('egres_inventories');
-
-            $table->foreignId('item_id')->nullable()->constrained('item_inventories');
-            $table->string('dispensingType')->nullable();
+            $table->foreignId('egresDetail_id')->nullable()->constrained('egres_inventory_details');
+            $table->foreignId('itemInventoryStock_id')->nullable()->constrained('item_inventory_stocks');
 
             $table->decimal('quantity', 10, 2)->nullable();
-            $table->text('observation')->nullable();
-            
-            
+
             $table->timestamps();            
             $table->foreignId('registerUser_id')->nullable()->constrained('users');
             $table->string('registerRole')->nullable();
@@ -42,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('egres_inventory_details');
+        Schema::dropIfExists('egres_detail_item_inventory_stocks');
     }
 };

@@ -2,12 +2,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ setting('admin.title') }} | Notificación de pago</title>
+        <title>@yield('page_title') | {{Voyager::setting('admin.title') }} | Notificación de pago</title>
         
         <!-- Favicon -->
         <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
         @if($admin_favicon == '')
-            <link rel="shortcut icon" href="{{ asset('images/icon.png') }}" type="image/png">
+            <link rel="shortcut icon" href="{{ voyager_asset('images/logo-icon-light.png') }}" type="image/png">
         @else
             <link rel="shortcut icon" href="{{ Voyager::image($admin_favicon) }}" type="image/png">
         @endif
@@ -139,7 +139,7 @@
         <div class="container">
             <div class="card">
                 <div class="card-header">
-                    <img src="{{ $admin_favicon == '' ? asset('images/icon.png') : Voyager::image($admin_favicon) }}" alt="logo" class="logo">
+                    <img src="{{ $admin_favicon == '' ? voyager_asset('images/logo-icon-light.png') : Voyager::image($admin_favicon) }}" alt="logo" class="logo">
                     <h3>{{ $title }}</h3>
                 </div>
                 <div class="card-body">

@@ -40,7 +40,7 @@ class ItemInventoryController extends Controller
                                 $query->whereRaw($search ? "name like '%$search%'" : 1);
                             })
                             ->OrWhereRaw($search ? "id = '$search'" : 1)
-                            ->OrWhereRaw($search ? "typeSale like '%$search%'" : 1)
+                            ->OrWhereRaw($search ? "observation like '%$search%'" : 1)
                             ->OrWhereRaw($search ? "name like '%$search%'" : 1);
                         })
                         ->where('deleted_at', NULL)

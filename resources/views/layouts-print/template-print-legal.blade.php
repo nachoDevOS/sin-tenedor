@@ -4,11 +4,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('page_title') | {{ env('APP_NAME', 'Prestamo') }}</title>
+        <title>@yield('page_title') | {{Voyager::setting('admin.title') }}</title>
         <!-- Favicon -->
         <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
         @if($admin_favicon == '')
-            <link rel="shortcut icon" href="{{ asset('images/icon.png') }}" type="image/png">
+            <link rel="shortcut icon" href="{{ voyager_asset('images/logo-icon-light.png') }}" type="image/png">
         @else
             <link rel="shortcut icon" href="{{ Voyager::image($admin_favicon) }}" type="image/png">
         @endif
@@ -103,12 +103,28 @@
             <div class="sheet">
                 <table width="100%">
                     <tr>
-                        <td><img id="logo" src="{{ asset('images/icon.png') }}" /></td>
+                        <td>
+                            <?php 
+                                $admin_favicon = Voyager::setting('admin.icon_image', '');
+                            ?>
+                            @if($admin_favicon == '')
+                                <img  id="logo" src="{{ voyager_asset('images/logo-icon-light.png') }}" /> 
+                            @else
+                                <img  id="logo" src="{{ Voyager::image($admin_favicon) }}" /> 
+                            @endif
+                        </td>
                         <td style="text-align: right">@yield('qr_code')</td>
                     </tr>
                 </table>
                 <div id="watermark">
-                    <img src="{{ asset('images/icon.png') }}" /> 
+                    <?php 
+                        $admin_favicon = Voyager::setting('admin.icon_image', '');
+                    ?>
+                    @if($admin_favicon == '')
+                        <img src="{{ voyager_asset('images/logo-icon-light.png') }}" /> 
+                    @else
+                        <img src="{{ Voyager::image($admin_favicon) }}" /> 
+                    @endif
                 </div>
 		        <div class="options" style="position: fixed; bottom: 10px; right: 20px">
                     <button type="button" class="btn btn-print" onclick="window.print()">Imprimir</button>

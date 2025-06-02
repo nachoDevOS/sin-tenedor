@@ -4,10 +4,8 @@
             <thead>
                 <tr>
                     <th style="text-align: center; width: 15%">Codigo</th>
-                    <th style="text-align: center">Cliente</th>
-                    <th style="text-align: center">Monto de Venta</th>     
-                    <th style="text-align: center">Ticket</th>
-                    <th style="text-align: center">Fecha Venta</th>
+                    <th style="text-align: center">Detalles</th>
+                    <th style="text-align: center">Fecha Egreso</th>
                     <th style="text-align: center">Estado</th>
                     <th style="text-align: center">Acciones</th>
                 </tr>
@@ -16,36 +14,13 @@
                 @forelse ($data as $item)
                 <tr>
                     <td>{{ $item->code }}</td>
-                    <td>
-                        @if ($item->person)
-                            <table>
-                                @php
-                                    $image = asset('images/default.jpg');
-                                    if($item->person->image){
-                                        $image = asset('storage/'.str_replace('.', '-cropped.', $item->person->image));
-                                    }
-                                @endphp
-                                <tr>
-                                    <td><img src="{{ $image }}" alt="{{ $item->person->first_name }} " style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px"></td>
-                                    <td>
-                                        {{ strtoupper($item->person->first_name) }} {{ $item->person->middle_name??strtoupper($item->person->middle_name) }} {{ strtoupper($item->person->paternal_surname) }}  {{ strtoupper($item->person->maternal_surname) }} 
-                                    </td>
-                                </tr>
-                            </table>
-                        @else
-                            Sin Datos 
-                        @endif                        
-                    </td>
-                    <td style="text-align: right">
-                        Bs. {{ number_format($item->amount, 2, ',', '.') }}
-                    </td>
-                    <td style="text-align: center">{{ $item->ticket }}</td>
+                    <td>{{ $item->observation?$item->observation:'Sin Detalles' }}</td>
 
-                    <td style="text-align: center">
+                    <td style="text-align: center; width: 20%">
                         Registrado por {{$item->register->name}} <br>
-                        {{date('d/m/Y h:i:s a', strtotime($item->dateSale))}}<br><small>{{\Carbon\Carbon::parse($item->dateSale)->diffForHumans()}}
+                        {{date('d/m/Y h:i:s a', strtotime($item->dateEgres))}}<br><small>{{\Carbon\Carbon::parse($item->dateEgres)->diffForHumans()}}
                     </td>
-                    <td style="text-align: center">
+                    <td style="text-align: center; width: 12%">
                         @if ($item->status!='Pendiente')  
                             <label class="label label-success">Entregado</label>
                         @else
@@ -61,9 +36,7 @@
                                 {{-- </span> Impresión <span class="caret"></span> --}}
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank"><i class="fa-solid fa-print"></i> Ticket</a></li>
-                                <li><a href="{{route('sales-comanda.print', ['id'=>$item->id])}}" target="_blank"><i class="fa-solid fa-print"></i> Comanda</a></li>
-                                
+                                <li><a href="{{route('egres-inventories.print', ['id'=>$item->id])}}" target="_blank"><i class="fa-solid fa-print"></i> Salida</a></li>                                
                             </ul>
                         </div>
                         @if ($item->status == 'Pendiente')
@@ -74,7 +47,6 @@
                         @if (auth()->user()->hasPermission('read_sales'))
                             <a href="{{ route('sales.show', ['sale' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">
                                 <i class="voyager-eye"></i>
-                                {{-- <span class="hidden-xs hidden-sm">Ver</span> --}}
                             </a>
                         @endif
                         
@@ -87,7 +59,7 @@
                 </tr>
                 @empty
                     <tr>
-                        <td colspan="7">
+                        <td colspan="5">
                             <h5 class="text-center" style="margin-top: 50px">
                                 <img src="{{ asset('images/empty.png') }}" width="120px" alt="" style="opacity: 0.8">
                                 <br><br>

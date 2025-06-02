@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>@yield('page_title') | {{ env('APP_NAME', 'SYSALMACEN') }}</title>
+    <title>@yield('page_title') | {{Voyager::setting('admin.title') }}</title>
     <!-- Favicon -->
     <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
     @if($admin_favicon == '')
-        <link rel="shortcut icon" href="{{ asset('images/icon.png') }}" type="image/png">
+        <link rel="shortcut icon" href="{{ voyager_asset('images/logo-icon-light.png')}}" type="image/png">
     @else
         <link rel="shortcut icon" href="{{ Voyager::image($admin_favicon) }}" type="image/png">
     @endif
@@ -67,8 +67,15 @@
             <button class="btn-print" onclick="window.print()"> Imprimir <i class="fa fa-print"></i></button>
         </div>
         <div class="sheet">
-            <div id="watermark">
-                <img src="{{ asset('images/icon.png') }}" /> 
+            <div id="watermark" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.1; z-index: -1; text-align: center;">
+                <?php 
+                    $admin_favicon = Voyager::setting('admin.icon_image', '');
+                ?>
+                @if($admin_favicon == '')
+                    <img src="{{ voyager_asset('images/logo-icon-light.png') }}" /> 
+                @else
+                    <img src="{{ Voyager::image($admin_favicon) }}" style="width: 200px;"/> 
+                @endif
             </div>
             <div class="content">
                 @yield('content')

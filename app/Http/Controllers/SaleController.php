@@ -88,6 +88,7 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
+        return $request;
         $this->custom_authorize('add_sales');
         if ($request->amountTotalSale > $request->amountReceived) {
             return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);

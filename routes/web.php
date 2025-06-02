@@ -68,6 +68,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
     Route::resource('egres-inventories', EgresInventoryController::class);
     Route::get('egres-inventories/ajax/list', [EgresInventoryController::class, 'list']);
     Route::get('egres-inventories/stock/ajax', [EgresInventoryController::class, 'stockInventory']);//Para obtener los item que hay disponible en el inventario
+    Route::get('egres-inventories/{id}/print', [EgresInventoryController::class, 'printEgres'])->name('egres-inventories.print');
 
 
 

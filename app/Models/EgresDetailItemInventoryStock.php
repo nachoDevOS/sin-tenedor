@@ -6,20 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\RegistersUserEvents;
-use PhpParser\Node\Expr\FuncCall;
 
-class EgresInventoryDetail extends Model
+class EgresDetailItemInventoryStock extends Model
 {
     use HasFactory, RegistersUserEvents, SoftDeletes;
 
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'egresInventory_id',
-        'item_id',
-        'dispensingType',
+        'egresDetail_id',
+        'itemInventoryStock_id',
         'quantity',
-        'observation',
 
         'registerUser_id',
         'registerRole',
@@ -28,10 +25,4 @@ class EgresInventoryDetail extends Model
         'deleteRole',
         'deleteObservation',
     ];
-
-    public function itemInventory()
-    {
-        return $this->belongsTo(ItemInventory::class, 'item_id');
-    }
-
 }
