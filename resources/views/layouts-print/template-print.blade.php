@@ -19,10 +19,14 @@
             font-family: Arial, sans-serif;
             font-weight: 100;
         }
+
         .background {
             width: 100%;
+            min-height: 100vh; /* Esto hace que ocupe al menos el alto completo de la pantalla */
             background-color: #566573;
+            position: relative; /* Añade esto para posicionamiento relativo */
         }
+
         .sheet {
             width: 850px;
             background-color: white;
@@ -44,6 +48,46 @@
             position: relative;
             width: 350px;
         }
+
+
+        /* Estilo para los botones */
+        .btn-print, .btn-cancel {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Botón Imprimir (verde moderno) */
+        .btn-print {
+            background-color: #28a745; /* Verde */
+            color: white;
+        }
+
+        .btn-print:hover {
+            background-color: #218838; /* Verde oscuro al pasar el mouse */
+            transform: translateY(-1px);
+        }
+
+        /* Botón Cancelar (rojo moderno) */
+        .btn-cancel {
+            background-color: #dc3545; /* Rojo */
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c82333; /* Rojo oscuro al pasar el mouse */
+            transform: translateY(-1px);
+        }
+
+        /* Iconos dentro de los botones */
+        .btn-print i, .btn-cancel i {
+            margin-left: 5px;
+        }
         @media print{
             .hide-print{
                 display: none
@@ -55,6 +99,10 @@
                 width: 100%;
                 margin: 0px;
                 padding: 0px;
+            }
+            .background {
+                min-height: 100%;
+                background-color: #566573 !important;
             }
         }
     </style>
