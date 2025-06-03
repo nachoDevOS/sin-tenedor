@@ -89,6 +89,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
     Route::delete('users/{id}/deleted', [UserController::class, 'destroy'])->name('voyager.users.destroy');
     
 
+    Route::get('print-sale', [ReportSaleController::class, 'indexSale'])->name('print-sale.index');
+    Route::post('print-sale/list', [ReportSaleController::class, 'listSale'])->name('print-sale.list');
+
     Route::get('print-sale/stock', [ReportSaleController::class, 'indexSaleStock'])->name('print-sale-stock.index');
     Route::post('print-sale/stock/list', [ReportSaleController::class, 'listSaleStock'])->name('print-sale-stock.list');
 

@@ -13,6 +13,30 @@ class ReportSaleController extends Controller
         $this->middleware('auth');
     }
 
+
+
+    // ############################################################ VENTAS #########################################################
+
+    public function indexSale()
+    {
+        return view('reports.sales.sales.report');
+    }
+
+    public function listSale(Request $request)
+    {
+        dump('En desarrollo');
+        return null;
+        if($request->print){
+            return view('reports.sales.sale.print', compact('data'));
+        }else{
+            return view('reports.sales.sale.list', compact('data'));
+        }
+    }
+
+
+
+
+    // ########################################################### STOCK DISPONIBLE ##################################################
     public function indexSaleStock()
     {
         $category = ItemSale::with(['category'])
