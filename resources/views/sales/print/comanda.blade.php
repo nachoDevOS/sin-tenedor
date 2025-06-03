@@ -150,7 +150,7 @@
         
         <div class="footer">
             Hora de entrega estimada: {{ date('h:i a', strtotime('+30 minutes', strtotime($sale->dateSale))) }}<br>
-            {{ setting('admin.title') }} v1.0
+            {{ setting('admin.title') }}  v1.0
         </div>
     </div>
 </body>
