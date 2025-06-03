@@ -62,6 +62,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
     Route::resource('sales', SaleController::class);
     Route::get('sales/ajax/list', [SaleController::class, 'list']);
     Route::get('sales/{id}/status', [SaleController::class, 'saleSuccess'])->name('sales-status.success');
+    Route::get('sales/fullprint/{id}', [SaleController::class, 'fullPrint'])->name('sales-fullPrint.print');
     Route::get('sales/{id}/ticket', [SaleController::class, 'printTicket'])->name('sales-ticket.print');
     Route::get('sales/{id}/comanda', [SaleController::class, 'printComanda'])->name('sales-comanda.print');
 

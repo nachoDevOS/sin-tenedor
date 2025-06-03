@@ -174,7 +174,7 @@ class SaleController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('sales.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
+            return redirect()->route('sales.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success', 'sale_id' => $sale->id,]);
         } catch (\Throwable $e) {
             DB::rollBack();
             return 0;
@@ -254,6 +254,32 @@ class SaleController extends Controller
             ->where('id', $id)
             ->first();
             
-        return view('sales.print.comanda', compact('sale'));
+        // Agrupar automáticamente por categoría sin orden específico
+        $groupedItems = $sale->saleDetails->groupBy(function($item) {
+            return optional($item->itemSale->category)->name ?? 'Otros';
+        });
+        
+        return view('sales.print.comanda', compact('sale', 'groupedItems'));
+    }
+
+    public function fullPrint($id)
+    {
+        $sale = Sale::with([
+                'person', 
+                'register', 
+                'saleDetails' => function($q) {
+                    $q->where('deleted_at', null)
+                    ->with(['itemSale.category']);
+                }
+            ])
+            ->where('id', $id)
+            ->first();
+            
+        // Agrupar automáticamente por categoría sin orden específico
+        $groupedItems = $sale->saleDetails->groupBy(function($item) {
+            return optional($item->itemSale->category)->name ?? 'Otros';
+        });
+        
+        return view('sales.print.fullPrint', compact('sale', 'groupedItems'));
     }
 }

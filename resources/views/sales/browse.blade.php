@@ -71,6 +71,19 @@
     </div>
 
 
+    <div id="popup-button">
+            <div class="col-md-12" style="padding-top: 5px">
+                <h4 class="text-muted">Desea imprimir el comprobante?</h4>
+            </div>
+            <div class="col-md-12 text-right">
+                <button onclick="javascript:$('#popup-button').fadeOut('fast')" class="btn btn-default">Cerrar</button>
+                <a id="btn-print" onclick="printDailyMoney()"  title="Imprimir" class="btn btn-danger">Imprimir <i class="glyphicon glyphicon-print"></i></a>
+                {{-- <button type="submit" id="btn-print" title="Imprimir" class="btn btn-danger" onclick="printDailyMoney()" class="btn btn-primary">Imprimir <i class="glyphicon glyphicon-print"></i></button> --}}
+
+            </div>
+        </div>
+
+
 
     @include('partials.modal-delete')
     @include('partials.modal-success')
@@ -83,7 +96,32 @@
 @section('css')
     <style>
 
-    
+    #popup-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            height: 100px;
+            background-color: white;
+            box-shadow: 5px 5px 15px grey;
+            z-index: 1000;
+
+            /* Mostrar/ocultar popup */
+            /* @if(session('sale_id')) */
+                animation: show-animation 1s;
+            /* @else */
+            right: -500px;
+            /* @endif */
+        }
+
+        @keyframes show-animation {
+            0% {
+                right: -500px;
+            }
+            100% {
+                right: 20px;
+            }
+        }
     </style>
 @stop
 
@@ -93,6 +131,7 @@
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
     <script>
         var countPage = 10, order = 'id', typeOrder = 'desc';
+        let sale_id=null;
         $(document).ready(() => {
             list();
 
@@ -115,7 +154,20 @@
                
                 list();
             });
+
+            @if(session('sale_id'))
+                sale_id = "{{ session('sale_id') }}";
+            @endif
+
+            // Ocultar popup de impresión
+            setTimeout(() => {
+                $('#popup-button').fadeOut('fast');
+            }, 8000);
         });
+        function printDailyMoney()
+        {
+           window.open("{{ url('admin/sales/fullprint') }}/"+sale_id, "Recibo", `width=700, height=700`)
+        }
 
         function list(page = 1){
             $('#div-results').loading({message: 'Cargando...'});

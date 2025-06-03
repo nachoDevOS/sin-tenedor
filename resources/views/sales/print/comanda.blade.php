@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comanda de Cocina</title>
     <style>
+        /* Tus estilos actuales se mantienen igual */
         body {
             font-family: Arial, sans-serif;
             font-size: 12px;
@@ -39,6 +40,7 @@
             background-color: #f0f0f0;
             margin: 5px 0;
             padding: 2px 0;
+            text-transform: uppercase;
         }
         .items-table {
             width: 100%;
@@ -115,19 +117,13 @@
             <div>Registrado por: {{ $sale->register->name }}</div>
         </div>
         
-        <!-- PLATOS PRINCIPALES -->
-        @php
-            $mainDishes = $sale->saleDetails->filter(function($item) {
-                return optional($item->itemSale->category)->name === 'Platos Principales';
-            });
-        @endphp
-        
-        @if($mainDishes->count() > 0)
-        <div class="section-title">PLATOS PRINCIPALES</div>
+        <!-- SECCIONES DINÁMICAS POR CATEGORÍA -->
+        @foreach($groupedItems as $categoryName => $items)
+        <div class="section-title">{{ $categoryName }}</div>
         
         <table class="items-table">
             <tbody>
-                @foreach($mainDishes as $item)
+                @foreach($items as $item)
                 <tr>
                     <td class="quantity">{{ number_format($item->quantity, 0) }}</td>
                     <td class="item-name">
@@ -140,61 +136,7 @@
                 @endforeach
             </tbody>
         </table>
-        @endif
-        
-        <!-- BEBIDAS -->
-        @php
-            $drinks = $sale->saleDetails->filter(function($item) {
-                return optional($item->itemSale->category)->name === 'Bebidas';
-            });
-        @endphp
-        
-        @if($drinks->count() > 0)
-        <div class="section-title">BEBIDAS</div>
-        
-        <table class="items-table">
-            <tbody>
-                @foreach($drinks as $item)
-                <tr>
-                    <td class="quantity">{{ number_format($item->quantity, 0) }}</td>
-                    <td class="item-name">
-                        <strong>{{ $item->itemSale->name }}</strong>
-                        @if($item->observation)
-                        <br><em>({{ $item->observation }})</em>
-                        @endif
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        @endif
-        
-        <!-- POSTRES -->
-        @php
-            $desserts = $sale->saleDetails->filter(function($item) {
-                return optional($item->itemSale->category)->name === 'Postres';
-            });
-        @endphp
-        
-        @if($desserts->count() > 0)
-        <div class="section-title">POSTRES</div>
-        
-        <table class="items-table">
-            <tbody>
-                @foreach($desserts as $item)
-                <tr>
-                    <td class="quantity">{{ number_format($item->quantity, 0) }}</td>
-                    <td class="item-name">
-                        <strong>{{ $item->itemSale->name }}</strong>
-                        @if($item->observation)
-                        <br><em>({{ $item->observation }})</em>
-                        @endif
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        @endif
+        @endforeach
         
         @if($sale->observation)
         <div class="observations">
