@@ -34,8 +34,8 @@
                                     <div class="form-line">
                                         <select name="typeSale" id="typeSale" class="form-control select2">
                                             <option value="" selected>Todos</option>
-                                            <option value="Venta Con Stock" selected>Venta Con Stock</option>
-                                            <option value="Venta Sin Stock" selected>Venta Sin Stock</option>   
+                                            <option value="Venta Con Stock">Venta Con Stock</option>
+                                            <option value="Venta Sin Stock">Venta Sin Stock</option>   
                                         </select>
                                         <small>Tipo de Venta</small>
                                     </div>
