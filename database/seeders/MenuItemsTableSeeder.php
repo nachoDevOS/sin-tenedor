@@ -387,6 +387,22 @@ class MenuItemsTableSeeder extends Seeder
                 'route' => NULL,
                 'parameters' => '',
             ),
+            23 => 
+            array (
+                'id' => 30,
+                'menu_id' => 1,
+                'title' => 'Stock Disponible " Ventas"',
+                'url' => '',
+                'target' => '_self',
+                'icon_class' => 'fa-solid fa-print',
+                'color' => '#000000',
+                'parent_id' => 29,
+                'order' => 1,
+                'created_at' => '2025-06-02 21:57:33',
+                'updated_at' => '2025-06-02 21:58:10',
+                'route' => 'print-sale-stock.index',
+                'parameters' => 'null',
+            ),
         ));
         
         

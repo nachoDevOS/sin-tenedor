@@ -20,6 +20,7 @@ class ItemSaleController extends Controller
         
         $category = ItemSale::with(['category'])
             ->where('deleted_at', null)
+            ->where('status', 1)
             ->select('category_id')
             ->groupBy('category_id')
             ->get();
