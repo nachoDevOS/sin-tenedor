@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\ItemSale;
+use App\Models\Sale;
 use Illuminate\Http\Request;
+use Luecano\NumeroALetras\NumeroALetras;
 
 class ReportSaleController extends Controller
 {
@@ -24,12 +26,26 @@ class ReportSaleController extends Controller
 
     public function listSale(Request $request)
     {
-        dump('En desarrollo');
-        return null;
+        $detail = $request->detail;
+        $start = $request->start;
+        $finish = $request->finish;
+        $sales = Sale::with(['person', 'register','saleDetails'=>function($q){
+                $q->where('deleted_at', null)
+                ->with(['itemSale.category']);
+            }])
+            ->whereDate('created_at', '>=', $start)
+            ->whereDate('created_at', '<=', $finish)
+            ->where('status', 'Entregado')
+            ->where('deleted_at', null)
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
+        // return 1;
+        
         if($request->print){
-            return view('reports.sales.sale.print', compact('data'));
+            return view('reports.sales.sales.print', compact('sales', 'detail', 'start', 'finish'));
         }else{
-            return view('reports.sales.sale.list', compact('data'));
+            return view('reports.sales.sales.list', compact('sales', 'detail'));
         }
     }
 

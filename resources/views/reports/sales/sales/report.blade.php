@@ -36,7 +36,7 @@
                                 
                                 <div class="form-group">
                                     <div class="form-line">
-                                        <select name="typeSale" id="typeSale" class="form-control select2" required>
+                                        <select name="detail" id="detail" class="form-control select2" required>
                                             <option value="" disabled selected>--Seleccione una opción--</option>
                                             <option value="0">Sin Detalles</option>
                                             <option value="1">Con Detalles</option>   

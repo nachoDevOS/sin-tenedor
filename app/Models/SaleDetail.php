@@ -35,7 +35,7 @@ class SaleDetail extends Model
     }
     public function itemSale()
     {
-        return $this->belongsTo(ItemSale::class, 'item_id');
+        return $this->belongsTo(ItemSale::class, 'item_id')->withTrashed();
     }
 
     public function saleDetailItemSaleStock()
