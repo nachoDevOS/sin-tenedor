@@ -14,6 +14,40 @@ class ReportInventoryController extends Controller
     }
 
 
+    // ############################################################ SALIDAS #########################################################
+
+    public function indexInventoryEgres()
+    {
+        return view('reports.inventories.egres.report');
+    }
+
+    public function listSale(Request $request)
+    {
+        $detail = $request->detail;
+        $start = $request->start;
+        $finish = $request->finish;
+        $sales = Sale::with(['person', 'register','saleDetails'=>function($q){
+                $q->where('deleted_at', null)
+                ->with(['itemSale.category']);
+            }])
+            ->whereDate('created_at', '>=', $start)
+            ->whereDate('created_at', '<=', $finish)
+            ->where('status', 'Entregado')
+            ->where('deleted_at', null)
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
+        // return 1;
+        
+        if($request->print){
+            return view('reports.sales.sales.print', compact('sales', 'detail', 'start', 'finish'));
+        }else{
+            return view('reports.sales.sales.list', compact('sales', 'detail'));
+        }
+    }
+
+
+
     // ########################################################### STOCK DISPONIBLE ##################################################
     public function indexInventoryStock()
     {

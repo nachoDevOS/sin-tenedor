@@ -29,6 +29,8 @@ class UserController extends Controller
     {
         // $this->custom_authorize('browse_users');
 
+        $rol_id = Auth::user()->role->id;
+
         $search = request('search') ?? null;
         $paginate = request('paginate') ?? 10;
         
@@ -39,6 +41,7 @@ class UserController extends Controller
                         ->OrWhereRaw($search ? "email like '%$search%'" : 1);
                     })
                     // ->where('deleted_at', NULL)
+                    ->whereRaw($rol_id!=1? 'role_id != 1':1)
                     ->orderBy('id', 'DESC')
                     ->paginate($paginate);
         return view('vendor.voyager.users.list', compact('data'));

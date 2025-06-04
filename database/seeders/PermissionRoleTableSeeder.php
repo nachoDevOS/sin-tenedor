@@ -24,18 +24,13 @@ class PermissionRoleTableSeeder extends Seeder
 
 
 
-        // $role = Role::where('name', 'sedeges_admin')->firstOrFail();
-        // $permissions = Permission::whereRaw('table_name = "admin" or
-        //                                     `key` = "browse_centro_categorias" or
-        //                                     `key` = "read_centro_categorias" or
+        $role = Role::where('name', 'administrador')->firstOrFail();
+        $permissions = Permission::whereRaw('table_name = "admin" or
+                                            `key` = "add_egressdonor" or
 
-        //                                     `key` = "browse_egressdonor" or
-        //                                     `key` = "read_egressdonor" or
-        //                                     `key` = "edit_egressdonor" or
-        //                                     `key` = "add_egressdonor" or
-
-        //                                     table_name = "view_stock_donacion" or
-        //                                     `key` = "browse_clear-cache"')->get();
-        // $role->permissions()->sync($permissions->pluck('id')->all());
+                                            table_name = "people" or
+                                            table_name = "users" or
+                                            `key` = "browse_clear-cache"')->get();
+        $role->permissions()->sync($permissions->pluck('id')->all());
     }
 }

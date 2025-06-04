@@ -75,9 +75,23 @@
                                 @endif
                                 <input type="password" class="form-control" id="password" name="password" value="" autocomplete="new-password">
                             </div>
-
-                            @can('editRoles', $dataTypeContent)
+                            @php
+                                $rol_id = Auth::user()->role->id;
+                                $role = TCG\Voyager\Models\Role::whereRaw($rol_id!=1? 'id != 1':1)
+                                        ->get();
+                            @endphp
+                            @can('editRoles', $dataTypeContent)  
+                            
                                 <div class="form-group">
+                                    <label>Rol predeterminado</label>
+                                    <select name="role_id" id="role_id" class="form-control select2" required>
+                                        <option value="" disabled selected>Ninguno</option>
+                                        @foreach ($role as $item)
+                                            <option value="{{$item->id}}" @if($dataTypeContent) {{$dataTypeContent->role_id==$item->id? 'selected':''}} @endif >{{$item->name}}</option>  
+                                        @endforeach
+                                    </select>
+                                </div>   
+                                {{-- <div class="form-group">
                                     <label for="default_role">{{ __('voyager::profile.role_default') }}</label>
                                     @php
                                         $dataTypeRows = $dataType->{(isset($dataTypeContent->id) ? 'editRows' : 'addRows' )};
@@ -86,7 +100,7 @@
                                         $options = $row->details;
                                     @endphp
                                     @include('voyager::formfields.relationship')
-                                </div>
+                                </div> --}}
                                 {{-- <div class="form-group">
                                     <label for="additional_roles">{{ __('voyager::profile.roles_additional') }}</label>
                                     @php
