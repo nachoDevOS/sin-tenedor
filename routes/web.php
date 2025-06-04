@@ -91,14 +91,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
     Route::delete('users/{id}/deleted', [UserController::class, 'destroy'])->name('voyager.users.destroy');
     
 
-    Route::get('print-sale', [ReportSaleController::class, 'indexSale'])->name('print-sale.index');
-    Route::post('print-sale/list', [ReportSaleController::class, 'listSale'])->name('print-sale.list');
 
-    Route::get('print-sale/stock', [ReportSaleController::class, 'indexSaleStock'])->name('print-sale-stock.index');
-    Route::post('print-sale/stock/list', [ReportSaleController::class, 'listSaleStock'])->name('print-sale-stock.list');
+// ################################ REPORTE DE VENTAS #####################################
+    Route::get('print-sales', [ReportSaleController::class, 'indexSale'])->name('print-sale.index');
+    Route::post('print-sales/list', [ReportSaleController::class, 'listSale'])->name('print-sale.list');
 
-    Route::get('print-sale/income', [ReportSaleController::class, 'indexSaleIncome'])->name('print-sale-income.index');
-    Route::post('print-sale/income/list', [ReportSaleController::class, 'listSaleIncome'])->name('print-sale-income.list');
+    Route::get('print-sales/stock', [ReportSaleController::class, 'indexSaleStock'])->name('print-sale-stock.index');
+    Route::post('print-sales/stock/list', [ReportSaleController::class, 'listSaleStock'])->name('print-sale-stock.list');
+
+    Route::get('print-sales/income', [ReportSaleController::class, 'indexSaleIncome'])->name('print-sale-income.index');
+    Route::post('print-sales/income/list', [ReportSaleController::class, 'listSaleIncome'])->name('print-sale-income.list');
 
 
 // ########################## REPORTE DE INVENTARIO DEL ALMACEN ######################################
@@ -124,8 +126,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
 Route::get('/admin/clear-cache', function() {
     Artisan::call('optimize:clear');
 
-    Artisan::call('db:seed', ['--class' => 'UpdateBreadSeeder']);
-    Artisan::call('db:seed', ['--class' => 'UpdatePermissionsSeeder']);
+    // Artisan::call('db:seed', ['--class' => 'UpdateBreadSeeder']);
+    // Artisan::call('db:seed', ['--class' => 'UpdatePermissionsSeeder']);
 
     return redirect('/admin/profile')->with(['message' => 'Cache eliminada.', 'alert-type' => 'success']);
 })->name('clear.cache');

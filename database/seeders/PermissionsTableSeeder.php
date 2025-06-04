@@ -50,12 +50,11 @@ class PermissionsTableSeeder extends Seeder
 
         Permission::generateFor('users');
 
-        Permission::generateFor('posts');
-        Permission::generateFor('categories');
-        Permission::generateFor('pages');
+        // Permission::generateFor('posts');
+        // Permission::generateFor('pages');
 
 
-        // Ventas
+        //##################### Ventas  ##########################
 
         $permissions = [
             'browse_sales' => 'Ver lista de ventas',
@@ -74,9 +73,28 @@ class PermissionsTableSeeder extends Seeder
             ]);
         }
 
+
+
+        //############################## Egresos del almacen ############################
+        $permissions = [
+            'browse_egres_inventories' => 'Ver lista de egreso del almacén',
+            'read_egres_inventories' => 'Ver detalles de egreso del almacén',
+            'edit_egres_inventories' => 'Editar información del egreso del almacén',
+            'add_egres_inventories' => 'Agregar nuevo egreso del almacén',
+            'delete_egres_inventories' => 'Eliminar egreso del almacén',
+        ];
+
+        foreach ($permissions as $key => $description) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'keyDescription'=> $description,
+                'table_name' => 'egres_inventories',
+                'tableDescription'=>'Egreso de Almacén'
+            ]);
+        }
         
 
-        // Administracion
+        //#################################### Administracion #################################
         $permissions = [
             'browse_people' => 'Ver lista de personas',
             'read_people' => 'Ver detalles de una persona',
@@ -95,7 +113,25 @@ class PermissionsTableSeeder extends Seeder
         }
 
 
-        // Parametros
+        //############################## Parametros  de ventas ###########################
+
+        $permissions = [
+            'browse_categories' => 'Ver lista de categories de items de venta',
+            'read_categories' => 'Ver detalles de categories de items de venta',
+            'edit_categories' => 'Editar información de categories de items de venta',
+            'add_categories' => 'Agregar nuevos categories de items de venta',
+            'delete_categories' => 'Eliminar categories de items de venta',
+        ];
+
+        foreach ($permissions as $key => $description) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'keyDescription'=> $description,
+                'table_name' => 'categories',
+                'tableDescription'=>'Categorias Items de Ventas'
+            ]);
+        }
+
         $permissions = [
             'browse_item_sales' => 'Ver lista de productos en ventas',
             'read_item_sales' => 'Ver detalles de productos en ventas',
@@ -134,41 +170,44 @@ class PermissionsTableSeeder extends Seeder
                 'tableDescription'=>'Categorías del Almacén'
             ]);
         }
-        // Item del Almacen
+
+
+        //############################# REPORT SALES #####################################
         $permissions = [
-            'browse_item_inventories' => 'Ver lista de productos del almacén',
-            'read_item_inventories' => 'Ver detalles de productos del almacén',
-            'edit_item_inventories' => 'Editar información de productos del almacén',
-            'add_item_inventories' => 'Agregar nuevos productos del almacén',
-            'delete_item_inventories' => 'Eliminar productos del almacén',
+            'browse_print_sales' => 'Reportes de ventas',
+            'browse_print_salesstock' => 'Reportes de stock disponible',
+            'browse_print_salesincome' => 'Reportes de ingresos de items',
         ];
 
         foreach ($permissions as $key => $description) {
             Permission::firstOrCreate([
                 'key'        => $key,
                 'keyDescription'=> $description,
-                'table_name' => 'item_inventories',
-                'tableDescription'=>'Producto / Items del Almacén'
+                'table_name' => 'report_sales',
+                'tableDescription'=>'Reportes de Ventas'
             ]);
         }
 
-        // Egresos del almacen
+
+        //############################# REPORT INVENTARIO ALMACEN #####################################
         $permissions = [
-            'browse_egres_inventories' => 'Ver lista de egreso del almacén',
-            'read_egres_inventories' => 'Ver detalles de egreso del almacén',
-            'edit_egres_inventories' => 'Editar información del egreso del almacén',
-            'add_egres_inventories' => 'Agregar nuevo egreso del almacén',
-            'delete_egres_inventories' => 'Eliminar egreso del almacén',
+            'browse_print_inventoriesegres' => 'Reportes de salidas de items',
+            'browse_print_inventoriesstock' => 'Reportes de stock disponible',
+            'browse_print_inventoriesincome' => 'Reportes de ingresos de items',
         ];
 
         foreach ($permissions as $key => $description) {
             Permission::firstOrCreate([
                 'key'        => $key,
                 'keyDescription'=> $description,
-                'table_name' => 'egres_inventories',
-                'tableDescription'=>'Egreso de Almacén'
+                'table_name' => 'report_inventories',
+                'tableDescription'=>'Reportes de Almacen'
             ]);
         }
+
+
+
+        
 
 
         
