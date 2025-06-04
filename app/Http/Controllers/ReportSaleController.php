@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\ItemSale;
+use App\Models\ItemSaleStock;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Luecano\NumeroALetras\NumeroALetras;
@@ -107,6 +108,30 @@ class ReportSaleController extends Controller
             return view('reports.sales.availableStock.print', compact('data'));
         }else{
             return view('reports.sales.availableStock.list', compact('data'));
+        }
+    }
+
+    // ############################################# INCOME ##############################################################
+    public function indexSaleIncome()
+    {
+        return view('reports.sales.income.report');
+    }
+
+    public function listSaleIncome(Request $request)
+    {
+        $start = $request->start;
+        $finish = $request->finish;
+        $data = ItemSaleStock::with('itemSale.category', 'register')
+            ->where('deleted_at', null)
+            ->whereDate('created_at', '>=', $start)
+            ->whereDate('created_at', '<=', $finish)
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
+        if($request->print){
+            return view('reports.sales.income.print', compact('data',  'start', 'finish'));
+        }else{
+            return view('reports.sales.income.list', compact('data'));
         }
     }
 }

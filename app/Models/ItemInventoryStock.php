@@ -30,6 +30,11 @@ class ItemInventoryStock extends Model
 
     public function itemInventory()
     {
-        return $this->belongsTo(ItemInventory::class, 'itemInventory_id');
+        return $this->belongsTo(ItemInventory::class, 'itemInventory_id')->withTrashed();
+    }
+
+    public function register()
+    {
+        return $this->belongsTo(User::class, 'registerUser_id');
     }
 }

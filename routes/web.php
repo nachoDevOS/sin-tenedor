@@ -9,6 +9,7 @@ use App\Http\Controllers\BoardController;
 use App\Http\Controllers\EgresInventoryController;
 use App\Http\Controllers\ItemInventoryController;
 use App\Http\Controllers\ItemSaleController;
+use App\Http\Controllers\ReportInventoryController;
 use App\Http\Controllers\ReportSaleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TableController;
@@ -95,6 +96,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
 
     Route::get('print-sale/stock', [ReportSaleController::class, 'indexSaleStock'])->name('print-sale-stock.index');
     Route::post('print-sale/stock/list', [ReportSaleController::class, 'listSaleStock'])->name('print-sale-stock.list');
+
+    Route::get('print-sale/income', [ReportSaleController::class, 'indexSaleIncome'])->name('print-sale-income.index');
+    Route::post('print-sale/income/list', [ReportSaleController::class, 'listSaleIncome'])->name('print-sale-income.list');
+
+
+// ########################## REPORTE DE INVENTARIO DEL ALMACEN ######################################
+    Route::get('print-inventories/income', [ReportInventoryController::class, 'indexInventoryIncome'])->name('print-inventories-income.index');
+    Route::post('print-inventories/income/list', [ReportInventoryController::class, 'listInventoryIncome'])->name('print-inventories-income.list');
+
+
 
 
     Route::get('ajax/personList', [AjaxController::class, 'personList']);

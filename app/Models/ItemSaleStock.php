@@ -30,7 +30,11 @@ class ItemSaleStock extends Model
 
     public function itemSale()
     {
-        return $this->belongsTo(ItemSale::class, 'itemSale_id');
+        return $this->belongsTo(ItemSale::class, 'itemSale_id')->withTrashed();
+    }
+    public function register()
+    {
+        return $this->belongsTo(User::class, 'registerUser_id');
     }
 
 
