@@ -127,7 +127,7 @@
                 <div class="col-md-5">
                     <div class="panel panel-bordered">
                         <div class="panel-body" style="padding: 10px 0px">
-                            <div class="col-md-12" style="height: 300px; max-height: 300px; overflow-y: auto">
+                            <div class="col-md-12" style="height: 350px; max-height: 350px; overflow-y: auto">
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-bordered table-hover">
                                         <thead>
@@ -142,8 +142,8 @@
                                         </thead>
                                         <tbody id="table-body">
                                             <tr id="tr-empty">
-                                                <td colspan="7" style="height: 240px">
-                                                    <h4 class="text-center text-muted" style="margin-top: 50px">
+                                                <td colspan="7" style="height: 280px">
+                                                    <h4 class="text-center text-muted" style="margin-top: 80px">
                                                         <i class="glyphicon glyphicon-shopping-cart" style="font-size: 50px"></i> <br><br>
                                                         Lista de venta vacía
                                                     </h4>

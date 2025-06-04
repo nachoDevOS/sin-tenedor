@@ -102,6 +102,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
 
 
 // ########################## REPORTE DE INVENTARIO DEL ALMACEN ######################################
+    Route::get('print-inventories/egres', [ReportInventoryController::class, 'indexInventoryEgres'])->name('print-inventories-egres.index');
+    Route::post('print-inventories/egres/list', [ReportInventoryController::class, 'listInventoryEgres'])->name('print-inventories-egres.list');
+
+    Route::get('print-inventories/stock', [ReportInventoryController::class, 'indexInventoryStock'])->name('print-inventories-stock.index');
+    Route::post('print-inventories/stock/list', [ReportInventoryController::class, 'listInventoryStock'])->name('print-inventories-stock.list');
+
     Route::get('print-inventories/income', [ReportInventoryController::class, 'indexInventoryIncome'])->name('print-inventories-income.index');
     Route::post('print-inventories/income/list', [ReportInventoryController::class, 'listInventoryIncome'])->name('print-inventories-income.list');
 

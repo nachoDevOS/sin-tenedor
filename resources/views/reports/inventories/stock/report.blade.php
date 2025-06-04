@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-@section('page_title', 'Reporte de Ingresos para Ventas')
+@section('page_title', 'Reporte de Stock del Almacen')
 
 @section('page_header')
 
@@ -11,26 +11,33 @@
                     <div class="panel-body" style="padding: 0px">
                         <div class="col-md-8" style="padding: 0px">
                             <h1 class="page-title">
-                                <i class="fa-solid fa-print"></i> Ingresos de Ventas
+                                <i class="fa-solid fa-print"></i> Stock Disponible del Almacen
                             </h1>
                         </div>
                         <div class="col-md-4" style="margin-top: 30px">
-                            <form name="form_search" id="form-search" action="{{route('print-sale-income.list')}}" method="post">
+                            <form name="form_search" id="form-search" action="{{route('print-inventories-stock.list')}}" method="post">
                                 @csrf
                                 <input type="hidden" name="print">
 
-                                <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <div class="form-line">
-                                            <input type="date" class="form-control" name="start" required>
-                                            <small>Inicio</small>
-                                        </div>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        <select name="category_id" id="category_id" class="form-control select2">
+                                            <option value="" selected>Todos</option>
+                                            @foreach ($category as $item)
+                                                <option value="{{$item->categoryInventory_id }}">{{$item->category->name}}</option>
+                                            @endforeach  
+                                        </select>
+                                        <small>Categoría</small>
                                     </div>
-                                    <div class="form-group col-md-6">
-                                        <div class="form-line">
-                                            <input type="date" class="form-control" name="finish" required>
-                                            <small>Fin</small>
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        <select name="dispensingType" id="dispensingType" class="form-control select2">
+                                            <option value="" selected>Todos</option>
+                                            <option value="Entera">Entera</option>
+                                            <option value="Fraccionaria">Fraccionaria</option>   
+                                        </select>
+                                        <small>Tipo de Venta</small>
                                     </div>
                                 </div>
                                 <div class="text-right">

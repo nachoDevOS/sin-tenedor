@@ -1,6 +1,6 @@
 @extends('layouts-print.template-print')
 
-@section('page_title', 'Reporte de Stock Disponible Para Venta')
+@section('page_title', 'Reporte de Ingresos Del Almacen')
 
 @section('content')
     @php

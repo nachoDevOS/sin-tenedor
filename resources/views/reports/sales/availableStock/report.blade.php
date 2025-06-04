@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-@section('page_title', 'Reporte de Stock Disponible Para Venta')
+@section('page_title', 'Reporte de Stock Para Venta')
 
 @section('page_header')
 

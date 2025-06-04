@@ -1,6 +1,6 @@
 @extends('layouts-print.template-print')
 
-@section('page_title', 'Reporte de Stock Para Venta')
+@section('page_title', 'Reporte de Stock del Almacen')
 
 @section('content')
     @php
@@ -24,7 +24,7 @@
                     {{Voyager::setting('admin.title') }}
                 </h3>
                 <h4 style="margin-bottom: 0px; margin-top: 5px">
-                    REPORTE DE STOCK DE ITEMS DISPONIBLE PARA VENTA
+                    REPORTE DE STOCK DE ITEMS DISPONIBLE DEL ALMACEN
                 </h4>
                 {{-- <small style="margin-bottom: 0px; margin-top: 5px">
                     @if ($start == $finish)
@@ -52,7 +52,6 @@
                 <th style="text-align: center">ITEMS / PRODUCTOS</th>
                 <th style="text-align: center">CATEGORIA</th>
                 <th style="text-align: center">TIPO DE VENTA</th>
-                <th style="text-align: center">PRECIO</th>
                 <th style="text-align: center">CANTIDAD</th>
             </tr>
         </thead>
@@ -65,8 +64,7 @@
                     <td>{{ $count }}</td>
                     <td>{{ $item->name }}</td>
                     <td>{{ $item->category->name }}</td>
-                    <td>{{ $item->typeSale }}</td>
-                    <td style="text-align: right">{{ number_format($item->price,2, ',','.') }}</td>
+                    <td>{{ $item->dispensingType }}</td>
                     <td style="text-align: right">{{ number_format($item->total_stock,2, ',','.') }}</td>           
                 </tr>
                 @php
@@ -75,7 +73,7 @@
                     
             @empty
                 <tr style="text-align: center">
-                    <td colspan="6">No se encontraron registros.</td>
+                    <td colspan="5">No se encontraron registros.</td>
                 </tr>
             @endforelse
  
