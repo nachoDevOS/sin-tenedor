@@ -93,14 +93,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
 
 
 // ################################ REPORTE DE VENTAS #####################################
-    Route::get('print-sales', [ReportSaleController::class, 'indexSale'])->name('print-sale.index');
-    Route::post('print-sales/list', [ReportSaleController::class, 'listSale'])->name('print-sale.list');
+    Route::get('print/sales', [ReportSaleController::class, 'indexSale'])->name('print-sale.index');
+    Route::post('print/sales/list', [ReportSaleController::class, 'listSale'])->name('print-sale.list');
 
-    Route::get('print-sales/stock', [ReportSaleController::class, 'indexSaleStock'])->name('print-sale-stock.index');
-    Route::post('print-sales/stock/list', [ReportSaleController::class, 'listSaleStock'])->name('print-sale-stock.list');
+    Route::get('print/sales/stock', [ReportSaleController::class, 'indexSaleStock'])->name('print-sale-stock.index');
+    Route::post('print/sales/stock/list', [ReportSaleController::class, 'listSaleStock'])->name('print-sale-stock.list');
 
-    Route::get('print-sales/income', [ReportSaleController::class, 'indexSaleIncome'])->name('print-sale-income.index');
-    Route::post('print-sales/income/list', [ReportSaleController::class, 'listSaleIncome'])->name('print-sale-income.list');
+    Route::get('print/sales/income', [ReportSaleController::class, 'indexSaleIncome'])->name('print-sale-income.index');
+    Route::post('print/sales/income/list', [ReportSaleController::class, 'listSaleIncome'])->name('print-sale-income.list');
 
 
 // ########################## REPORTE DE INVENTARIO DEL ALMACEN ######################################
@@ -127,7 +127,7 @@ Route::get('/admin/clear-cache', function() {
     Artisan::call('optimize:clear');
 
     // Artisan::call('db:seed', ['--class' => 'UpdateBreadSeeder']);
-    // Artisan::call('db:seed', ['--class' => 'UpdatePermissionsSeeder']);
+    Artisan::call('db:seed', ['--class' => 'UpdatePermissionsSeeder']);
 
     return redirect('/admin/profile')->with(['message' => 'Cache eliminada.', 'alert-type' => 'success']);
 })->name('clear.cache');

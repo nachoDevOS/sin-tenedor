@@ -174,19 +174,22 @@ class PermissionsTableSeeder extends Seeder
 
         //############################# REPORT SALES #####################################
         $permissions = [
-            'browse_print_sales' => 'Reportes de ventas',
-            'browse_print_salesstock' => 'Reportes de stock disponible',
-            'browse_print_salesincome' => 'Reportes de ingresos de items',
+            'browse_printsales' => 'Reportes de ventas',
+            'browse_printsalestock' => 'Reportes de stock disponible',
+            'browse_printsaleincome' => 'Reportes de ingresos de items',
         ];
+        
 
         foreach ($permissions as $key => $description) {
             Permission::firstOrCreate([
                 'key'        => $key,
                 'keyDescription'=> $description,
-                'table_name' => 'report_sales',
+                // 'table_name' => null,
+                'table_name' => 'report-sales',
                 'tableDescription'=>'Reportes de Ventas'
             ]);
         }
+
 
 
         //############################# REPORT INVENTARIO ALMACEN #####################################
