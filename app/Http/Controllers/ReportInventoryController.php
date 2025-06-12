@@ -18,7 +18,7 @@ class ReportInventoryController extends Controller
 
     public function indexInventoryEgres()
     {
-        $this->custom_authorize('browse_print_inventoriesegres');
+        $this->custom_authorize('browse_reportinventories-egres');
         return view('reports.inventories.egres.report');
     }
 
@@ -52,7 +52,7 @@ class ReportInventoryController extends Controller
     // ########################################################### STOCK DISPONIBLE ##################################################
     public function indexInventoryStock()
     {
-        $this->custom_authorize('browse_print_inventoriesstock');
+        $this->custom_authorize('browse_reportinventories-stock');
         $category = ItemInventory::with(['category'])
             ->where('deleted_at', null)
             ->where('status', 1)
@@ -91,7 +91,7 @@ class ReportInventoryController extends Controller
     // Ingresos al almacen
     public function indexInventoryIncome()
     {
-        $this->custom_authorize('browse_print_inventoriesincome');
+        $this->custom_authorize('browse_reportinventories-income');
 
         return view('reports.inventories.income.report');
     }

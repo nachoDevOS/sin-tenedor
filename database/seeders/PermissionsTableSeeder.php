@@ -174,9 +174,9 @@ class PermissionsTableSeeder extends Seeder
 
         //############################# REPORT SALES #####################################
         $permissions = [
-            'browse_printsales' => 'Reportes de ventas',
-            'browse_printsalestock' => 'Reportes de stock disponible',
-            'browse_printsaleincome' => 'Reportes de ingresos de items',
+            'browse_reportsales' => 'Reportes de ventas',
+            'browse_reportsales-stock' => 'Reportes de stock disponible',
+            'browse_reportsales-income' => 'Reportes de ingresos de items',
         ];
         
 
@@ -184,8 +184,7 @@ class PermissionsTableSeeder extends Seeder
             Permission::firstOrCreate([
                 'key'        => $key,
                 'keyDescription'=> $description,
-                // 'table_name' => null,
-                'table_name' => 'report-sales',
+                'table_name' => 'report_sales',
                 'tableDescription'=>'Reportes de Ventas'
             ]);
         }
@@ -194,9 +193,9 @@ class PermissionsTableSeeder extends Seeder
 
         //############################# REPORT INVENTARIO ALMACEN #####################################
         $permissions = [
-            'browse_print_inventoriesegres' => 'Reportes de salidas de items',
-            'browse_print_inventoriesstock' => 'Reportes de stock disponible',
-            'browse_print_inventoriesincome' => 'Reportes de ingresos de items',
+            'browse_reportinventories-egres' => 'Reportes de salidas de items',
+            'browse_reportinventories-stock' => 'Reportes de stock disponible',
+            'browse_reportinventories-income' => 'Reportes de ingresos de items',
         ];
 
         foreach ($permissions as $key => $description) {

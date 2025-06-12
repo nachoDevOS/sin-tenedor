@@ -93,25 +93,25 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
 
 
 // ################################ REPORTE DE VENTAS #####################################
-    Route::get('print/sales', [ReportSaleController::class, 'indexSale'])->name('print-sale.index');
-    Route::post('print/sales/list', [ReportSaleController::class, 'listSale'])->name('print-sale.list');
+    Route::get('report/sales', [ReportSaleController::class, 'indexSale'])->name('report-sales.index');
+    Route::post('report/sales/list', [ReportSaleController::class, 'listSale'])->name('report-sales.list');
 
-    Route::get('print/sales/stock', [ReportSaleController::class, 'indexSaleStock'])->name('print-sale-stock.index');
-    Route::post('print/sales/stock/list', [ReportSaleController::class, 'listSaleStock'])->name('print-sale-stock.list');
+    Route::get('report/sales-stock', [ReportSaleController::class, 'indexSaleStock'])->name('report-sales-stock.index');
+    Route::post('report/sales/stock/list', [ReportSaleController::class, 'listSaleStock'])->name('report-sales-stock.list');
 
-    Route::get('print/sales/income', [ReportSaleController::class, 'indexSaleIncome'])->name('print-sale-income.index');
-    Route::post('print/sales/income/list', [ReportSaleController::class, 'listSaleIncome'])->name('print-sale-income.list');
+    Route::get('report/sales-income', [ReportSaleController::class, 'indexSaleIncome'])->name('report-sales-income.index');
+    Route::post('report/sales/income/list', [ReportSaleController::class, 'listSaleIncome'])->name('report-sales-income.list');
 
 
 // ########################## REPORTE DE INVENTARIO DEL ALMACEN ######################################
-    Route::get('print-inventories/egres', [ReportInventoryController::class, 'indexInventoryEgres'])->name('print-inventories-egres.index');
-    Route::post('print-inventories/egres/list', [ReportInventoryController::class, 'listInventoryEgres'])->name('print-inventories-egres.list');
+    Route::get('report/inventories-egres', [ReportInventoryController::class, 'indexInventoryEgres'])->name('report-inventories-egres.index');
+    Route::post('report/inventories/egres/list', [ReportInventoryController::class, 'listInventoryEgres'])->name('report-inventories-egres.list');
 
-    Route::get('print-inventories/stock', [ReportInventoryController::class, 'indexInventoryStock'])->name('print-inventories-stock.index');
-    Route::post('print-inventories/stock/list', [ReportInventoryController::class, 'listInventoryStock'])->name('print-inventories-stock.list');
+    Route::get('report/inventories-stock', [ReportInventoryController::class, 'indexInventoryStock'])->name('report-inventories-stock.index');
+    Route::post('report/inventories/stock/list', [ReportInventoryController::class, 'listInventoryStock'])->name('report-inventories-stock.list');
 
-    Route::get('print-inventories/income', [ReportInventoryController::class, 'indexInventoryIncome'])->name('print-inventories-income.index');
-    Route::post('print-inventories/income/list', [ReportInventoryController::class, 'listInventoryIncome'])->name('print-inventories-income.list');
+    Route::get('report/inventories-income', [ReportInventoryController::class, 'indexInventoryIncome'])->name('report-inventories-income.index');
+    Route::post('report/inventories/income/list', [ReportInventoryController::class, 'listInventoryIncome'])->name('report-inventories-income.list');
 
 
 

@@ -42,9 +42,8 @@ class PermissionRoleTableSeeder extends Seeder
                                             table_name = "roles" or
                                             table_name = "users" or
 
-
-
-
+                                            table_name = "report_sales" or
+                                            table_name = "report_inventories" or
 
 
                                             `key` = "browse_clear-cache"')

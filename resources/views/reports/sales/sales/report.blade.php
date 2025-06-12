@@ -15,7 +15,7 @@
                             </h1>
                         </div>
                         <div class="col-md-4" style="margin-top: 30px">
-                            <form name="form_search" id="form-search" action="{{route('print-sale.list')}}" method="post">
+                            <form name="form_search" id="form-search" action="{{route('report-sales.list')}}" method="post">
                                 @csrf
                                 <input type="hidden" name="print">
 

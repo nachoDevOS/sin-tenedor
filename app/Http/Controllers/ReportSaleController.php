@@ -22,7 +22,7 @@ class ReportSaleController extends Controller
 
     public function indexSale()
     {
-        $this->custom_authorize('browse_printsales');
+        $this->custom_authorize('browse_reportsales');
         return view('reports.sales.sales.report');
     }
 
@@ -55,7 +55,7 @@ class ReportSaleController extends Controller
     // ########################################################### STOCK DISPONIBLE ##################################################
     public function indexSaleStock()
     {
-        $this->custom_authorize('browse_printsalestock');
+        $this->custom_authorize('browse_reportsales-stock');
         $category = ItemSale::with(['category'])
             ->where('deleted_at', null)
             ->where('status', 1)
@@ -114,7 +114,7 @@ class ReportSaleController extends Controller
     // ############################################# INCOME ##############################################################
     public function indexSaleIncome()
     {
-        $this->custom_authorize('browse_printsaleincome');
+        $this->custom_authorize('browse_reportsales-income');
         return view('reports.sales.income.report');
     }
 
