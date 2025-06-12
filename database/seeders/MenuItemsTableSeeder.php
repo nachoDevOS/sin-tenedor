@@ -399,8 +399,8 @@ class MenuItemsTableSeeder extends Seeder
                 'parent_id' => 29,
                 'order' => 2,
                 'created_at' => '2025-06-02 21:57:33',
-                'updated_at' => '2025-06-11 12:22:31',
-                'route' => 'print-sale-stock.index',
+                'updated_at' => '2025-06-12 08:36:15',
+                'route' => 'report-sales-stock.index',
                 'parameters' => 'null',
             ),
             24 => 
@@ -415,8 +415,8 @@ class MenuItemsTableSeeder extends Seeder
                 'parent_id' => 29,
                 'order' => 1,
                 'created_at' => '2025-06-02 23:47:24',
-                'updated_at' => '2025-06-11 12:22:21',
-                'route' => 'print-sale.index',
+                'updated_at' => '2025-06-12 08:35:54',
+                'route' => 'report-sales.index',
                 'parameters' => 'null',
             ),
             25 => 
@@ -431,8 +431,8 @@ class MenuItemsTableSeeder extends Seeder
                 'parent_id' => 29,
                 'order' => 3,
                 'created_at' => '2025-06-04 09:15:31',
-                'updated_at' => '2025-06-11 12:22:42',
-                'route' => 'print-sale-income.index',
+                'updated_at' => '2025-06-12 08:36:41',
+                'route' => 'report-sales-income.index',
                 'parameters' => 'null',
             ),
             26 => 
@@ -463,9 +463,9 @@ class MenuItemsTableSeeder extends Seeder
                 'parent_id' => 33,
                 'order' => 3,
                 'created_at' => '2025-06-04 10:19:31',
-                'updated_at' => '2025-06-04 11:39:44',
-                'route' => 'print-inventories-income.index',
-                'parameters' => NULL,
+                'updated_at' => '2025-06-12 08:44:49',
+                'route' => 'report-inventories-income.index',
+                'parameters' => 'null',
             ),
             28 => 
             array (
@@ -479,9 +479,9 @@ class MenuItemsTableSeeder extends Seeder
                 'parent_id' => 33,
                 'order' => 2,
                 'created_at' => '2025-06-04 10:47:02',
-                'updated_at' => '2025-06-04 11:39:44',
-                'route' => 'print-inventories-stock.index',
-                'parameters' => NULL,
+                'updated_at' => '2025-06-12 08:44:32',
+                'route' => 'report-inventories-stock.index',
+                'parameters' => 'null',
             ),
             29 => 
             array (
@@ -495,9 +495,9 @@ class MenuItemsTableSeeder extends Seeder
                 'parent_id' => 33,
                 'order' => 1,
                 'created_at' => '2025-06-04 11:39:31',
-                'updated_at' => '2025-06-04 11:39:44',
-                'route' => 'print-inventories-egres.index',
-                'parameters' => NULL,
+                'updated_at' => '2025-06-12 08:44:20',
+                'route' => 'report-inventories-egres.index',
+                'parameters' => 'null',
             ),
         ));
         
