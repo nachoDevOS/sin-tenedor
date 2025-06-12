@@ -54,49 +54,38 @@ class SettingsTableSeeder extends Seeder
             ),
             3 => 
             array (
-                'id' => 4,
-                'key' => 'site.google_analytics_tracking_id',
-                'display_name' => 'ID de rastreo de Google Analytics',
-                'value' => NULL,
-                'details' => '',
-                'type' => 'text',
-                'order' => 4,
-                'group' => 'Site',
-            ),
-            4 => 
-            array (
                 'id' => 5,
                 'key' => 'admin.bg_image',
                 'display_name' => 'Imagen de fondo del administrador',
-                'value' => '',
+                'value' => 'settings/May2025/ZngacIwELlyr59mGgUb0.webp',
                 'details' => '',
                 'type' => 'image',
                 'order' => 5,
                 'group' => 'Admin',
             ),
-            5 => 
+            4 => 
             array (
                 'id' => 6,
                 'key' => 'admin.title',
                 'display_name' => 'Título del administrador',
-                'value' => 'FAST FOOD',
+                'value' => 'SNACK AL PASO',
                 'details' => '',
                 'type' => 'text',
                 'order' => 1,
                 'group' => 'Admin',
             ),
-            6 => 
+            5 => 
             array (
                 'id' => 7,
                 'key' => 'admin.description',
                 'display_name' => 'Descripción del administrador',
-                'value' => 'Bienvenido a Voyager. El administrador que le faltaba a Laravel',
+                'value' => 'Sistema de administracion de restaurante',
                 'details' => '',
                 'type' => 'text',
                 'order' => 2,
                 'group' => 'Admin',
             ),
-            7 => 
+            6 => 
             array (
                 'id' => 8,
                 'key' => 'admin.loader',
@@ -107,38 +96,93 @@ class SettingsTableSeeder extends Seeder
                 'order' => 3,
                 'group' => 'Admin',
             ),
-            8 => 
+            7 => 
             array (
                 'id' => 9,
                 'key' => 'admin.icon_image',
                 'display_name' => 'Ícono del administrador',
-                'value' => '',
+                'value' => 'settings/May2025/FBiRtybcrTaEsbEdCXzw.png',
                 'details' => '',
                 'type' => 'image',
                 'order' => 4,
                 'group' => 'Admin',
             ),
-            9 => 
-            array (
-                'id' => 10,
-                'key' => 'admin.google_analytics_client_id',
-            'display_name' => 'ID de Cliente para Google Analytics (usado para el tablero de administrador)',
-                'value' => NULL,
-                'details' => '',
-                'type' => 'text',
-                'order' => 1,
-                'group' => 'Admin',
-            ),
-            10 => 
+            8 => 
             array (
                 'id' => 11,
-                'key' => 'dev.development',
-                'display_name' => 'Sistema en Desarrollo 503',
+                'key' => 'system.development',
+                'display_name' => 'Sistema en Mantenimiento 503',
                 'value' => '0',
                 'details' => NULL,
                 'type' => 'checkbox',
-                'order' => 6,
-                'group' => 'Dev',
+                'order' => 1,
+                'group' => 'System',
+            ),
+            9 => 
+            array (
+                'id' => 12,
+                'key' => 'system.payment-date',
+                'display_name' => 'Fecha de Limite de Pago',
+                'value' => '2025-06-12',
+                'details' => NULL,
+                'type' => 'text',
+                'order' => 2,
+                'group' => 'System',
+            ),
+            10 => 
+            array (
+                'id' => 13,
+                'key' => 'contact.name',
+                'display_name' => 'Nombre',
+                'value' => 'Ignacio Molina Guzman',
+                'details' => NULL,
+                'type' => 'text',
+                'order' => 1,
+                'group' => 'Contact',
+            ),
+            11 => 
+            array (
+                'id' => 14,
+                'key' => 'contact.phone',
+                'display_name' => 'Celular',
+                'value' => '+59163285914',
+                'details' => NULL,
+                'type' => 'text',
+                'order' => 2,
+                'group' => 'Contact',
+            ),
+            12 => 
+            array (
+                'id' => 15,
+                'key' => 'contact.email',
+                'display_name' => 'Email',
+                'value' => 'ignaciomolinaguzman20@gmail.com',
+                'details' => NULL,
+                'type' => 'text',
+                'order' => 3,
+                'group' => 'Contact',
+            ),
+            13 => 
+            array (
+                'id' => 16,
+                'key' => 'contact.address',
+                'display_name' => 'Dirección',
+                'value' => 'Nueva Trinidad',
+                'details' => NULL,
+                'type' => 'text',
+                'order' => 4,
+                'group' => 'Contact',
+            ),
+            14 => 
+            array (
+                'id' => 17,
+                'key' => 'system.payment-alert',
+                'display_name' => 'Alerta de Pago',
+                'value' => '1',
+                'details' => NULL,
+                'type' => 'checkbox',
+                'order' => 3,
+                'group' => 'System',
             ),
         ));
         

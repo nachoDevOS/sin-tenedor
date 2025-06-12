@@ -39,7 +39,7 @@ Route::get('/', function () {
 
 Route::get('/development', [ErrorController::class , 'error503'])->name('development');
 
-Route::group(['prefix' => 'admin', 'middleware' => ['loggin']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['loggin', 'system']], function () {
     Voyager::routes();
 
     Route::get('people', [PersonController::class, 'index'])->name('voyager.people.index');

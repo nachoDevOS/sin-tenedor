@@ -12,9 +12,9 @@ class Loggin
     public function handle(Request $request, Closure $next)
     {
         try {
-            if(setting('dev.development') && !auth()->user()->hasRole('admin')){
-                return redirect('development');
-            }
+            // if(setting('dev.development') && !auth()->user()->hasRole('admin')){
+            //     return redirect('development');
+            // }
 
             // if(Auth::user()->status == 0){
             //     Auth::logout();
