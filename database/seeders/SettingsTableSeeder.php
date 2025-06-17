@@ -120,61 +120,6 @@ class SettingsTableSeeder extends Seeder
             ),
             9 => 
             array (
-                'id' => 12,
-                'key' => 'system.payment-date',
-                'display_name' => 'Fecha de Limite de Pago',
-                'value' => '2025-06-12',
-                'details' => NULL,
-                'type' => 'text',
-                'order' => 2,
-                'group' => 'System',
-            ),
-            10 => 
-            array (
-                'id' => 13,
-                'key' => 'contact.name',
-                'display_name' => 'Nombre',
-                'value' => 'Ignacio Molina Guzman',
-                'details' => NULL,
-                'type' => 'text',
-                'order' => 1,
-                'group' => 'Contact',
-            ),
-            11 => 
-            array (
-                'id' => 14,
-                'key' => 'contact.phone',
-                'display_name' => 'Celular',
-                'value' => '+59163285914',
-                'details' => NULL,
-                'type' => 'text',
-                'order' => 2,
-                'group' => 'Contact',
-            ),
-            12 => 
-            array (
-                'id' => 15,
-                'key' => 'contact.email',
-                'display_name' => 'Email',
-                'value' => 'ignaciomolinaguzman20@gmail.com',
-                'details' => NULL,
-                'type' => 'text',
-                'order' => 3,
-                'group' => 'Contact',
-            ),
-            13 => 
-            array (
-                'id' => 16,
-                'key' => 'contact.address',
-                'display_name' => 'Dirección',
-                'value' => 'Nueva Trinidad',
-                'details' => NULL,
-                'type' => 'text',
-                'order' => 4,
-                'group' => 'Contact',
-            ),
-            14 => 
-            array (
                 'id' => 17,
                 'key' => 'system.payment-alert',
                 'display_name' => 'Alerta de Pago',
@@ -182,6 +127,17 @@ class SettingsTableSeeder extends Seeder
                 'details' => NULL,
                 'type' => 'checkbox',
                 'order' => 3,
+                'group' => 'System',
+            ),
+            10 => 
+            array (
+                'id' => 18,
+                'key' => 'system.code',
+                'display_name' => 'Código',
+                'value' => 'code-1',
+                'details' => NULL,
+                'type' => 'text',
+                'order' => 6,
                 'group' => 'System',
             ),
         ));
