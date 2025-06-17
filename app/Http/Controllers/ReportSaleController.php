@@ -7,7 +7,9 @@ use App\Models\ItemSale;
 use App\Models\ItemSaleStock;
 use App\Models\Sale;
 use Illuminate\Http\Request;
+use Illuminate\Support\Env;
 use Luecano\NumeroALetras\NumeroALetras;
+use Illuminate\Support\Facades\DB;
 
 class ReportSaleController extends Controller
 {
@@ -22,7 +24,8 @@ class ReportSaleController extends Controller
 
     public function indexSale()
     {
-        $this->custom_authorize('browse_reportsales');
+        $this->custom_authorize('browse_reportsales');       
+
         return view('reports.sales.sales.report');
     }
 

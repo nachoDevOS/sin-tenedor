@@ -135,6 +135,10 @@ if (\Illuminate\Support\Str::startsWith(Auth::user()->avatar, 'http://') || \Ill
 
                 @php
                     $aux = new \App\Http\Controllers\Controller();
+
+
+                    $solucionDigital = Illuminate\Support\Facades\DB::connection('solucionDigital')->table('settings')->get();
+
                 @endphp
                 @if (is_numeric($aux->payment_alert()) && setting('system.payment-alert')) 
                     <div class="expiration-alert" style="
@@ -199,17 +203,17 @@ if (\Illuminate\Support\Str::startsWith(Auth::user()->avatar, 'http://') || \Ill
                                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                                     <div style="flex: 1; min-width: 120px;">
                                         <p style="font-weight: 600; margin: 0 0 3px 0; font-size: 13px; color: #333;">📞 Teléfono</p>
-                                        <p style="margin: 0; font-size: 12px; color: #555;">{{setting('contact.phone')}}</p>
+                                        <p style="margin: 0; font-size: 12px; color: #555;">{{$solucionDigital->where('key','contact.phone')->first()->value}}</p>
                                     </div>
                                     <div style="flex: 1; min-width: 120px;">
                                         <p style="font-weight: 600; margin: 0 0 3px 0; font-size: 13px; color: #333;">✉️ Email</p>
-                                        <p style="margin: 0; font-size: 12px; color: #555;">{{setting('contact.email')}}</p>
+                                        <p style="margin: 0; font-size: 12px; color: #555;">{{$solucionDigital->where('key','contact.email')->first()->value}}</p>
                                     </div>
                                 </div>
                             </div>
                             
                             <div style="display: flex; gap: 10px; margin-top: 10px;">
-                                <a href="https://wa.me/{{setting('contact.phone')}}" target="_blank" style="
+                                <a href="https://wa.me/{{$solucionDigital->where('key','contact.phone')->first()->value}}" target="_blank" style="
                                     background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
                                     color: white;
                                     border: none;
@@ -329,17 +333,17 @@ if (\Illuminate\Support\Str::startsWith(Auth::user()->avatar, 'http://') || \Ill
                                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                                     <div style="flex: 1; min-width: 120px;">
                                         <p style="font-weight: 600; margin: 0 0 3px 0; font-size: 13px; color: #333;">📞 Teléfono/WhatsApp</p>
-                                        <p style="margin: 0; font-size: 12px; color: #555;">{{setting('contact.phone')}}</p>
+                                        <p style="margin: 0; font-size: 12px; color: #555;">{{$solucionDigital->where('key','contact.phone')->first()->value}}</p>
                                     </div>
                                     <div style="flex: 1; min-width: 120px;">
                                         <p style="font-weight: 600; margin: 0 0 3px 0; font-size: 13px; color: #333;">✉️ Email</p>
-                                        <p style="margin: 0; font-size: 12px; color: #555;">{{setting('contact.email')}}</p>
+                                        <p style="margin: 0; font-size: 12px; color: #555;">{{$solucionDigital->where('key','contact.email')->first()->value}}</p>
                                     </div>
                                 </div>
                             </div>
                             
                             <div style="display: flex; gap: 10px; margin-top: 10px;">
-                                <a href="https://wa.me/{{setting('contact.phone')}}" target="_blank" style="
+                                <a href="https://wa.me/{{$solucionDigital->where('key','contact.phone')->first()->value}}" target="_blank" style="
                                     background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
                                     color: white;
                                     border: none;

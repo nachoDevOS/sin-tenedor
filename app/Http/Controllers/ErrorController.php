@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 
 class ErrorController extends Controller
 {
-    public function error503()
+    public function error($id)
     {
-        return view('errors.503');
+        return view('errors.'.$id);
     }
+    // public function error500()
+    // {
+    //     return view('errors.500');
+    // }
 }
