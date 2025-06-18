@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
+
 use Illuminate\Support\Facades\DB;
 
 class Controller extends BaseController
@@ -20,9 +21,11 @@ class Controller extends BaseController
         }
     }
 
+
     public function payment_alert()
     {
-        $data = DB::connection('solucionDigital')->table('web_systems')->where('code', setting('system.code'))->first();
+        $soliciondigital = new SolucionDigitalController();
+        $data = $soliciondigital->settings_code();
         $date = $data->finish;
 
         $now = new DateTime();

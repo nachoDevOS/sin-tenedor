@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\SolucionDigitalController;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,10 @@ class System
             }
         }
 
-        $data = DB::connection('solucionDigital')->table('web_systems')->where('code', setting('system.code'))->first();
+ 
+        $soliciondigital = new SolucionDigitalController();
+        $data = $soliciondigital->settings_code();
+
         if (empty($data)) {
             return redirect()->route('errors', ['id'=>500]);
         }
@@ -35,7 +39,7 @@ class System
             if($payment->payment_alert() == 'finalizado')
             {
                 $blockedMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
-                $allowedRoutes = ['admin/login', 'admin/logout', 'api/webhook']; // Rutas permitidas
+                $allowedRoutes = ['admin/login', 'admin/logout', 'admin/settings']; // Rutas permitidas
                 if (in_array($request->method(), $blockedMethods) && !in_array($request->path(), $allowedRoutes)) {
                     return redirect()->back()
                     ->withInput()
@@ -44,8 +48,6 @@ class System
             }
         }
 
-
-        
         return $next($request);
     }
 }
