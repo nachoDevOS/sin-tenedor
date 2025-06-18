@@ -196,7 +196,7 @@
                         <div class="row">
                             <div class="form-group col-md-4">
                                 <label for="full_name">Cantidad a Ingresar</label>
-                                <input style="text-align: right" type="number" step="1" min="1" name="quantity" class="form-control" value="1" required>
+                                <input style="text-align: right" type="number" @if($item->dispensingType=='Entera') step="1" min="1" @else step="0.1" min="0.1" @endif name="quantity" class="form-control" value="1" required>
                             </div>
                         </div>    
                         <div class="form-group">

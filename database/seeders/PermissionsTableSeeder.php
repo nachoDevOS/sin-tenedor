@@ -171,6 +171,23 @@ class PermissionsTableSeeder extends Seeder
             ]);
         }
 
+        $permissions = [
+            'browse_item_inventories' => 'Ver lista de items del almacén',
+            'read_item_inventories' => 'Ver detalles de items del almacén',
+            'edit_item_inventories' => 'Editar información de items del almacén',
+            'add_item_inventories' => 'Agregar nuevas items del almacén',
+            'delete_item_inventories' => 'Eliminar items del almacén',
+        ];
+
+        foreach ($permissions as $key => $description) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'keyDescription'=> $description,
+                'table_name' => 'item_inventories',
+                'tableDescription'=>'Items del almacén'
+            ]);
+        }
+
 
         //############################# REPORT SALES #####################################
         $permissions = [
