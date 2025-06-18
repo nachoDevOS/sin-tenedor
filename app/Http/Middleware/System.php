@@ -35,7 +35,7 @@ class System
             if($payment->payment_alert() == 'finalizado')
             {
                 $blockedMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
-                $allowedRoutes = ['login', 'api/webhook']; // Rutas permitidas
+                $allowedRoutes = ['admin/login', 'admin/logout', 'api/webhook']; // Rutas permitidas
                 if (in_array($request->method(), $blockedMethods) && !in_array($request->path(), $allowedRoutes)) {
                     return redirect()->back()
                     ->withInput()
