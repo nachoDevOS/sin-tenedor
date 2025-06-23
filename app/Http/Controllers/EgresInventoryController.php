@@ -45,6 +45,18 @@ class EgresInventoryController extends Controller
 
         return view('egres-inventories.list', compact('data'));
     }
+    public function show($id)
+    {
+        $egres = EgresInventory::with(['register','egresInventoryDetails'=>function($q){
+                $q->where('deleted_at', null);
+            }])
+            ->where('id', $id)
+            ->where('deleted_at', null)
+            ->first();
+        // return $egres;
+
+        return view('egres-inventories.read',compact('egres'));
+    }
 
     public function create()
     {

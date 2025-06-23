@@ -39,13 +39,9 @@
                                 <li><a href="{{route('egres-inventories.print', ['id'=>$item->id])}}" target="_blank"><i class="fa-solid fa-print"></i> Salida</a></li>                                
                             </ul>
                         </div>
-                        @if ($item->status == 'Pendiente')
-                            <a onclick="successItem('{{ route('sales-status.success', ['id' => $item->id]) }}')" data-toggle="modal" data-target="#success-modal" title="Entregar Pedido" class="btn btn-sm btn-success">
-                                <i class="fa-solid fa-cart-shopping"></i>
-                            </a>
-                        @endif
-                        @if (auth()->user()->hasPermission('read_sales'))
-                            <a href="{{ route('sales.show', ['sale' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">
+                     
+                        @if (auth()->user()->hasPermission('read_egres_inventories'))
+                            <a href="{{ route('egres-inventories.show', ['egres_inventory' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">
                                 <i class="voyager-eye"></i>
                             </a>
                         @endif
