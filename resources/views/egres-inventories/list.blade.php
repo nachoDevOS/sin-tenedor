@@ -46,8 +46,8 @@
                             </a>
                         @endif
                         
-                        @if (auth()->user()->hasPermission('delete_sales'))
-                            <a href="#" onclick="deleteItem('{{ route('sales.destroy', ['sale' => $item->id]) }}')" title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
+                        @if (auth()->user()->hasPermission('delete_egres_inventories'))
+                            <a href="#" onclick="deleteItem('{{ route('egres-inventories.destroy', ['egres_inventory' => $item->id]) }}')" title="Eliminar" data-toggle="modal" data-target="#modal-delete" class="btn btn-sm btn-danger delete">
                                 <i class="voyager-trash"></i>
                             </a>
                         @endif

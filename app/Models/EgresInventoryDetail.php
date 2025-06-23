@@ -34,4 +34,8 @@ class EgresInventoryDetail extends Model
         return $this->belongsTo(ItemInventory::class, 'item_id');
     }
 
+    public function egresDetailItemInventoryStock()
+    {
+        return $this->hasMany(EgresDetailItemInventoryStock::class, 'egresDetail_id');
+    }
 }

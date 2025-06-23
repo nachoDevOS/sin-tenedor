@@ -176,6 +176,33 @@ class EgresInventoryController extends Controller
         }
     }
 
+
+    public function destroy($id)
+    {
+        $egres = EgresInventory::with(['egresInventoryDetails' => function($q){
+                $q->where('deleted_at', null)
+                    ->with(['egresDetailItemInventoryStock']);
+            }])
+            ->where('id',$id)
+            ->first();
+     
+        DB::beginTransaction();
+        try {        
+            foreach ($egres->egresInventoryDetails as $detail) {
+                foreach ($detail->egresDetailItemInventoryStock as $item) {
+                    $itemInventory = ItemInventoryStock::where('id', $item->itemInventoryStock_id )->first();
+                    $itemInventory->increment('stock', $item->quantity);
+                }
+            }
+            $egres->delete();
+            DB::commit();
+            return redirect()->route('egres-inventories.index')->with(['message' => 'Eliminado exitosamente.', 'alert-type' => 'success']);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->route('egres-inventories.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        }
+    }
+
     public function printEgres($id)
     {
         $egres = EgresInventory::with(['egresInventoryDetails'=>function($q){
