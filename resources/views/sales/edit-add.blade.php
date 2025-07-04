@@ -612,20 +612,23 @@
             
             // Si el monto recibido actual es menor que el nuevo total, actualizarlo
             const currentAmount = parseFloat($('#input-amount').val()) || 0;
-            if (currentAmount < finalTotal) {
+            // if (currentAmount < finalTotal) {
+            //     alert(finalTotal.toFixed(2))
                 $('#input-amount').val(finalTotal.toFixed(2));
-            }
+            // }
             
             // Calcular el cambio nuevamente
             calculateChange();
         }
 
         function removeFromCart(productId) {
+            
             if(cart[productId]) {
                 delete cart[productId];
                 updateCartTable();
                 toastr.info('Producto eliminado del carrito', '', {timeOut: 1000});
             }
+            
         }
     
         function getProductById(productId) {
