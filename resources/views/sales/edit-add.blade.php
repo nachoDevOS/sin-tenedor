@@ -14,6 +14,9 @@
                             </h1>
                         </div>
                         <div class="col-md-4 text-right" style="margin-top: 30px">
+                            <a href="{{ route('sales.create') }}" class="btn btn-primary">
+                                <i class="fa-solid fa-rotate"></i> <span>Actualizar</span>
+                            </a>
                             <a href="{{ route('sales.index') }}" class="btn btn-warning">
                                 <i class="voyager-plus"></i> <span>Volver</span>
                             </a>
@@ -172,20 +175,20 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="form-group col-md-12">
+                            {{-- <div class="form-group col-md-12">
                                 <label for="input-dni">NIT/CI</label>
                                 <input type="text" name="dni" id="input-dni" disabled value="" class="form-control" placeholder="NIT/CI">
-                            </div>
+                            </div> --}}
 
                             <div class="form-group col-md-6">
                                 <label for="date">Monto recibido</label>
                                 <input type="number" name="amountReceived" id="input-amount" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto recibo Bs." required>
                             </div>
 
-                            <div class="form-group col-md-6">
+                            {{-- <div class="form-group col-md-6">
                                 <label for="date">Fecha de venta</label>
                                 <input type="datetime" name="dateSale" value="{{ date('Y-m-d H:m:s') }}" class="form-control" readonly required>
-                            </div>
+                            </div> --}}
                             <div class="form-group col-md-6">
                                 <label for="typeSale">Tipo de venta</label>
                                 <select name="typeSale" id="typeSale" class="form-control select2" required>
@@ -193,6 +196,8 @@
                                     <option value="Mesa">Para Mesa</option>
                                     <option value="Llevar">Para LLevar</option>
                                 </select>
+                            </div>
+                            <div class="form-group col-md-6">
                             </div>
                             <div class="form-group col-md-6">
                                 <h3 class="text-right" id="change-message" style="display: none;"><small>Cambio: Bs.</small> <b id="change-amount">0.00</b></h3>
