@@ -154,7 +154,7 @@
                                 </div>
                             </div>
                             <div class="form-group col-md-12">
-                                <label for="input-dni">Detalle / Observación</label>
+                                <label for="observation">Detalle / Observación</label>
                                 <textarea name="observation" id="observation" class="form-control" rows="3"></textarea>
                             </div>
 
@@ -172,9 +172,19 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="form-group col-md-12">
+                            {{-- <div class="form-group col-md-12">
                                 <label for="input-dni">NIT/CI</label>
                                 <input type="text" name="dni" id="input-dni" disabled value="" class="form-control" placeholder="NIT/CI">
+                            </div> --}}
+ 
+                            <div class="form-group col-md-12">
+                                <label for="payment_type">Método de pago</label>
+                                <select name="payment_type" id="select-payment_type" class="form-control" required>
+                                    <option value="" disabled selected>Seleccionar método de pago</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Qr">Qr/Transferencia</option>
+                                    <option value="Ambos">Ambos Metodos</option>
+                                </select>
                             </div>
 
                             <div class="form-group col-md-6">
@@ -184,16 +194,9 @@
 
                             <div class="form-group col-md-6">
                                 <label for="date">Fecha de venta</label>
-                                <input type="datetime" name="dateSale" value="{{ date('Y-m-d H:m:s') }}" class="form-control" readonly required>
+                                <input type="datetime" name="dateSale" value="{{ date('Y-m-d h:i:s a') }}" class="form-control" readonly required>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="typeSale">Tipo de venta</label>
-                                <select name="typeSale" id="typeSale" class="form-control select2" required>
-                                    <option value="" disabled selected>--Seleccione una opción--</option>
-                                    <option value="Mesa">Para Mesa</option>
-                                    <option value="Llevar">Para LLevar</option>
-                                </select>
-                            </div>
+                            
                             <div class="form-group col-md-6">
                                 <h3 class="text-right" id="change-message" style="display: none;"><small>Cambio: Bs.</small> <b id="change-amount">0.00</b></h3>
                                 <h3 class="text-right" id="change-message-error" style="display: none;"><small  style="color: red !important">Ingrese un Monto igual o mayor al total de la venta</small></h3>
@@ -219,12 +222,21 @@
                             <h4 class="modal-title" style="color:rgb(255, 255, 255) !important"><i class="fa-solid fa-cart-shopping"></i> ¿Estás seguro que quieres registrar?</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="payment_type">Método de pago</label>
                                 <select name="payment_type" id="select-payment_type" class="form-control" required>
                                     <option value="" disabled selected>Seleccionar método de pago</option>
                                     <option value="Efectivo">Efectivo</option>
                                     <option value="Qr">Qr/Transferencia</option>
+                                </select>
+                            </div> --}}
+
+                            <div class="form-group">
+                                <label for="typeSale">Tipo de venta</label>
+                                <select name="typeSale" id="typeSale" class="form-control select2" required>
+                                    <option value="" disabled selected>--Seleccione una opción--</option>
+                                    <option value="Mesa">Para Mesa</option>
+                                    <option value="Llevar">Para LLevar</option>
                                 </select>
                             </div>
                         </div>
@@ -343,7 +355,7 @@
         });
 
         $('#trash-person').on('click', function () {
-            $('#input-dni').val('');
+            // $('#input-dni').val('');
             $('#select-person_id').val('').trigger('change');
             toastr.options = {
                 "closeButton": true,

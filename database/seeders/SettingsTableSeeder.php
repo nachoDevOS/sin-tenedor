@@ -68,7 +68,7 @@ class SettingsTableSeeder extends Seeder
                 'id' => 6,
                 'key' => 'admin.title',
                 'display_name' => 'Título del administrador',
-                'value' => 'SNACK AL PASO',
+                'value' => 'SIN TENEDOR',
                 'details' => '',
                 'type' => 'text',
                 'order' => 1,
