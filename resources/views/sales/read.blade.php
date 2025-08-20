@@ -183,6 +183,71 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="panel panel-bordered">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h4>
+                                    Metodo de Pagos
+                                </h4>
+                            </div>
+                            <div class="col-sm-6 text-right">
+                            </div>  
+                        </div>
+                        <div class="row" id="div-results" style="min-height: 120px">
+                            <div class="form-group col-md-12">
+                                <div class="table-responsive">
+                                    <table id="dataTable" class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 5%">N&deg;</th>
+                                                <th style="text-align: center">Metodo de Pago</th>
+                                                <th style="width:15%">Cantidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>    
+                                            @php
+                                                $i=1;
+                                                $amountTotalPayment=0;
+                                            @endphp 
+                                            @forelse ($sale->saleTransactions as $value)
+                                                <tr>
+                                                    <td>{{ $i }}</td>
+                                                    <td>{{$value->paymentType}}</td>
+                                                    <td style="text-align: right">    
+                                                        {{number_format($value->amount, 2, ',', '.')}}
+                                                    </td>
+                                                </tr>
+                                                @php
+                                                    $i++;
+                                                    $amountTotalPayment+=$value->amount;
+                                                @endphp
+                                            @empty
+                                                <tr>
+                                                    <td colspan="3">
+                                                        <h5 class="text-center" style="margin-top: 50px">
+                                                            <img src="{{ asset('images/empty.png') }}" width="120px" alt="" style="opacity: 0.8">
+                                                            <br><br>
+                                                            No hay resultados
+                                                        </h5>
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="2" style="text-align: right">Total</td>
+                                                <td style="text-align: right">Bs. {{number_format($amountTotalPayment, 2, ',', '.')}}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

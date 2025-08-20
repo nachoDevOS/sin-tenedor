@@ -55,7 +55,7 @@ class SaleController extends Controller
 
     public function show($id)
     {
-        $sale = Sale::with(['person', 'register', 'saleDetails' => function($q){
+        $sale = Sale::with(['person', 'register', 'saleTransactions', 'saleDetails' => function($q){
                 $q->where('deleted_at', null)
                 ->with(['itemSale']);
             }])
@@ -90,9 +90,11 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        return $request;
+        $amountReceivedEfectivo = $request->amountReceivedEfectivo? $request->amountReceivedEfectivo : 0;
+        $amountReceivedQr = $request->amountReceivedQr? $request->amountReceivedQr : 0;
+
         $this->custom_authorize('add_sales');
-        if ($request->amountTotalSale > $request->amountReceived) {
+        if ($request->amountTotalSale > $amountReceivedEfectivo+$amountReceivedQr) {
             return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
         $ok = false;
@@ -114,17 +116,16 @@ class SaleController extends Controller
         DB::beginTransaction();
         try {
             $transaction = Transaction::create([
-                'status' => 'pendiente'
+                'status' => 'Completado'
             ]);
             $sale = Sale::create([
                 'typeSale'=>$request->typeSale,
                 'ticket' => $this->ticket($request->typeSale),
                 'person_id'=>$request->person_id??NULL,
             
-                'amountReceivedEfectivo'=>$request->amountReceivedEfectivo? $request->amountReceivedEfectivo : 0,
-                'amountReceivedQr'=>$request->amountReceivedQr? $request->amountReceivedQr : 0,
+                'amountReceived'=>$amountReceivedQr+$amountReceivedEfectivo,
 
-                'amountChange'=>(($request->amountReceivedEfectivo? $request->amountReceivedEfectivo : 0) + ($request->amountReceivedQr? $request->amountReceivedQr : 0)) - $request->amountTotalSale,
+                'amountChange'=>($amountReceivedEfectivo + $amountReceivedQr) - $request->amountTotalSale,
                 'dateSale'=>Carbon::now(),
                 'amount'=>$request->amountTotalSale,
                 'observation'=>$request->observation,
@@ -136,8 +137,8 @@ class SaleController extends Controller
                 SaleTransaction::create([
                     'sale_id'=>$sale->id,
                     'transaction_id'=>$transaction->id,
-                    'amount'=>$request->amountReceivedEfectivo,
-                    'paymenetType'=>$request->paymentType
+                    'amount'=>$amountReceivedEfectivo,
+                    'paymentType'=>'Efectivo'
                 ]);
             }
             if($request->paymentType == 'Qr' || $request->paymentType == 'Ambos')
@@ -145,8 +146,8 @@ class SaleController extends Controller
                 SaleTransaction::create([
                     'sale_id'=>$sale->id,
                     'transaction_id'=>$transaction->id,
-                    'amount'=>$request->amountReceivedQr,
-                    'paymenetType'=>$request->paymentType
+                    'amount'=>$amountReceivedQr,
+                    'paymentType'=>'Qr'
                 ]);
             }
 

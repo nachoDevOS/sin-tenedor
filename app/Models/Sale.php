@@ -77,5 +77,10 @@ class Sale extends Model
         return $this->belongsTo(User::class, 'registerUser_id')->withTrashed();
     }
 
+    public function saleTransactions()
+    {
+        return $this->hasMany(SaleTransaction::class, 'sale_id');
+    }
+
 
 }

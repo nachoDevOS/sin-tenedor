@@ -69,7 +69,7 @@
                                                             <p class="text-success">Bs. {{ number_format($product->price, 2, ',', '.') }}</p>
                                                             @if ($product->typeSale == 'Venta Con Stock')                                                                
                                                                 @if ($cantStock==0)
-                                                                    Stock: <small style="color: red !important"> {{ number_format($cantStock, 2,',','.') }}</small>
+                                                                    Stock: <small style="color: red !important;"> {{ number_format($cantStock, 2,',','.') }}</small>
                                                                 @else
                                                                     Stock: <small> {{ number_format($cantStock, 2,',','.') }}</small>
                                                                 @endif
@@ -137,7 +137,7 @@
                                                 <th style="text-align: center; width:15%">Precio</th>
                                                 <th style="text-align: center; width:12%">Cantidad</th>
                                                 <th style="text-align: center; width:10%">Subtotal</th>
-                                                <th style="width: 30px"></th>
+                                                <th style="width: 25px"></th>
                                             </tr>
                                         </thead>
                                         <tbody id="table-body">
@@ -249,7 +249,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                             <input type="submit" class="btn btn-primary btn-confirm" id="btn-confirm" value="Confirmar venta">
-                        </div>
+                        </div> 
                     </div>
                 </div>
             </div>
@@ -277,7 +277,7 @@
         }
 
         .product-info {
-            padding: 10px 0;
+            padding: 5px 0;
         }
 
         .product-info h5 {
@@ -522,7 +522,8 @@
                         <tr class="tr-item" id="tr-item-${productId}">
                             <td class="td-item">${counter++}</td>
                             <td>
-                                <b>${product.name}</b>
+                                <b>${product.name}</b> <br>
+                                ${product.typeSale === "Venta Con Stock" ? `<small class="text-muted">Disponible: ${availableStock}</small>` : ''}
                                 <input type="hidden" name="products[${productId}][id]" value="${productId}">
                                 <input type="hidden" name="products[${productId}][name]" value="${product.name}">
                                 <input type="hidden" name="products[${productId}][typeSale]" value="${product.typeSale}">
@@ -534,12 +535,11 @@
                             <td>
                                 <input type="number" name="products[${productId}][quantity]" class="form-control input-quantity" 
                                     value="${product.quantity}" min="1" max="${availableStock}" step="1" required>
-                                ${product.typeSale === "Venta Con Stock" ? 
-                                    `<small class="text-muted">Disponible: ${availableStock}</small>` : ''}
+                                    
                             </td>
                             <td class="text-right subtotal">${subtotal.toFixed(2)}</td>
-                            <td class="text-right">
-                                <button type="button" onclick="removeFromCart(${productId})" class="btn btn-link">
+                            <td class="text-right" style="padding: 8px; text-align: right;">
+                                <button type="button" onclick="removeFromCart(${productId})"  title="Quitar" style="background-color: transparent; border: none;">
                                     <i class="voyager-trash text-danger"></i>
                                 </button>
                             </td>
