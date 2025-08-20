@@ -177,24 +177,37 @@
                                 <input type="text" name="dni" id="input-dni" disabled value="" class="form-control" placeholder="NIT/CI">
                             </div> --}}
  
-                            <div class="form-group col-md-12">
+                            <div class="form-group col-md-6">
                                 <label for="payment_type">Método de pago</label>
-                                <select name="payment_type" id="select-payment_type" class="form-control" required>
+                                <select name="paymentType" id="select-payment_type" class="form-control select2" required>
                                     <option value="" disabled selected>Seleccionar método de pago</option>
                                     <option value="Efectivo">Efectivo</option>
                                     <option value="Qr">Qr/Transferencia</option>
                                     <option value="Ambos">Ambos Metodos</option>
                                 </select>
                             </div>
-
                             <div class="form-group col-md-6">
-                                <label for="date">Monto recibido</label>
-                                <input type="number" name="amountReceived" id="input-amount" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto recibo Bs." required>
+                                <label for="typeSale">Tipo de venta</label>
+                                <select name="typeSale" id="typeSale" class="form-control select2" required>
+                                    <option value="" disabled selected>--Seleccione una opción--</option>
+                                    <option value="Mesa">Para Mesa</option>
+                                    <option value="Llevar">Para LLevar</option>
+                                </select>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="date">Fecha de venta</label>
-                                <input type="datetime" name="dateSale" value="{{ date('Y-m-d h:i:s a') }}" class="form-control" readonly required>
+                                <label for="date">Monto "Efectivo"</label>
+                                <input type="number" disabled onkeyup="amountRecived()" onchange="amountRecived()" name="amountReceivedEfectivo" id="input-amountEfectivo" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto Efectivo." required>
+                            </div>
+
+
+                            <div class="form-group col-md-6">
+                                <label for="date">Monto "QR"</label>
+                                <input type="number" disabled onkeyup="amountRecived()" onchange="amountRecived()" name="amountReceivedQr" id="input-amountQr" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto Qr." required>
+                            </div>
+
+                            <div class="form-group col-md-6">
+
                             </div>
                             
                             <div class="form-group col-md-6">
@@ -214,7 +227,7 @@
             </div>
 
             <!-- Modal de confirmación -->
-            <div class="modal fade" data-backdrop="static" id="modal-confirm" role="dialog">
+            <div class="modal fade" tabindex="-1" data-backdrop="static" id="modal-confirm" role="dialog">
                 <div class="modal-dialog modal-primary">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -222,27 +235,20 @@
                             <h4 class="modal-title" style="color:rgb(255, 255, 255) !important"><i class="fa-solid fa-cart-shopping"></i> ¿Estás seguro que quieres registrar?</h4>
                         </div>
                         <div class="modal-body">
-                            {{-- <div class="form-group">
-                                <label for="payment_type">Método de pago</label>
-                                <select name="payment_type" id="select-payment_type" class="form-control" required>
-                                    <option value="" disabled selected>Seleccionar método de pago</option>
-                                    <option value="Efectivo">Efectivo</option>
-                                    <option value="Qr">Qr/Transferencia</option>
-                                </select>
-                            </div> --}}
+                         
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="typeSale">Tipo de venta</label>
                                 <select name="typeSale" id="typeSale" class="form-control select2" required>
                                     <option value="" disabled selected>--Seleccione una opción--</option>
                                     <option value="Mesa">Para Mesa</option>
                                     <option value="Llevar">Para LLevar</option>
                                 </select>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <input type="submit" class="btn btn-primary btn-confirm" id="btn-confirm" value="Confirmar">
+                            <input type="submit" class="btn btn-primary btn-confirm" id="btn-confirm" value="Confirmar venta">
                         </div>
                     </div>
                 </div>
@@ -328,6 +334,24 @@
 
     <script>
         // Objeto para almacenar los productos en el carrito
+        toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-bottom-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "1000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
         let cart = {};
         let lastClickTime = 0;
         const CLICK_DELAY = 300; // 300ms de delay entre clicks
@@ -346,41 +370,52 @@
             // Configurar eventos del formulario
             $('#form-sale').submit(function(e){
                 $('.btn-confirm').val('Guardando...');
-                $('.btn-confirm').attr('disabled', true);
+                $('.btn-confirm').attr('disabled', true);           
             });
 
-            $('#input-discount').on('keyup change', function(){
-                calculateTotal();
+            // Evento para el modal de confirmación cuando se cierra vulve a habilitar el botón
+            $('#modal-confirm').on('hidden.bs.modal', function() {
+                $(this).find('.btn-confirm').removeAttr('disabled');
+                $(this).find('.btn-confirm').val('Confirmar venta');
             });
         });
 
         $('#trash-person').on('click', function () {
             // $('#input-dni').val('');
             $('#select-person_id').val('').trigger('change');
-            toastr.options = {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-bottom-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "1000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            };
-            
+                       
             toastr.success('Cliente eliminado', 'Eliminado');
         });
 
-        $('#input-amount').on('click', function () {
-            $('#input-amount').val('');
+        // Limpiar los inputs de monto al hacer clic
+        $('#input-amountEfectivo').on('click', function () {
+            $('#input-amountEfectivo').val('');
         });
+        $('#input-amountQr').on('click', function () {
+            $('#input-amountQr').val('');
+        });
+
+
+        // Cambiar el estado de los inputs de monto según el tipo de pago seleccionado
+        $('#select-payment_type').change(function() {
+            $typeSale = $(this).val();
+            if ($typeSale === 'Efectivo') {
+                $('#input-amountEfectivo').removeAttr('disabled');
+                $('#input-amountQr').attr('disabled', true);
+                $('#input-amountQr').val(0);
+            } else if ($typeSale === 'Qr') {
+                $('#input-amountQr').removeAttr('disabled');
+                $('#input-amountEfectivo').attr('disabled', true);
+                $('#input-amountEfectivo').val(0);
+            } else {
+                $('#input-amountEfectivo').removeAttr('disabled');
+                $('#input-amountQr').removeAttr('disabled');
+            }
+            // calculateChange();
+        });
+
+
+
 
         // Función para obtener el stock disponible de un producto
         function getStock(productId) {
@@ -407,25 +442,6 @@
             const $productCard = $(`.product-card[data-product-id="${productId}"]`);
             const typeSale = $productCard.data('type-sale');
             const availableStock = typeSale === "Venta Con Stock" ? getStock(productId) : 9999;
-
-            // Configurar toastr
-            toastr.options = {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-bottom-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "1000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            };
 
             // Validación para productos con stock
             if(typeSale === "Venta Con Stock" && availableStock <= 0) {
@@ -472,24 +488,6 @@
             setTimeout(() => {
                 $productCard.css('background-color', '');
             }, 300);
-            
-            toastr.options = {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-bottom-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "1000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            };
             
             toastr.success(`+1 ${cart[productId].name}`, 'Producto agregado');
         }
@@ -587,11 +585,12 @@
 
         // Función para calcular y mostrar el cambio
         function calculateChange() {
-            const amountReceived = parseFloat($('#input-amount').val()) || 0;
+            const input_amountEfectivo = parseFloat($('#input-amountEfectivo').val()) || 0;
+            const input_amountQr = parseFloat($('#input-amountQr').val()) || 0;
             const total = parseFloat($('#amountTotalSale').val()) || 0;
-            
-            if (amountReceived >= total) {
-                const change = amountReceived - total;
+            let total_inputs = input_amountEfectivo+input_amountQr;
+            if (total_inputs >= total) {
+                const change = total_inputs - total;
                 $('#change-message-error').hide();
                 $('#change-message').show();
                 $('#change-amount').text(change.toFixed(2));
@@ -604,24 +603,20 @@
 
         // Función para calcular el total
         function calculateTotal() {
-            let total = 0;
-            const discount = parseFloat($('#input-discount').val()) || 0;
-            
+            let total = 0;            
             $('.subtotal').each(function() {
                 total += parseFloat($(this).text());
             });
             
-            $('#input-discount').attr('max', total.toFixed(2));
-            const finalTotal = total - discount;
+            const finalTotal = total;
             
             $('#label-total').text(finalTotal.toFixed(2));
             $('#amountTotalSale').val(finalTotal.toFixed(2));
             
             // Si el monto recibido actual es menor que el nuevo total, actualizarlo
-            const currentAmount = parseFloat($('#input-amount').val()) || 0;
-            if (currentAmount < finalTotal) {
-                $('#input-amount').val(finalTotal.toFixed(2));
-            }
+            // const currentAmount = parseFloat($('#input-amountEfectivo').val()) || 0;
+
+            // $('#input-amountEfectivo').val(finalTotal.toFixed(2));
             
             // Calcular el cambio nuevamente
             calculateChange();
@@ -652,23 +647,22 @@
             };
         }
 
-        // Evento para el input de monto recibido
-        $('#input-amount').on('change keyup', function() {
-            const total = parseFloat($('#amountTotalSale').val()) || 0;
-            const amount = parseFloat($(this).val()) || 0;
-            
-            $(this).attr('min', total.toFixed(2));
+        function amountRecived() {
+            const input_amountEfectivo = parseFloat($('#input-amountEfectivo').val()) || 0;
+            const input_amountQr = parseFloat($('#input-amountQr').val()) || 0;
             calculateChange();
-        });
+        }
 
         // Validar antes de enviar el formulario
         $('#form-sale').submit(function(e) {
             const total = parseFloat($('#amountTotalSale').val()) || 0;
-            const amountReceived = parseFloat($('#input-amount').val()) || 0;
-            
-            if (amountReceived < total) {
+            const input_amountEfectivo = parseFloat($('#input-amountEfectivo').val()) || 0;
+            const input_amountQr = parseFloat($('#input-amountQr').val()) || 0;
+            let total_inputs = input_amountEfectivo+input_amountQr;         
+
+            if (total_inputs < total) {
                 toastr.error(`El monto recibido no puede ser menor al total (Bs. ${total.toFixed(2)})`);
-                $('#input-amount').val(total.toFixed(2));
+                $('#modal-confirm').modal('hide');
                 calculateChange();
                 e.preventDefault();
                 return false;
@@ -677,6 +671,7 @@
             // Validar que haya productos en el carrito
             if(Object.keys(cart).length === 0) {
                 toastr.error('Debe agregar al menos un producto al carrito');
+                $('#modal-confirm').modal('hide');
                 e.preventDefault();
                 return false;
             }

@@ -26,8 +26,14 @@ class DatabaseSeeder extends Seeder
         // $this->call(RolesTableSeeder::class);
         // $this->call(PermissionsTableSeeder::class);
         // $this->call(PermissionRoleTableSeeder::class);
+
         $this->call(CategoriesTableSeeder::class);
         $this->call(CategoryInventoriesTableSeeder::class);
         $this->call(UnitTypesTableSeeder::class);
+        $this->call(PeopleTableSeeder::class);
+        $this->call(ItemInventoriesTableSeeder::class);
+        $this->call(ItemInventoryStocksTableSeeder::class);
+        $this->call(ItemSalesTableSeeder::class);
+        $this->call(ItemSaleStocksTableSeeder::class);
     }
 }

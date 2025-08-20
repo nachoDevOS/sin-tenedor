@@ -8,6 +8,8 @@ use App\Models\ItemSaleStock;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\SaleDetailItemSaleStock;
+use App\Models\SaleTransaction;
+use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -88,7 +90,7 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        // return $request;
+        return $request;
         $this->custom_authorize('add_sales');
         if ($request->amountTotalSale > $request->amountReceived) {
             return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
@@ -111,17 +113,44 @@ class SaleController extends Controller
         }
         DB::beginTransaction();
         try {
+            $transaction = Transaction::create([
+                'status' => 'pendiente'
+            ]);
             $sale = Sale::create([
                 'typeSale'=>$request->typeSale,
                 'ticket' => $this->ticket($request->typeSale),
                 'person_id'=>$request->person_id??NULL,
-                'amountReceived'=>$request->amountReceived,
-                'amountChange'=>$request->amountReceived - $request->amountTotalSale,
+            
+                'amountReceivedEfectivo'=>$request->amountReceivedEfectivo? $request->amountReceivedEfectivo : 0,
+                'amountReceivedQr'=>$request->amountReceivedQr? $request->amountReceivedQr : 0,
+
+                'amountChange'=>(($request->amountReceivedEfectivo? $request->amountReceivedEfectivo : 0) + ($request->amountReceivedQr? $request->amountReceivedQr : 0)) - $request->amountTotalSale,
                 'dateSale'=>Carbon::now(),
                 'amount'=>$request->amountTotalSale,
                 'observation'=>$request->observation,
                 'status'=>'Entregado'
             ]);
+
+            if($request->paymentType == 'Efectivo' || $request->paymentType == 'Ambos')
+            {
+                SaleTransaction::create([
+                    'sale_id'=>$sale->id,
+                    'transaction_id'=>$transaction->id,
+                    'amount'=>$request->amountReceivedEfectivo,
+                    'paymenetType'=>$request->paymentType
+                ]);
+            }
+            if($request->paymentType == 'Qr' || $request->paymentType == 'Ambos')
+            {
+                SaleTransaction::create([
+                    'sale_id'=>$sale->id,
+                    'transaction_id'=>$transaction->id,
+                    'amount'=>$request->amountReceivedQr,
+                    'paymenetType'=>$request->paymentType
+                ]);
+            }
+
+
 
             foreach ($request->products as $key => $value) {
                 $saleDetail = SaleDetail::create([
