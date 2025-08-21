@@ -49,6 +49,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin', 'system']], functi
 
     Route::get('item-sales', [ItemSaleController::class, 'index'])->name('voyager.item-sales.index');
     Route::get('item-sales/ajax/list', [ItemSaleController::class, 'list']);
+    Route::post('item-sales', [ItemSaleController::class, 'store'])->name('voyager.item-sales.store');
+    Route::put('item-sales/{id}', [ItemSaleController::class, 'update'])->name('voyager.item-sales.update');
+
     Route::get('item-sales/{id}', [ItemSaleController::class, 'show'])->name('voyager.item-sales.show');
     Route::post('item-sales/{id}/stock', [ItemSaleController::class, 'storeStock'])->name('item-sales-stock.store');
     Route::delete('item-sales/{id}/stock/{stock}', [ItemSaleController::class, 'destroyStock'])->name('item-sales-stock.destroy');
@@ -56,6 +59,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin', 'system']], functi
 
     Route::get('item-inventories', [ItemInventoryController::class, 'index'])->name('voyager.item-inventories.index');
     Route::get('item-inventories/ajax/list', [ItemInventoryController::class, 'list']);
+    Route::post('item-inventories', [ItemInventoryController::class, 'store'])->name('voyager.item-inventories.store');
+    Route::put('item-inventories/{id}', [ItemInventoryController::class, 'update'])->name('voyager.item-inventories.update');
     Route::get('item-inventories/{id}', [ItemInventoryController::class, 'show'])->name('voyager.item-inventories.show');
     Route::post('item-inventories/{id}/stock', [ItemInventoryController::class, 'storeStock'])->name('item-inventories-stock.store');
     Route::delete('item-inventories/{id}/stock/{stock}', [ItemInventoryController::class, 'destroyStock'])->name('item-inventories-stock.destroy');

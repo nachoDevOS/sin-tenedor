@@ -52,6 +52,63 @@ class ItemInventoryController extends Controller
     }
 
 
+    public function store(Request $request)
+    {
+        $this->custom_authorize('browse_item_inventories');
+        $request->validate([
+            'image' => 'image|mimes:jpeg,jpg,png,bmp,webp'
+        ]);
+        try {
+            $storageController = new StorageController();
+
+            ItemInventory::create([
+                'categoryInventory_id' => $request->categoryInventory_id,
+                'name' => $request->name,
+                'dispensingType' => $request->dispensingType,
+                'observation' => $request->observation,
+                'image' => $storageController->store_image($request->image, 'item-inventories'),
+            ]);
+
+            DB::commit();
+            return redirect()->route('voyager.item-inventories.index')->with(['message' => 'Registrado exitosamente', 'alert-type' => 'success']);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return redirect()->route('voyager.item-inventories.index')->with(['message' => $th->getMessage(), 'alert-type' => 'error']);
+        }
+    }
+
+
+    public function update(Request $request, $id){
+        $this->custom_authorize('browse_item_inventories');
+        $request->validate([
+            'image' => 'image|mimes:jpeg,jpg,png,bmp,webp'
+        ]);
+        DB::beginTransaction();
+        try {
+            $storageController = new StorageController();
+            
+            $itemInventory = ItemInventory::find($id);
+            $itemInventory->categoryInventory_id = $request->categoryInventory_id;
+            $itemInventory->name = $request->name;
+            $itemInventory->dispensingType = $request->dispensingType;
+            $itemInventory->observation = $request->observation;
+            $itemInventory->status = $request->status=='on' ? 1 : 0;
+
+            if ($request->image) {
+                $itemInventory->image = $storageController->store_image($request->image, 'item-inventories');
+            }
+            
+            $itemInventory->update();
+
+            DB::commit();
+            return redirect()->route('voyager.item-inventories.index')->with(['message' => 'Actualizada exitosamente', 'alert-type' => 'success']);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return redirect()->route('voyager.item-inventories.index')->with(['message' => $th->getMessage(), 'alert-type' => 'error']);
+        }
+    }
+
+
     public function show($id)
     {
         $this->custom_authorize('read_item_inventories');
