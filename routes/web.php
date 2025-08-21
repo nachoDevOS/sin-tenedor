@@ -46,6 +46,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin', 'system']], functi
 
     Route::get('people', [PersonController::class, 'index'])->name('voyager.people.index');
     Route::get('people/ajax/list', [PersonController::class, 'list']);
+    Route::post('people', [PersonController::class, 'store'])->name('voyager.people.store');
+    Route::put('people/{id}', [PersonController::class, 'update'])->name('voyager.people.update');
 
 
     Route::get('item-sales', [ItemSaleController::class, 'index'])->name('voyager.item-sales.index');

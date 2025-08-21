@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Person;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class PersonController extends Controller
 {
@@ -42,5 +43,83 @@ class PersonController extends Controller
                         ->where('deleted_at', NULL)->orderBy('id', 'DESC')->paginate($paginate);
 
         return view('administrations.people.list', compact('data'));
+    }
+
+    public function store(Request $request)
+    {
+        $this->custom_authorize('add_item_sales');
+        $request->validate([
+            'image' => 'image|mimes:jpeg,jpg,png,bmp,webp'
+        ]);
+        try {
+            // Si envian las imágenes
+            $storageController = new StorageController();
+
+            // $images = [];
+            // if ($request->images) {
+            //     $images = json_decode($request->images);
+            //     foreach ($request->images as $image) {
+            //         $image_store = $this->store_image($image, 'posts');
+            //         if($image_store){
+            //             array_push($images, $image_store);
+            //         }
+            //     }
+            // }
+
+            ItemSale::create([
+                'category_id' => $request->category_id,
+                'name' => $request->name,
+                'price' => $request->price,
+                'typeSale' => $request->typeSale,
+                'observation' => $request->observation,
+                'image' => $storageController->store_image($request->image, 'item-sales'),
+                // 'images' => json_encode($images),
+            ]);
+
+            DB::commit();
+            return redirect()->route('voyager.item-sales.index')->with(['message' => 'Registrado exitosamente', 'alert-type' => 'success']);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return redirect()->route('voyager.item-sales.index')->with(['message' => $th->getMessage(), 'alert-type' => 'error']);
+        }
+    }
+
+
+    public function update(Request $request, $id){
+        $this->custom_authorize('edit_people');
+        $request->validate([
+            'image' => 'image|mimes:jpeg,jpg,png,bmp,webp'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $storageController = new StorageController();
+            
+            $person = Person::find($id);
+            $person->ci = $request->ci;
+            $person->birth_date = $request->birth_date;
+            $person->gender = $request->gender;
+            $person->first_name = $request->first_name;
+            $person->middle_name = $request->middle_name;
+            $person->paternal_surname = $request->paternal_surname;
+            $person->maternal_surname = $request->maternal_surname;
+            $person->email = $request->email;
+            $person->phone = $request->phone;
+            $person->address = $request->address;
+            $person->status = $request->status=='on' ? 1 : 0;
+
+            if ($request->image) {
+                $person->image = $storageController->store_image($request->image, 'people');
+            }
+          
+            
+            $person->update();
+
+            DB::commit();
+            return redirect()->route('voyager.people.index')->with(['message' => 'Actualizada exitosamente', 'alert-type' => 'success']);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return redirect()->route('voyager.people.index')->with(['message' => $th->getMessage(), 'alert-type' => 'error']);
+        }
     }
 }
