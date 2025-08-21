@@ -65,7 +65,7 @@ class PersonController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'address' => $request->address,
-                'image' => $storageController->store_image($request->image, 'item-sales'),
+                'image' => $storageController->store_image($request->image, 'people'),
             ]);
 
             DB::commit();
