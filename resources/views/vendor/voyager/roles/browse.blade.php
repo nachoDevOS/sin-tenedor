@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-@section('page_title', 'Viendo Datos Personales')
+@section('page_title', 'Viendo Roles')
 
 @section('page_header')
     <div class="container-fluid">
@@ -10,12 +10,12 @@
                     <div class="panel-body" style="padding: 0px">
                         <div class="col-md-8" style="padding: 0px">
                             <h1 class="page-title">
-                                <i class="voyager-person"></i> Datos Personales
+                                <i class="voyager-lock"></i> Roles
                             </h1>
                         </div>
                         <div class="col-md-4 text-right" style="margin-top: 30px">
-                            @if (auth()->user()->hasPermission('add_people'))
-                            <a href="{{ route('voyager.people.create') }}" class="btn btn-success">
+                            @if (auth()->user()->hasPermission('add_roles'))
+                            <a href="{{ route('voyager.roles.create') }}" class="btn btn-success">
                                 <i class="voyager-plus"></i> <span>Crear</span>
                             </a>
                             @endif
@@ -80,26 +80,35 @@
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
     <script>
         var countPage = 10, order = 'id', typeOrder = 'desc';
+        var timeout = null;
         $(document).ready(() => {
             list();
-            
+
             $('#input-search').on('keyup', function(e){
                 if(e.keyCode == 13) {
+                    // Cancelar el timeout del evento input si existe
+                    clearTimeout(timeout);
                     list();
                 }
             });
 
             $('#select-paginate').change(function(){
-                countPage = $(this).val();
-               
+                countPage = $(this).val();               
                 list();
+            });
+
+            $('#input-search').on('input', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    list();
+                }, 2000); // retardo de 2 segundos cada vez que se escribe algo en el input
             });
         });
 
         function list(page = 1){
             $('#div-results').loading({message: 'Cargando...'});
 
-            let url = '{{ url("admin/people/ajax/list") }}';
+            let url = '{{ url("admin/roles/ajax/list") }}';
             let search = $('#input-search').val() ? $('#input-search').val() : '';
 
             $.ajax({

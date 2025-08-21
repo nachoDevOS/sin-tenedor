@@ -11,6 +11,7 @@ use App\Http\Controllers\ItemInventoryController;
 use App\Http\Controllers\ItemSaleController;
 use App\Http\Controllers\ReportInventoryController;
 use App\Http\Controllers\ReportSaleController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TableController;
 use App\Models\EgresInventory;
@@ -90,11 +91,15 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin', 'system']], functi
 
 
 
-
+    // Usuarios 
     Route::get('users/ajax/list', [UserController::class, 'list']);
     Route::post('users/store', [UserController::class, 'store'])->name('voyager.users.store');
     Route::put('users/{id}', [UserController::class, 'update'])->name('voyager.users.update');
     Route::delete('users/{id}/deleted', [UserController::class, 'destroy'])->name('voyager.users.destroy');
+
+    // Roles
+    Route::get('roles/ajax/list', [RoleController::class, 'list']);
+
     
 
 
