@@ -1,17 +1,20 @@
 @extends('voyager::master')
 
 @section('page_header')
+    @php
+        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');       
+    @endphp
     <div class="page-content container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <h2>Hola, {{ Auth::user()->name }}</h2>
-                                <p class="text-muted">Resumen de rendimiento - {{ now()->format('d F Y') }}</p>
+                                <p class="text-muted">Resumen de rendimiento - {{date('d').' de '.$meses[intval(date('m'))].' '.date('Y')}}</p>
                             </div>
-                            <div class="col-md-4 text-right">
+                            {{-- <div class="col-md-4 text-right">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-primary" id="refresh-dashboard">
                                         <i class="voyager-refresh"></i> Actualizar
@@ -26,7 +29,7 @@
                                         <li><a href="#" data-range="year">Este año</a></li>
                                     </ul>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>                        
                     </div>
                 </div>
@@ -36,10 +39,7 @@
 @stop
 
 @section('content')
-    @php
-        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');       
-    @endphp
-    
+   
     <div class="page-content container-fluid">
         @include('voyager::alerts')
         @include('voyager::dimmers')
@@ -78,7 +78,7 @@
                             <i class="voyager-dollar"></i>
                         </div>
                         <h3 class="kpi-value">Bs. {{number_format($amountDaytotal, 2, ',','.')}}</h3>
-                        <p class="kpi-label">Ventas Totales</p>
+                        <p class="kpi-label">Ventas Total de hoy</p>
                         {{-- <div class="kpi-trend trend-up">
                             <i class="voyager-up"></i> 12.5%
                         </div> --}}
@@ -186,7 +186,7 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Pedidos Recientes</h3>
+                        <h3 class="panel-title">Pedidos del Día</h3>
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">

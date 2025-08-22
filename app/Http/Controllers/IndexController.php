@@ -108,7 +108,7 @@ class IndexController extends Controller
 
         // calculamos el total de las ventas a día
         foreach ($resultado as $index => $dayData) {
-            $amount = $sales->filter(function ($sale) use ($dayData) {
+            $amount = $sales->where('deleted_at', null)->filter(function ($sale) use ($dayData) {
                 return $sale->created_at->format('Y-m-d') === $dayData['date'];
             })->sum('amount');
             
@@ -122,7 +122,7 @@ class IndexController extends Controller
     public function productTop5Day($date ,$sales)
     {
 
-        $sales = $sales->filter(function ($sale) use ($date) {
+        $sales = $sales->where('deleted_at', null)->filter(function ($sale) use ($date) {
                     return $sale->created_at->format('Y-m-d') === $date;
                 });
         // 1. Recolectar todos los detalles de venta "saleDetails"
@@ -158,8 +158,6 @@ class IndexController extends Controller
         // return response()->json($top5Products);
         return $top5Products;;
     }
-
-
     public function IndexSystem()
     {
         $month = date('m');
@@ -176,14 +174,15 @@ class IndexController extends Controller
         $endDate = date('Y-m-t', strtotime($monthInteractive[11]['year'] . '-' . str_pad($monthInteractive[11]['month_number'], 2, '0', STR_PAD_LEFT) . '-01'));
 
         $sales = Sale::with('person', 'saleTransactions', 'saleDetails.itemSale')
-            ->where('deleted_at', null)
             ->whereDate('created_at', '>=', $startDate)
             ->whereDate('created_at', '<=', $endDate)
+            ->withTrashed()
+            ->orderBy('created_at', 'DESC')
             ->get();
 
         // calculamos el total de las ventas a mes
         foreach ($monthInteractive as $index => $monthData) {
-            $amount = $sales->filter(function ($sale) use ($monthData) {
+            $amount = $sales->where('deleted_at', null)->filter(function ($sale) use ($monthData) {
                 $saleDate = Carbon::parse($sale->created_at);
                 return $saleDate->year == $monthData['year'] && 
                     $saleDate->month == $monthData['month_number'];
