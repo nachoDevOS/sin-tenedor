@@ -183,7 +183,7 @@
         
         <div class="row">
             <!-- Tabla de últimos pedidos -->
-            <div class="col-md-12">
+            {{-- <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-heading">
                         <h3 class="panel-title">Pedidos del Día</h3>
@@ -255,6 +255,44 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+            </div> --}}
+
+            <div class="col-md-12">
+                <div class="panel panel-bordered">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="dataTables_length" id="dataTable_length">
+                                    <label>Mostrar <select id="select-paginate" class="form-control input-sm">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select> registros</label>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2" style="margin-bottom: 10px">
+                                <select id="status" name="status" class="form-control select2">
+                                    <option value="" selected>Todos</option>
+                                    <option value="Pendiente">Pendientes</option>
+                                    <option value="Entregado">Entregados</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2" style="margin-bottom: 10px">
+                                <select id="typeSale" name="typeSale" class="form-control select2">
+                                    <option value="" selected>Todos</option>
+                                    <option value="Llevar">Para LLevar</option>
+                                    <option value="Mesa">Para Mesa</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2" style="margin-bottom: 10px">
+                                <input type="text" id="input-search" placeholder="🔍 Buscar..." class="form-control">
+                            </div>
+                        </div>
+                        <div class="row" id="div-results" style="min-height: 120px"></div>
                     </div>
                 </div>
             </div>
