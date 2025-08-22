@@ -16,6 +16,11 @@ class PersonController extends Controller
 
     public function index()
     {
+        // $prueba = new IndexController();
+        // return $prueba->saleDay();
+
+
+
         $this->custom_authorize('browse_people');
         return view('administrations.people.browse');
     }

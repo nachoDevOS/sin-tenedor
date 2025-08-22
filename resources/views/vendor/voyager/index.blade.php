@@ -7,9 +7,26 @@
                 <div class="panel panel-bordered">
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-8">
                                 <h2>Hola, {{ Auth::user()->name }}</h2>
-                            </div>                        
+                                <p class="text-muted">Resumen de rendimiento - {{ now()->format('d F Y') }}</p>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary" id="refresh-dashboard">
+                                        <i class="voyager-refresh"></i> Actualizar
+                                    </button>
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#" data-range="today">Hoy</a></li>
+                                        <li><a href="#" data-range="week">Esta semana</a></li>
+                                        <li><a href="#" data-range="month">Este mes</a></li>
+                                        <li><a href="#" data-range="year">Este año</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>                        
                     </div>
                 </div>
@@ -26,6 +43,91 @@
     <div class="page-content container-fluid">
         @include('voyager::alerts')
         @include('voyager::dimmers')
+        @php
+            $sales = $global_index['sales'];
+            // dump($sales);
+
+            $amountDaytotal = $global_index['sales']
+                ->where('deleted_at', null)
+                ->filter(function ($sale) {
+                    return $sale->created_at->format('Y-m-d') === date("Y-m-d");
+                })
+                ->sum('amount');
+
+            $saleDaytotal = $global_index['sales']
+                ->where('deleted_at', null)
+                ->filter(function ($sale) {
+                    return $sale->created_at->format('Y-m-d') === date("Y-m-d");
+                })
+                ->count();
+
+            $customer = $global_index['people']
+                ->count();
+
+            $monthInteractive = $global_index['monthInteractive'];
+            // $monthInteractive = $global_index['monthInteractive'];
+
+        @endphp
+
+        <!-- KPI Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="panel panel-bordered dashboard-kpi">
+                    <div class="panel-body text-center">
+                        <div class="kpi-icon">
+                            <i class="voyager-dollar"></i>
+                        </div>
+                        <h3 class="kpi-value">Bs. {{number_format($amountDaytotal, 2, ',','.')}}</h3>
+                        <p class="kpi-label">Ventas Totales</p>
+                        {{-- <div class="kpi-trend trend-up">
+                            <i class="voyager-up"></i> 12.5%
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-bordered dashboard-kpi">
+                    <div class="panel-body text-center">
+                        <div class="kpi-icon">
+                            <i class="voyager-bag"></i>
+                        </div>
+                        <h3 class="kpi-value">{{$saleDaytotal}}</h3>
+                        <p class="kpi-label">Pedidos Hoy</p>
+                        {{-- <div class="kpi-trend trend-up">
+                            <i class="voyager-up"></i> 5.2%
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-bordered dashboard-kpi">
+                    <div class="panel-body text-center">
+                        <div class="kpi-icon">
+                            <i class="voyager-person"></i>
+                        </div>
+                        <h3 class="kpi-value">{{$customer}}</h3>
+                        <p class="kpi-label">Clientes</p>
+                        {{-- <div class="kpi-trend trend-down">
+                            <i class="voyager-down"></i> 3.1%
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-bordered dashboard-kpi">
+                    <div class="panel-body text-center">
+                        <div class="kpi-icon">
+                            <i class="voyager-bar-chart"></i>
+                        </div>
+                        <h3 class="kpi-value">$78.50</h3>
+                        <p class="kpi-label">Ticket Promedio</p>
+                        <div class="kpi-trend trend-up">
+                            <i class="voyager-up"></i> 8.7%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="row">
             <!-- Gráfico de ventas mensuales -->
@@ -44,14 +146,16 @@
             <div class="col-md-6">
                 <div class="panel panel-bordered">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Productos Más Vendidos</h3>
+                        <h3 class="panel-title">5 Productos Más Vendidos del Día</h3>
                     </div>
                     <div class="panel-body">
                         <canvas id="topProductosChart" height="250"></canvas>
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="row">
             <!-- Gráfico de ventas por día de la semana -->
             <div class="col-md-6">
                 <div class="panel panel-bordered">
@@ -76,7 +180,130 @@
                 </div>
             </div>
         </div>
+        
+        <div class="row">
+            <!-- Tabla de últimos pedidos -->
+            <div class="col-md-12">
+                <div class="panel panel-bordered">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Pedidos Recientes</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th># Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#12345</td>
+                                        <td>Juan Pérez</td>
+                                        <td>20 Nov 2023</td>
+                                        <td>$125.80</td>
+                                        <td><span class="label label-success">Completado</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-primary">Ver</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#12344</td>
+                                        <td>María García</td>
+                                        <td>20 Nov 2023</td>
+                                        <td>$89.50</td>
+                                        <td><span class="label label-warning">Procesando</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-primary">Ver</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#12343</td>
+                                        <td>Carlos López</td>
+                                        <td>19 Nov 2023</td>
+                                        <td>$210.00</td>
+                                        <td><span class="label label-success">Completado</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-primary">Ver</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#12342</td>
+                                        <td>Ana Martínez</td>
+                                        <td>19 Nov 2023</td>
+                                        <td>$56.90</td>
+                                        <td><span class="label label-danger">Cancelado</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-primary">Ver</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#12341</td>
+                                        <td>Pedro Sánchez</td>
+                                        <td>18 Nov 2023</td>
+                                        <td>$178.30</td>
+                                        <td><span class="label label-success">Completado</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-primary">Ver</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+@stop
+
+@section('css')
+    <style>
+        .dashboard-kpi {
+            transition: all 0.3s ease;
+        }
+        .dashboard-kpi:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .kpi-icon {
+            font-size: 24px;
+            color: #22A7F0;
+            margin-bottom: 10px;
+        }
+        .kpi-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .kpi-label {
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        .kpi-trend {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .trend-up {
+            color: #2ecc71;
+        }
+        .trend-down {
+            color: #e74c3c;
+        }
+        .panel-heading .btn-group {
+            margin-top: -5px;
+        }
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+    </style>
 @stop
 
 @section('javascript')
@@ -85,34 +312,46 @@
 
     <script>
         $(document).ready(function(){   
-            $('.form-submit').submit(function(e){
-                $('.btn-form-submit').attr('disabled', true);
-                $('.btn-form-submit').val('Guardando...');
+            // Configuración de rangos de fecha
+            $('.dropdown-menu a').click(function(e) {
+                e.preventDefault();
+                let range = $(this).data('range');
+                $('#refresh-dashboard').html('<i class="voyager-refresh"></i> Actualizando...');
+                
+                // Simular carga de datos
+                setTimeout(function() {
+                    $('#refresh-dashboard').html('<i class="voyager-refresh"></i> Actualizar');
+                    toastr.success('Datos actualizados para el período: ' + range);
+                }, 1500);
             });
-
-            // Datos de ejemplo (debes reemplazarlos con tus datos reales)
+            console.log(@json($monthInteractive));
+            const monthData = @json($monthInteractive);
             const ventasMensualesData = {
-                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                labels: monthData.map(item => item.month.substring(0, 3)+'-'+item.year),
                 datasets: [{
-                    label: 'Ventas 2023',
-                    data: [120000, 190000, 150000, 180000, 210000, 230000, 250000, 220000, 240000, 260000, 280000, 300000],
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    label: 'Ventas',
+                    data: monthData.map(item => item.amount),
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+
                     borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
+                    borderWidth: 2
                 }]
             };
 
+            // Datos para el gráfico de productos más vendidos
+            const productTop5Day = @json($global_index['productTop5Day']);
+
             const topProductosData = {
-                labels: ['Hamburguesa', 'Pizza', 'Ensalada', 'Bebida', 'Postre'],
+                labels: productTop5Day.map(item => item.name),
                 datasets: [{
                     label: 'Unidades Vendidas',
-                    data: [1200, 800, 500, 1500, 300],
+                    data: productTop5Day.map(item => item.total_quantity),
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)'
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)'
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
@@ -125,14 +364,19 @@
                 }]
             };
 
+            // Datos para el gráfico de ventas por día de la semana
+            $weekDays = @json($global_index['weekDays']);
             const ventasDiasData = {
-                labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+                labels: $weekDays.map(item => item.name+' ('+item.dateInverso+')'),
+
                 datasets: [{
                     label: 'Ventas promedio',
-                    data: [80000, 85000, 90000, 95000, 120000, 150000, 130000],
+                    data: $weekDays.map(item => item.amount),
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
                 }]
             };
 
@@ -144,14 +388,18 @@
                         data: [100000, 150000, 130000, 160000, 190000, 210000, 230000, 200000, 220000, 240000, 260000, 280000],
                         borderColor: 'rgba(201, 203, 207, 1)',
                         backgroundColor: 'rgba(201, 203, 207, 0.2)',
-                        borderWidth: 1
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
                     },
                     {
                         label: '2023',
                         data: [120000, 190000, 150000, 180000, 210000, 230000, 250000, 220000, 240000, 260000, 280000, 300000],
                         borderColor: 'rgba(54, 162, 235, 1)',
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderWidth: 1
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
                     }
                 ]
             };
@@ -160,9 +408,36 @@
             const chartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            };
+            
+            const pieChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
                     }
                 }
             };
@@ -177,7 +452,7 @@
             new Chart(document.getElementById('topProductosChart'), {
                 type: 'pie',
                 data: topProductosData,
-                options: chartOptions
+                options: pieChartOptions
             });
 
             new Chart(document.getElementById('ventasDiasChart'), {

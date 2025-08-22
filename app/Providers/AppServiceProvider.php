@@ -4,7 +4,11 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-use Illuminate\Pagination\Paginator;    
+use Illuminate\Pagination\Paginator;   
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\IndexController; 
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +31,18 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Paginator::useBootstrap();
+
+
+        View::composer('*', function ($view) {
+            $new = new IndexController();
+            $global_index = $new->IndexSystem();
+            // $global_cashier = $global_cashier->availableMoney(Auth::user()->id, 'user');
+            $view->with('global_index', $global_index->original); //Para retornar en formato json
+            // $view->with('global_index', $global_index); //Para retornar en formato de array
+        });
+
+
+
 
     }
 }
