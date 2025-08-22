@@ -82,9 +82,6 @@ class IndexController extends Controller
         // Convertir la fecha a objeto DateTime
         $fecha_obj = new DateTime($fecha);
         
-        // Obtener el número del día de la semana (0=domingo, 1=lunes, ..., 6=sábado)
-        $numero_dia = (int)$fecha_obj->format('w');
-        
         // Retroceder 6 días para empezar desde 7 días antes de la fecha dada
         $fecha_inicio = clone $fecha_obj;
         $fecha_inicio->modify("-6 days");
@@ -112,8 +109,7 @@ class IndexController extends Controller
         // calculamos el total de las ventas a día
         foreach ($resultado as $index => $dayData) {
             $amount = $sales->filter(function ($sale) use ($dayData) {
-                $saleDate = Carbon::parse($sale->created_at);
-                return $saleDate->format('Y-m-d') == $dayData['date'];
+                return $sale->created_at->format('Y-m-d') === $dayData['date'];
             })->sum('amount');
             
             $resultado[$index]['amount'] = $amount;           
@@ -195,11 +191,6 @@ class IndexController extends Controller
             
             $monthInteractive[$index]['amount'] = $amount;           
         }
-
-        $sales = Sale::with('saleDetails.itemSale')
-            ->whereNull('deleted_at')
-            ->whereDate('created_at', date('Y-m-d'))
-            ->get();
 
         // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // Para obtener el top 5 de productos del día
