@@ -199,7 +199,34 @@ class IndexController extends Controller
         // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // Para obtener las ventas del día
         $weekDays = $this->generarDiasSemana(date('Y-m-d'), $sales);
-        // dd($weekDays);
+
+
+        // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // Para obtener la cantidad total de ventas del día por tipo de pago Qr
+        $amountQrDay = $sales
+            ->where('deleted_at', null)
+            ->filter(function ($sale) {
+                return $sale->created_at->format('Y-m-d') === date("Y-m-d");
+            })
+            ->flatMap(function ($sale) {
+                return $sale->saleTransactions;
+            })
+            ->where('paymentType', 'Qr')
+            ->sum('amount');
+
+        // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // Para obtener la cantidad total de ventas del día por tipo de pago Efectivo
+        $amountEfectivoDay = $sales
+            ->where('deleted_at', null)
+            ->filter(function ($sale) {
+                return $sale->created_at->format('Y-m-d') === date("Y-m-d");
+            })
+            ->flatMap(function ($sale) {
+                return $sale->saleTransactions;
+            })
+            ->where('paymentType', 'Efectivo')
+            ->sum('amount');
+
 
 
 
@@ -213,7 +240,10 @@ class IndexController extends Controller
             'sales'=> $sales,
             'people' => $people,
             'productTop5Day' => $productTop5Day,
-            'weekDays' => $weekDays
+            'weekDays' => $weekDays,
+
+            'amountQrDay' => $amountQrDay, // total ventas del día por tipo de pago Qr
+            'amountEfectivoDay' => $amountEfectivoDay // total ventas del día por tipo de pago Efectivo
         ]);
     }
 }

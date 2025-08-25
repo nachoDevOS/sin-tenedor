@@ -121,9 +121,9 @@
                         </div>
                         <h3 class="kpi-value">$78.50</h3>
                         <p class="kpi-label">Ticket Promedio</p>
-                        <div class="kpi-trend trend-up">
+                        {{-- <div class="kpi-trend trend-up">
                             <i class="voyager-up"></i> 8.7%
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -259,7 +259,7 @@
                 </div>
             </div> --}}
 
-            <div class="col-md-12">
+            {{-- <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
                         <div class="row">
@@ -295,7 +295,7 @@
                         <div class="row" id="div-results" style="min-height: 120px"></div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 @stop

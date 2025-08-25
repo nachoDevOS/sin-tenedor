@@ -131,13 +131,13 @@ class SaleController extends Controller
                 'observation'=>$request->observation,
                 'status'=>'Entregado'
             ]);
-
+            // return $request;
             if($request->paymentType == 'Efectivo' || $request->paymentType == 'Ambos')
             {
                 SaleTransaction::create([
                     'sale_id'=>$sale->id,
                     'transaction_id'=>$transaction->id,
-                    'amount'=>$amountReceivedEfectivo,
+                    'amount'=>$request->amountTotalSale - $amountReceivedQr,
                     'paymentType'=>'Efectivo'
                 ]);
             }

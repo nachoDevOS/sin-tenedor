@@ -182,7 +182,7 @@
                                 <select name="paymentType" id="select-payment_type" class="form-control select2" required>
                                     <option value="" disabled selected>Seleccionar método de pago</option>
                                     <option value="Efectivo">Efectivo</option>
-                                    <option value="Qr">Qr/Transferencia</option>
+                                    <option value="Qr"><i class="fa-solid fa-qrcode"></i> Qr/Transferencia</option>
                                     <option value="Ambos">Ambos Metodos</option>
                                 </select>
                             </div>
@@ -197,13 +197,13 @@
 
                             <div class="form-group col-md-6">
                                 <label for="date">Monto "Efectivo"</label>
-                                <input type="number" disabled onkeyup="amountRecived()" onchange="amountRecived()" name="amountReceivedEfectivo" id="input-amountEfectivo" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto Efectivo." required>
+                                <input type="number" readonly onkeyup="amountRecived()" onchange="amountRecived()" name="amountReceivedEfectivo" id="input-amountEfectivo" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto Efectivo." required>
                             </div>
 
 
                             <div class="form-group col-md-6">
                                 <label for="date">Monto "QR"</label>
-                                <input type="number" disabled onkeyup="amountRecived()" onchange="amountRecived()" name="amountReceivedQr" id="input-amountQr" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto Qr." required>
+                                <input type="number" readonly name="amountReceivedQr" id="input-amountQr" style="text-align: right" min="0" value="0" step="0.1" class="form-control" placeholder="Monto Qr." required>
                             </div>
 
                             <div class="form-group col-md-6">
@@ -357,6 +357,29 @@
         const CLICK_DELAY = 300; // 300ms de delay entre clicks
 
         $(document).ready(function(){
+
+            // Inicializar Select2 para el select de tipo de pago con iconos (efectivo y qr)
+            $('#select-payment_type').select2({
+                templateResult: formatOption,
+                templateSelection: formatOption
+            });
+            
+            function formatOption(option) {
+                if (!option.id) return option.text;
+                
+                if (option.id === 'Efectivo') {
+                    return $('<i class="fa-solid fa-money-bill-1-wave"></i> ' + option.text + '</span>');
+                }
+                if (option.id === 'Qr') {
+                    return $('<span><i class="fa-solid fa-qrcode"></i> ' + option.text + '</span>');
+                }
+                if (option.id === 'Ambos') {
+                    return $('<span><i class="fa-solid fa-money-bill-1-wave"></i> + <i class="fa-solid fa-qrcode"></i> ' + option.text + '</span>');
+                }
+                return option.text;
+            }
+
+
             // Configurar eventos de clic para los productos
             $('.product-card').on('click', function() {
                 const now = Date.now();
@@ -388,31 +411,62 @@
         });
 
         // Limpiar los inputs de monto al hacer clic
-        $('#input-amountEfectivo').on('click', function () {
-            $('#input-amountEfectivo').val('');
+        $('#input-amountEfectivo').on('click', function () {            
+            $typeSale = $('#select-payment_type').val();
+            if($typeSale != 'Qr'){
+                $('#input-amountEfectivo').val('');
+            }
         });
-        $('#input-amountQr').on('click', function () {
-            $('#input-amountQr').val('');
-        });
+        // $('#input-amountQr').on('click', function () {
+        //     $('#input-amountQr').val('');
+        // });
 
 
         // Cambiar el estado de los inputs de monto según el tipo de pago seleccionado
         $('#select-payment_type').change(function() {
             $typeSale = $(this).val();
-            if ($typeSale === 'Efectivo') {
-                $('#input-amountEfectivo').removeAttr('disabled');
-                $('#input-amountQr').attr('disabled', true);
-                $('#input-amountQr').val(0);
-            } else if ($typeSale === 'Qr') {
-                $('#input-amountQr').removeAttr('disabled');
-                $('#input-amountEfectivo').attr('disabled', true);
-                $('#input-amountEfectivo').val(0);
-            } else {
-                $('#input-amountEfectivo').removeAttr('disabled');
-                $('#input-amountQr').removeAttr('disabled');
-            }
-            // calculateChange();
+            calculateTotal();
+
+            salectPaytmentStatus();
+
+            amountRecived();
         });
+
+        // Función para manejar el cambio en los inputs de monto
+        function salectPaytmentStatus()
+        {
+            $typeSale = $('#select-payment_type').val();
+            const total = parseFloat($('#amountTotalSale').val()) || 0;
+            if ($typeSale === 'Efectivo') {
+                $('#input-amountEfectivo').removeAttr('readonly');
+
+                $('#input-amountQr').val(0);
+                $('#input-amountQr').attr('readonly', true); // Hacer el campo de solo lectura
+                $('#input-amountQr').attr('min', 0); // Asignar el valor minimo al monto total de la venta si es por Qr la venta
+                $('#input-amountQr').attr('max', 0); // Asignar el valor máximo al monto total de la venta si es por Qr la venta
+            }
+            if ($typeSale === 'Qr') {
+                $('#input-amountEfectivo').val(0);
+                $('#input-amountEfectivo').attr('readonly', true); // Hacer el campo de solo lectura
+                $('#input-amountEfectivo').attr('min', 0); // Asignar el valor minimo al monto total de la venta si es por Qr la venta
+                $('#input-amountEfectivo').attr('max', 0); // Asignar el valor máximo al monto total de la venta si es por Qr la venta
+
+                $('#input-amountQr').val(total);
+                $('#input-amountQr').attr('readonly', true); // Hacer el campo de solo lectura
+                $('#input-amountQr').attr('min', total); // Asignar el valor minimo al monto total de la venta si es por Qr la venta
+                $('#input-amountQr').attr('max', total); // Asignar el valor máximo al monto total de la venta si es por Qr la venta
+            } 
+            if ($typeSale == 'Ambos') { // Ambos
+                $('#input-amountEfectivo').removeAttr('readonly');
+                $('#input-amountEfectivo').val(0);
+
+
+                $('#input-amountQr').val(0);
+                $('#input-amountQr').attr('readonly', true); // Hacer el campo de solo lectura
+                $('#input-amountQr').attr('min', 0); // Asignar el valor minimo al monto total de la venta si es por Qr la venta
+                $('#input-amountQr').attr('max', 0); // Asignar el valor máximo al monto total de la venta si es por Qr la venta
+            }
+        }
 
 
 
@@ -563,8 +617,9 @@
                 });
             }
             
-            // Actualizar el total
+            // Actualizar el total general
             calculateTotal();
+            calculateChange();
         }
 
         // Función para actualizar subtotal con validación de stock
@@ -611,15 +666,11 @@
             const finalTotal = total;
             
             $('#label-total').text(finalTotal.toFixed(2));
-            $('#amountTotalSale').val(finalTotal.toFixed(2));
-            
-            // Si el monto recibido actual es menor que el nuevo total, actualizarlo
-            // const currentAmount = parseFloat($('#input-amountEfectivo').val()) || 0;
-
-            // $('#input-amountEfectivo').val(finalTotal.toFixed(2));
+            $('#amountTotalSale').val(finalTotal.toFixed(2));            
             
             // Calcular el cambio nuevamente
             calculateChange();
+            salectPaytmentStatus();
         }
 
         function removeFromCart(productId) {
@@ -649,7 +700,17 @@
 
         function amountRecived() {
             const input_amountEfectivo = parseFloat($('#input-amountEfectivo').val()) || 0;
-            const input_amountQr = parseFloat($('#input-amountQr').val()) || 0;
+            // const input_amountQr = parseFloat($('#input-amountQr').val()) || 0
+            $typeSale = $('#select-payment_type').val();
+            const total = parseFloat($('#amountTotalSale').val()) || 0;
+
+            if ($typeSale == 'Ambos') { // Ambos
+                if (input_amountEfectivo > total) {
+                    $('#input-amountQr').val(0);
+                } else {
+                    $('#input-amountQr').val((total - input_amountEfectivo).toFixed(2));
+                }
+            }
             calculateChange();
         }
 
