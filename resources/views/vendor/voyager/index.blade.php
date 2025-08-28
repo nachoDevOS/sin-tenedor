@@ -78,7 +78,7 @@
                             <i class="voyager-dollar"></i>
                         </div>
                         <h3 class="kpi-value">Bs. {{number_format($amountDaytotal, 2, ',','.')}}</h3>
-                        <p class="kpi-label">Ventas Total de hoy</p>
+                        <p class="kpi-label">Ventas Total del Día</p>
                         {{-- <div class="kpi-trend trend-up">
                             <i class="voyager-up"></i> 12.5%
                         </div> --}}
@@ -92,9 +92,23 @@
                             <i class="voyager-bag"></i>
                         </div>
                         <h3 class="kpi-value">{{$saleDaytotal}}</h3>
-                        <p class="kpi-label">Pedidos Hoy</p>
+                        <p class="kpi-label">Pedidos del Día</p>
                         {{-- <div class="kpi-trend trend-up">
                             <i class="voyager-up"></i> 5.2%
+                        </div> --}}
+                    </div>
+                </div>
+            </div>            
+            <div class="col-md-3">
+                <div class="panel panel-bordered dashboard-kpi">
+                    <div class="panel-body text-center">
+                        <div class="kpi-icon">
+                            <i class="voyager-bar-chart"></i>
+                        </div>
+                        <h3 class="kpi-value">Bs. {{number_format($amountDaytotal/$saleDaytotal, 2, ',','.')}}</h3>
+                        <p class="kpi-label">Ticket Promedio</p>
+                        {{-- <div class="kpi-trend trend-up">
+                            <i class="voyager-up"></i> 8.7%
                         </div> --}}
                     </div>
                 </div>
@@ -113,31 +127,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="panel panel-bordered dashboard-kpi">
-                    <div class="panel-body text-center">
-                        <div class="kpi-icon">
-                            <i class="voyager-bar-chart"></i>
-                        </div>
-                        <h3 class="kpi-value">$78.50</h3>
-                        <p class="kpi-label">Ticket Promedio</p>
-                        {{-- <div class="kpi-trend trend-up">
-                            <i class="voyager-up"></i> 8.7%
-                        </div> --}}
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="row">
-            <!-- Gráfico de ventas mensuales -->
+            <!-- Gráfico de ventas por día de la semana -->
             <div class="col-md-6">
                 <div class="panel panel-bordered">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Ventas Mensuales</h3>
+                        <h3 class="panel-title">Ventas por Día de la Semana</h3>
                     </div>
                     <div class="panel-body">
-                        <canvas id="ventasMensualesChart" height="250"></canvas>
+                        <canvas id="ventasDiasChart" height="250"></canvas>
                     </div>
                 </div>
             </div>
@@ -156,20 +156,20 @@
         </div>
 
         <div class="row">
-            <!-- Gráfico de ventas por día de la semana -->
+            <!-- Gráfico de ventas mensuales -->
             <div class="col-md-6">
                 <div class="panel panel-bordered">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Ventas por Día de la Semana</h3>
+                        <h3 class="panel-title">Ventas Mensuales</h3>
                     </div>
                     <div class="panel-body">
-                        <canvas id="ventasDiasChart" height="250"></canvas>
+                        <canvas id="ventasMensualesChart" height="250"></canvas>
                     </div>
                 </div>
             </div>
 
             <!-- Gráfico de comparación año actual vs año anterior -->
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
                 <div class="panel panel-bordered">
                     <div class="panel-heading">
                         <h3 class="panel-title">Comparación Anual</h3>
@@ -178,7 +178,7 @@
                         <canvas id="comparacionAnualChart" height="250"></canvas>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
         
         <div class="row">
