@@ -105,7 +105,7 @@
                         <div class="kpi-icon">
                             <i class="voyager-bar-chart"></i>
                         </div>
-                        <h3 class="kpi-value">Bs. {{number_format($amountDaytotal/$saleDaytotal, 2, ',','.')}}</h3>
+                        <h3 class="kpi-value">Bs. {{$amountDaytotal? number_format($amountDaytotal/$saleDaytotal, 2, ',','.') : 0}}</h3>
                         <p class="kpi-label">Ticket Promedio</p>
                         {{-- <div class="kpi-trend trend-up">
                             <i class="voyager-up"></i> 8.7%
