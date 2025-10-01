@@ -189,9 +189,13 @@
                     let product = productSelected;
                     // alert(product.id)
                     let image = "{{ asset('images/default.jpg') }}";
-                    if(product.image){
-                        image = "{{ asset('storage') }}/"+product.image.replace('.', '-medium.');
+                    if(product.image) {
+                        const lastDotIndex = product.image.lastIndexOf('.');
+                        const baseName = lastDotIndex !== -1 ? product.image.substring(0, lastDotIndex) : product.image;
+                        image = `${window.storagePath}${baseName}-cropped.webp`;
                     }
+
+
                     if($('.table').find(`#tr-item-${product.id}`).val() === undefined){
                         $('#table-body').append(`
                             <tr class="tr-item" id="tr-item-${product.id}">
