@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class PersonController extends Controller
 {
+    public $storageController;
     public function __construct()
     {
         $this->middleware('auth');
+        $this->storageController = new StorageController();
     }
 
     public function index()
@@ -58,7 +60,6 @@ class PersonController extends Controller
         ]);
         try {
             // Si envian las imágenes
-            $storageController = new StorageController();
             Person::create([
                 'ci' => $request->ci,
                 'birth_date' => $request->birth_date,
@@ -70,7 +71,8 @@ class PersonController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'address' => $request->address,
-                'image' => $storageController->store_image($request->image, 'people'),
+                // 'image' => $storageController->store_image($request->image, 'people'),
+                'image' => $this->storageController->store_image($request->image, 'people')
             ]);
 
             DB::commit();
@@ -106,7 +108,7 @@ class PersonController extends Controller
             $person->status = $request->status=='on' ? 1 : 0;
 
             if ($request->image) {
-                $person->image = $storageController->store_image($request->image, 'people');
+                $person->image = $this->storageController->store_image($request->image, 'people');
             }
           
             

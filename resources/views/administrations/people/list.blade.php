@@ -14,31 +14,29 @@
             </thead>
             <tbody>
                 @forelse ($data as $item)
+                @php
+                    $image = asset('images/default.jpg');
+                    if($item->image){
+                        $image = asset('storage/' . str_replace('.avif', '', $item->image) . '-cropped.webp');
+                    }
+                    $now = \Carbon\Carbon::now();
+                    $birthday = new \Carbon\Carbon($item->birth_date);
+                    $age = $birthday->diffInYears($now);
+                @endphp
                 <tr>
                     <td>{{ $item->id }}</td>
                     <td>{{ $item->ci }}</td>
                     <td>
-                        <table>
-                            @php
-                                $image = asset('images/default.jpg');
-                                if($item->image){
-                                    $image = asset('storage/'.str_replace('.', '-cropped.', $item->image));
-                                }
-                                $now = \Carbon\Carbon::now();
-                                $birthday = new \Carbon\Carbon($item->birth_date);
-                                $age = $birthday->diffInYears($now);
-                            @endphp
-                            <tr>
-                                <td><img src="{{ $image }}" alt="{{ $item->first_name }} " style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px"></td>
-                                <td>
-                                    {{ strtoupper($item->first_name) }} {{ $item->middle_name??strtoupper($item->middle_name) }} {{ strtoupper($item->paternal_surname) }}  {{ strtoupper($item->maternal_surname) }} 
-                                </td>
-                            </tr>
-                        </table>
+                        <div style="display: flex; align-items: center;">
+                            <img src="{{ $image }}" alt="{{ $item->first_name }}" class="image-expandable" style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px; object-fit: cover;">
+                            <div>
+                                {{ strtoupper($item->first_name) }} {{ $item->middle_name ? strtoupper($item->middle_name) : '' }} {{ strtoupper($item->paternal_surname) }}  {{ strtoupper($item->maternal_surname) }}
+                            </div>
+                        </div>
                     </td>
                     <td style="text-align: center">
                         @if ($item->birth_date)
-                            {{ date('d/m/Y', strtotime($item->birth_date)) }} <br> <small>{{ $age }} años</small>
+                            {{ \Carbon\Carbon::parse($item->birth_date)->format('d/m/Y') }} <br> <small>{{ $age }} años</small>
                         @else
                             Sin Datos                            
                         @endif

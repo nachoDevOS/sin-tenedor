@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class ItemSaleController extends Controller
 {
+    public $storageController;
     public function __construct()
     {
         $this->middleware('auth');
+        $this->storageController = new StorageController();
     }
 
     public function index()
@@ -64,19 +66,6 @@ class ItemSaleController extends Controller
             'image' => 'image|mimes:jpeg,jpg,png,bmp,webp'
         ]);
         try {
-            // Si envian las imágenes
-            $storageController = new StorageController();
-
-            // $images = [];
-            // if ($request->images) {
-            //     $images = json_decode($request->images);
-            //     foreach ($request->images as $image) {
-            //         $image_store = $this->store_image($image, 'posts');
-            //         if($image_store){
-            //             array_push($images, $image_store);
-            //         }
-            //     }
-            // }
 
             ItemSale::create([
                 'category_id' => $request->category_id,
@@ -84,8 +73,7 @@ class ItemSaleController extends Controller
                 'price' => $request->price,
                 'typeSale' => $request->typeSale,
                 'observation' => $request->observation,
-                'image' => $storageController->store_image($request->image, 'item-sales'),
-                // 'images' => json_encode($images),
+                'image' => $this->storageController->store_image($request->image, 'item-sales')
             ]);
 
             DB::commit();
@@ -105,7 +93,6 @@ class ItemSaleController extends Controller
 
         DB::beginTransaction();
         try {
-            $storageController = new StorageController();
             
             $itemSale = ItemSale::find($id);
             $itemSale->category_id = $request->category_id;
@@ -117,21 +104,8 @@ class ItemSaleController extends Controller
 
             // Si envian el banner
             if ($request->image) {
-                $itemSale->image = $storageController->store_image($request->image, 'item-sales');
+                $itemSale->image = $this->storageController->store_image($request->image, 'item-sales');
             }
-            // return $itemSale;
-
-            // Si envian las imágenes
-            // if ($request->images) {
-            //     $images = $post->images ? json_decode($post->images) : [];
-            //     foreach ($request->images as $image) {
-            //         $image_store = $this->store_image($image, 'posts');
-            //         if($image_store){
-            //             array_push($images, $image_store);
-            //         }
-            //     }
-            //     $post->images = json_encode($images);
-            // }
             
             $itemSale->update();
 

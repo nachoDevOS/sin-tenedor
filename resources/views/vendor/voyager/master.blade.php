@@ -29,6 +29,9 @@
     <link rel="stylesheet" href="{{ asset('css/style/span.css') }}">
     {{-- <link rel="stylesheet" href="{{ asset('css/style/a.css') }}"> --}}
 
+    <link rel="stylesheet" href="{{ asset('css/image-expandable.css') }}">
+
+
 
     {{-- Para person-select --}}
     <script>
@@ -51,6 +54,19 @@
 
     <!-- App CSS -->
     <link rel="stylesheet" href="{{ voyager_asset('css/app.css') }}">
+
+    <style>
+        #voyager-loader img{
+            animation:none !important;
+            height:170px;
+            left:50%;
+            margin-left:-100px;
+            margin-right:-50px;
+            position:absolute;
+            top:40%;
+            width:200px
+        }
+    </style>
 
     @yield('css')
     @if (__('voyager::generic.is_rtl') == 'true')
@@ -96,7 +112,7 @@
     <div id="voyager-loader" style="animation: none !important;">
         <?php $admin_loader_img = Voyager::setting('admin.loader', ''); ?>
         @if ($admin_loader_img == '')
-            <img src="{{ voyager_asset('images/logo-icon.png') }}" alt="Voyager Loader">
+            <img src="{{ asset('images/loader_img.gif') }}" alt="Voyager Loader">
         @else
             <img src="{{ Voyager::image($admin_loader_img) }}" alt="Voyager Loader">
         @endif

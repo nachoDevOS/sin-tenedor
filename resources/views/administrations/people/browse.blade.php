@@ -69,7 +69,6 @@
 
 @section('css')
     <style>
-
     
     </style>
 @stop
@@ -80,21 +79,33 @@
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
     <script>
         var countPage = 10, order = 'id', typeOrder = 'desc';
+        var timeout = null;
         $(document).ready(() => {
             list();
-            
             $('#input-search').on('keyup', function(e){
                 if(e.keyCode == 13) {
+                    // Cancelar el timeout del evento input si existe
+                    clearTimeout(timeout);
                     list();
                 }
             });
 
             $('#select-paginate').change(function(){
                 countPage = $(this).val();
-               
                 list();
             });
+
+            $('#input-search').on('input', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    list();
+                }, 2000); // retardo de 2 segundos cada vez que se escribe algo en el input
+            });
         });
+
+ 
+            
+   
 
         function list(page = 1){
             $('#div-results').loading({message: 'Cargando...'});
@@ -115,8 +126,6 @@
             });
 
         }
-
-
         function deleteItem(url){
             $('#delete_form').attr('action', url);
         }

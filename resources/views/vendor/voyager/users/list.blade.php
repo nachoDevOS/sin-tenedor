@@ -14,33 +14,32 @@
             <tbody>
                 @forelse ($data as $item)
                 <tr>
-                    <td>{{ $item->id }}</td>
+                    <td>{{ $item->id }}</td> 
                     <td>
                         @if($item->person_id)
-                            <table>
-                                @php
-                                    $image = asset('images/default.jpg');
-                                    if($item->person->image){
-                                        $image = asset('storage/'.str_replace('.', '-cropped.', $item->person->image));
-                                    }
-                                @endphp
-                                <tr>
-                                    <td ><img src="{{ $image }}" alt="{{ $item->person->first_name }} " style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px"></td>
-                                    <td>
-                                        <small>CI:</small> {{$item->person->ci}} <br>
-                                        {{ strtoupper($item->person->first_name) }} {{ strtoupper($item->person->last_name) }} 
-                                    </td>
-                                </tr>
-                            </table>
+                            @php
+                                $image = asset('images/default.jpg');
+                                if($item->person->image){
+                                    $image = asset('storage/' . str_replace('.avif', '', $item->person->image) . '-cropped.webp');
+                                }
+                            @endphp
+                            <div style="display: flex; align-items: center;">
+                                <img src="{{ $image }}" alt="{{ $item->person->first_name }}" class="image-expandable" style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px; object-fit: cover;">
+                                <div>
+                                    <small>CI:</small> {{$item->person->ci}} <br>
+                                    {{ strtoupper($item->person->first_name) }} {{ strtoupper($item->person->last_name) }}
+                                </div>
+                            </div>
                         @else
                             {{$item->name}}
                         @endif
                     </td>
                     <td>{{ $item->email }}</td>
-                    @php
-                        $rol = TCG\Voyager\Models\Role::where('id', $item->role_id)->first();
-                    @endphp
-                    <td>{{ $item->role_id?$rol->name:'Sin Permiso' }}</td>
+                    <td>
+                        {{-- Se recomienda precargar la relación 'role' en el controlador para evitar consultas N+1 --}}
+                        {{-- Ejemplo en controlador: User::with('role')->paginate(); --}}
+                        {{ $item->role->name ?? 'Sin Permiso' }}
+                    </td>
                     <td style="text-align: center">
                         @if ($item->status==1)  
                             <label class="label label-success">Activo</label>

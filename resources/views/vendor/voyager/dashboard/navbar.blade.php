@@ -5,12 +5,12 @@
                 <span class="hamburger-inner"></span>
             </button>
             @section('breadcrumbs')
-            {{-- <ol class="breadcrumb hidden-xs">
+                {{-- <ol class="breadcrumb hidden-xs">
                 @php
                 $segments = array_filter(explode('/', str_replace(route('voyager.dashboard'), '', Request::url())));
                 $url = route('voyager.dashboard');
                 @endphp
-                @if(count($segments) == 0)
+                @if (count($segments) == 0)
                     <li class="active"><i class="voyager-boat"></i> {{ __('voyager::generic.dashboard') }}</li>
                 @else
                     <li class="active">
@@ -35,18 +35,16 @@
         <ul class="nav navbar-nav @if (__('voyager::generic.is_rtl') == 'true') navbar-left @else navbar-right @endif">
             @php
                 $user = App\Models\User::where('id', Auth::user()->id)->first();
-                if($user->person)
-                {
-                    if($user->person->image)
-                    {
-                        $user_avatar = asset('storage/'.str_replace('.', '-cropped.', $user->person->image));
+                if ($user->person) {
+                    if($user->person->image){
+                        $user_avatar = asset('storage/' . str_replace('.avif', '', $user->person->image) . '-cropped.webp');
                     }
                 }
             @endphp
             <li class="dropdown profile">
                 <a href="#" class="dropdown-toggle text-right" data-toggle="dropdown" role="button"
-                   aria-expanded="false"><img src="{{ $user_avatar }}" class="profile-img"> <span
-                            class="caret"></span></a>
+                    aria-expanded="false"><img src="{{ $user_avatar }}" class="profile-img"> <span
+                        class="caret"></span></a>
                 <ul class="dropdown-menu dropdown-menu-animated">
                     <li class="profile-img">
                         <img src="{{ $user_avatar }}" class="profile-img">
@@ -57,29 +55,30 @@
                     </li>
                     <li class="divider"></li>
                     <?php $nav_items = config('voyager.dashboard.navbar_items'); ?>
-                    @if(is_array($nav_items) && !empty($nav_items))
-                    @foreach($nav_items as $name => $item)
-                    <li {!! isset($item['classes']) && !empty($item['classes']) ? 'class="'.$item['classes'].'"' : '' !!}>
-                        @if(isset($item['route']) && $item['route'] == 'voyager.logout')
-                        <form action="{{ route('voyager.logout') }}" method="POST">
-                            {{ csrf_field() }}
-                            <button type="submit" class="btn btn-danger btn-block">
-                                @if(isset($item['icon_class']) && !empty($item['icon_class']))
-                                <i class="{!! $item['icon_class'] !!}"></i>
+                    @if (is_array($nav_items) && !empty($nav_items))
+                        @foreach ($nav_items as $name => $item)
+                            <li {!! isset($item['classes']) && !empty($item['classes']) ? 'class="' . $item['classes'] . '"' : '' !!}>
+                                @if (isset($item['route']) && $item['route'] == 'voyager.logout')
+                                    <form action="{{ route('voyager.logout') }}" method="POST">
+                                        {{ csrf_field() }}
+                                        <button type="submit" class="btn btn-danger btn-block">
+                                            @if (isset($item['icon_class']) && !empty($item['icon_class']))
+                                                <i class="{!! $item['icon_class'] !!}"></i>
+                                            @endif
+                                            {{ __($name) }}
+                                        </button>
+                                    </form>
+                                @else
+                                    <a href="{{ isset($item['route']) && Route::has($item['route']) ? route($item['route']) : (isset($item['route']) ? $item['route'] : '#') }}"
+                                        {!! isset($item['target_blank']) && $item['target_blank'] ? 'target="_blank"' : '' !!}>
+                                        @if (isset($item['icon_class']) && !empty($item['icon_class']))
+                                            <i class="{!! $item['icon_class'] !!}"></i>
+                                        @endif
+                                        {{ __($name) }}
+                                    </a>
                                 @endif
-                                {{__($name)}}
-                            </button>
-                        </form>
-                        @else
-                        <a href="{{ isset($item['route']) && Route::has($item['route']) ? route($item['route']) : (isset($item['route']) ? $item['route'] : '#') }}" {!! isset($item['target_blank']) && $item['target_blank'] ? 'target="_blank"' : '' !!}>
-                            @if(isset($item['icon_class']) && !empty($item['icon_class']))
-                            <i class="{!! $item['icon_class'] !!}"></i>
-                            @endif
-                            {{__($name)}}
-                        </a>
-                        @endif
-                    </li>
-                    @endforeach
+                            </li>
+                        @endforeach
                     @endif
                 </ul>
             </li>

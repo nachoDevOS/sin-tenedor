@@ -16,9 +16,11 @@ use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
+    public $storageController;
     public function __construct()
     {
         $this->middleware('auth');
+        $this->storageController = new StorageController();
     }
 
     public function index()

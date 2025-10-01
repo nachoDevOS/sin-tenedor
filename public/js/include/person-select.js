@@ -53,8 +53,15 @@ var personSelected;
 
             let image = window.defaultImage;
             
-            if(option.image){
-                image = window.storagePath+option.image.replace('.', '-cropped.');
+            // if(option.image){
+            //     image = window.storagePath+option.image.replace('.', '-cropped.');
+            // }
+
+            if (option.image) {
+                // Remove the extension and add the cropped suffix with webp extension
+                const lastDotIndex = option.image.lastIndexOf('.');
+                const baseName = lastDotIndex !== -1 ? option.image.substring(0, lastDotIndex) : option.image;
+                image = `${window.storagePath}${baseName}-cropped.webp`;
             }
 
             // let image = option.image 
