@@ -32,28 +32,19 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="text-align: center">
-                            <table>
-                                <tr>
-                                    <th>Dispensación</th>
-                                    <td>
-                                        {{ $item->dispensingType }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Stock</th>
-                                    <td>
-                                        @if ($item->itemInventoryStocks->sum('stock') == 0)
-                                            <del
-                                                style="color: red">{{ number_format($item->itemInventoryStocks->sum('stock'), 2, ',', '.') }}</del>
-                                        @else
-                                            {{ number_format($item->itemInventoryStocks->sum('stock'), 2, ',', '.') }}
-                                        @endif
-                                    </td>
-                                </tr>
-                            </table>
-
-
+                        <td>
+                            <div>
+                                <small>DISPENSACIÓN:</small> {{ $item->dispensingType }}
+                            </div>
+                            <div>
+                                <small>STOCK:</small>
+                                @if ($item->itemInventoryStocks->sum('stock') == 0)
+                                    <b style="color: red;">{{ number_format($item->itemInventoryStocks->sum('stock'), 2, ',', '.') }}</b>
+                                @else
+                                    <b>{{ number_format($item->itemInventoryStocks->sum('stock'), 2, ',', '.') }}</b>
+                                @endif
+                            </div>
+                        </td>
                         <td> {{ $item->observation }}</td>
 
                         <td style="text-align: center">
