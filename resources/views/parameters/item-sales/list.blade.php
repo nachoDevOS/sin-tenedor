@@ -31,36 +31,24 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="text-align: center">
-                            <table>
-                                <tr>
-                                    <th>Precio</th>
-                                    <td>
-                                        Bs. {{ number_format($item->price, 2, ',', '.') }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <td>
-                                        {{ $item->typeSale }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Stock</th>
-                                    <td>
-                                        @if ($item->typeSale == 'Venta Con Stock')
-                                            @if ($item->itemSalestocks->sum('stock') == 0)
-                                                <del
-                                                    style="color: red">{{ number_format($item->itemSalestocks->sum('stock'), 2, ',', '.') }}</del>
-                                            @else
-                                                {{ number_format($item->itemSalestocks->sum('stock'), 2, ',', '.') }}
-                                            @endif
-                                        @else
-                                            {{ $item->typeSale }}
-                                        @endif
-                                    </td>
-                                </tr>
-                            </table>
+                        <td>
+                            <div>
+                                <small>PRECIO:</small> <b>Bs. {{ number_format($item->price, 2, ',', '.') }}</b>
+                            </div>
+                            <div>
+                                <small>TIPO:</small> {{ $item->typeSale }}
+                            </div>
+                            <div>
+                                <small>STOCK:</small>
+                                @if ($item->typeSale == 'Venta Con Stock')
+                                    @if ($item->itemSalestocks->sum('stock') == 0)
+                                        <b style="color: red;">{{ number_format($item->itemSalestocks->sum('stock'), 2, ',', '.') }}</b>
+                                    @else
+                                        <b>{{ number_format($item->itemSalestocks->sum('stock'), 2, ',', '.') }}</b>
+                                    @endif
+                                @endif
+                            </div>
+                        </td>
 
 
                         <td> {{ $item->observation }}</td>
