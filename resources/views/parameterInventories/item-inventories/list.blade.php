@@ -58,13 +58,13 @@
                             @if (auth()->user()->hasPermission('read_item_inventories'))
                                 <a href="{{ route('voyager.item-inventories.show', ['id' => $item->id]) }}"
                                     title="Ver" class="btn btn-sm btn-warning view">
-                                    <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>
+                                    <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm"></span>
                                 </a>
                             @endif
                             @if (auth()->user()->hasPermission('edit_item_inventories'))
                                 <a href="{{ route('voyager.item-inventories.edit', ['id' => $item->id]) }}"
                                     title="Editar" class="btn btn-sm btn-primary edit">
-                                    <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm">Editar</span>
+                                    <i class="voyager-edit"></i> <span class="hidden-xs hidden-sm"></span>
                                 </a>
                             @endif
                             @if (auth()->user()->hasPermission('delete_item_inventories'))
@@ -72,7 +72,7 @@
                                     onclick="deleteItem('{{ route('voyager.item-inventories.destroy', ['id' => $item->id]) }}')"
                                     title="Eliminar" data-toggle="modal" data-target="#modal-delete"
                                     class="btn btn-sm btn-danger delete">
-                                    <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Eliminar</span>
+                                    <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm"></span>
                                 </a>
                             @endif
                         </td>
