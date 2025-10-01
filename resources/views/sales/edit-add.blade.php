@@ -26,61 +26,44 @@
 @stop
 
 @section('content')
-    <div class="page-content edit-add container-fluid">
+    <div class="page-content edit-add container-fluid" id="sale-pos-container">
         <form id="form-sale" action="{{ route('sales.store') }}" method="post">
             @csrf
             <div class="row">
-                <div class="col-md-7">
+                {{-- Products Section --}}
+                <div class="col-md-7 col-sm-12" id="products-container">
                     <div class="panel panel-bordered">
                         <div class="panel-body" style="padding: 0px">
+                            <div class="row">
+                                <div class="col-md-12" style="padding: 10px 25px;">
+                                    <input type="text" id="input-search-products" class="form-control" placeholder="Buscar producto...">
+                                </div>
+                            </div>
                             <ul class="nav nav-tabs" role="tablist">
                                 <li role="presentation" class="active">
                                     <a href="#tab-all" aria-controls="tab-all" role="tab" data-toggle="tab">Todos</a>
                                 </li>
                                 @foreach ($categories as $category)
                                     <li role="presentation">
-                                        <a href="#tab-{{ $category->id }}" aria-controls="tab-{{ $category->id }}" role="tab" data-toggle="tab">
-                                            {{ $category->name }}
-                                        </a>
+                                        <a href="#tab-{{ $category->id }}" aria-controls="tab-{{ $category->id }}" role="tab" data-toggle="tab">{{ $category->name }}</a>
                                     </li>
                                 @endforeach
                             </ul>
             
-                            <div class="tab-content" style="padding: 15px">
+                            <div class="tab-content" style="padding: 15px; height: calc(100vh - 250px); overflow-y: auto;">
+                                @php
+                                    $all_products = $categories->flatMap(function ($category) {
+                                        return $category->itemSales;
+                                    });
+                                @endphp
                                 <!-- Tab Todos los productos -->
                                 <div role="tabpanel" class="tab-pane active" id="tab-all">
                                     <div class="row">
-                                        @foreach ($categories as $category)
-                                            @foreach ($category->itemSales as $product)
-                                                @php
-                                                    $cantStock = $product->itemSalestocks->sum('stock');
-                                                @endphp
-                                                <div class="col-md-3 mb-3">
-                                                    <div class="product-card" data-product-id="{{ $product->id }}" data-type-sale="{{ $product->typeSale }}">
-                                                        @php
-                                                            $image = asset('images/default.jpg');
-                                                            if($product->image){
-                                                                $image = asset('storage/'.$product->image);
-                                                            }
-                                                        @endphp
-                                                        <img src="{{ $image }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
-                                                        <div class="product-info">
-                                                            <h5>{{ $product->name }}</h5>
-                                                            <p class="text-success">Bs. {{ number_format($product->price, 2, ',', '.') }}</p>
-                                                            @if ($product->typeSale == 'Venta Con Stock')                                                                
-                                                                @if ($cantStock==0)
-                                                                    Stock: <small style="color: red !important;"> {{ number_format($cantStock, 2,',','.') }}</small>
-                                                                @else
-                                                                    Stock: <small> {{ number_format($cantStock, 2,',','.') }}</small>
-                                                                @endif
-                                                            @else
-                                                                <small class="type-sale">Venta Sin Stock</small>
-                                                            @endif                                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        @endforeach
+                                        @forelse ($all_products as $product)
+                                            @include('sales.partials.product-card', ['product' => $product])
+                                        @empty
+                                            <div class="col-md-12"><p class="text-center">No hay productos disponibles.</p></div>
+                                        @endforelse
                                     </div>
                                 </div>
             
@@ -88,35 +71,11 @@
                                 @foreach ($categories as $category)
                                     <div role="tabpanel" class="tab-pane" id="tab-{{ $category->id }}">
                                         <div class="row">
-                                            @foreach ($category->itemSales as $product)
-                                                @php
-                                                    $cantStock = $product->itemSalestocks->sum('stock');
-                                                @endphp
-                                                <div class="col-md-3 mb-3">
-                                                    <div class="product-card" data-product-id="{{ $product->id }}" data-type-sale="{{ $product->typeSale }}">
-                                                        @php
-                                                            $image = asset('images/default.jpg');
-                                                            if($product->image){
-                                                                $image = asset('storage/'.$product->image);
-                                                            }
-                                                        @endphp
-                                                        <img src="{{ $image }}" class="img-responsive" style="height: 100px; width: 100%; object-fit: cover">
-                                                        <div class="product-info">
-                                                            <h5>{{ $product->name }}</h5>
-                                                            <p class="text-success">Bs. {{ number_format($product->price, 2, ',', '.') }}</p>
-                                                            @if ($product->typeSale == 'Venta Con Stock')                                                                
-                                                                @if ($cantStock==0)
-                                                                    Stock: <small style="color: red !important"> {{ number_format($cantStock, 2,',','.') }}</small>
-                                                                @else
-                                                                    Stock: <small> {{ number_format($cantStock, 2,',','.') }}</small>
-                                                                @endif
-                                                            @else
-                                                                <small class="type-sale">Venta Sin Stock</small>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
+                                            @forelse ($category->itemSales as $product)
+                                                @include('sales.partials.product-card', ['product' => $product])
+                                            @empty
+                                                <div class="col-md-12"><p class="text-center">No hay productos en esta categoría.</p></div>
+                                            @endforelse
                                         </div>
                                     </div>
                                 @endforeach
@@ -124,28 +83,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-5">
+
+                {{-- Cart Section (Desktop) --}}
+                <div class="col-md-5 hidden-xs hidden-sm" id="cart-container">
                     <div class="panel panel-bordered">
-                        <div class="panel-body" style="padding: 10px 0px">
-                            <div class="col-md-12" style="height: 350px; max-height: 350px; overflow-y: auto">
+                        <div class="panel-body" style="padding: 10px 0px; display: flex; flex-direction: column; height: calc(100vh - 140px);">
+                            {{-- Cart Items --}}
+                            <div id="cart-items" style="height: 45vh; overflow-y: auto; padding: 0 15px;">
                                 <div class="table-responsive">
-                                    <table id="dataTable" class="table table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 30px">N&deg;</th>
-                                                <th>Detalles</th>
-                                                <th style="text-align: center; width:15%">Precio</th>
-                                                <th style="text-align: center; width:12%">Cantidad</th>
-                                                <th style="text-align: center; width:10%">Subtotal</th>
-                                                <th style="width: 25px"></th>
-                                            </tr>
-                                        </thead>
+                                    <table id="dataTable" class="table table-hover">
                                         <tbody id="table-body">
                                             <tr id="tr-empty">
-                                                <td colspan="7" style="height: 280px">
+                                                <td colspan="4" style="height: 280px">
                                                     <h4 class="text-center text-muted" style="margin-top: 80px">
                                                         <i class="glyphicon glyphicon-shopping-cart" style="font-size: 50px"></i> <br><br>
-                                                        Lista de venta vacía
+                                                        El carrito está vacío
                                                     </h4>
                                                 </td>
                                             </tr>
@@ -153,6 +105,9 @@
                                     </table>
                                 </div>
                             </div>
+
+                            {{-- Cart Summary and Actions --}}
+                            <div id="cart-summary" style="padding: 0 15px; flex-grow: 1; overflow-y: auto;">
                             <div class="form-group col-md-12">
                                 <label for="observation">Detalle / Observación</label>
                                 <textarea name="observation" id="observation" class="form-control" rows="3"></textarea>
@@ -163,7 +118,7 @@
                                 <div class="input-group">
                                     <select name="person_id" id="select-person_id" class="form-control"></select>
                                     <span class="input-group-btn">
-                                        <button id="trash-person" class="btn btn-danger" title="Quitar Clientes" data-toggle="modal" style="margin: 0px" type="button">
+                                        <button id="trash-person" class="btn btn-default" title="Quitar Cliente" style="margin: 0px" type="button">
                                             <i class="voyager-trash"></i>
                                         </button>
                                         <button class="btn btn-primary" title="Nuevo cliente" data-target="#modal-create-person" data-toggle="modal" style="margin: 0px" type="button">
@@ -172,10 +127,6 @@
                                     </span>
                                 </div>
                             </div>
-                            {{-- <div class="form-group col-md-12">
-                                <label for="input-dni">NIT/CI</label>
-                                <input type="text" name="dni" id="input-dni" disabled value="" class="form-control" placeholder="NIT/CI">
-                            </div> --}}
  
                             <div class="form-group col-md-6">
                                 <label for="payment_type">Método de pago</label>
@@ -218,9 +169,9 @@
                             </div>
                             <div class="form-group col-md-12 text-center">
                                 <button type="button" id="btn-submit" class="btn btn-primary btn-block" data-toggle="modal" data-target="#modal-confirm">Vender <i class="voyager-basket"></i></button>
-                               
-                                <a href="{{ route('sales.index') }}" >Volver a la lista</a>
                             </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -234,18 +185,6 @@
                             <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                             <h4 class="modal-title" style="color:rgb(255, 255, 255) !important"><i class="fa-solid fa-cart-shopping"></i> ¿Estás seguro que quieres registrar?</h4>
                         </div>
-                        <div class="modal-body">
-                         
-
-                            {{-- <div class="form-group">
-                                <label for="typeSale">Tipo de venta</label>
-                                <select name="typeSale" id="typeSale" class="form-control select2" required>
-                                    <option value="" disabled selected>--Seleccione una opción--</option>
-                                    <option value="Mesa">Para Mesa</option>
-                                    <option value="Llevar">Para LLevar</option>
-                                </select>
-                            </div> --}}
-                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                             <input type="submit" class="btn btn-primary btn-confirm" id="btn-confirm" value="Confirmar venta">
@@ -256,74 +195,143 @@
         </form>
     </div>
 
+    {{-- Botón flotante para carrito en móviles --}}
+    <div id="mobile-cart-button" class="hidden-md hidden-lg">
+        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#modal-cart-mobile">
+            <i class="glyphicon glyphicon-shopping-cart"></i> Ver Carrito (<span id="mobile-cart-count">0</span>) - Bs. <span id="mobile-cart-total">0.00</span>
+        </button>
+    </div>
+
+    <!-- Modal Carrito para Móviles -->
+    <div class="modal fade" id="modal-cart-mobile" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Carrito de Compras</h4>
+                </div>
+                <div class="modal-body" id="mobile-cart-content" style="padding: 0;"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal crear cliente -->
     @include('partials.modal-registerPerson')
 @stop
 
 @section('css')
     <style>
+        #sale-pos-container {
+            height: calc(100vh - 120px);
+            overflow: hidden;
+        }
+        #products-container, #cart-container, #products-container .panel, #cart-container .panel {
+            height: calc(100vh - 120px);
+            height: 100%;
+            margin-bottom: 0;
+        }
         .product-card {
             border: 1px solid #ddd;
             border-radius: 4px;
-            padding: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #fff;
+            overflow: hidden;
         }
-
         .product-card:hover {
-            border-color: #3c8dbc;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-
+        .product-card.out-of-stock {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .product-card.out-of-stock::after {
+            content: 'Agotado';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(217, 83, 79, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .product-card img {
+            height: 100px;
+            width: 100%;
+            object-fit: cover;
+        }
         .product-info {
-            padding: 5px 0;
+            padding: 10px;
+            flex-grow: 1;
         }
-
         .product-info h5 {
             margin: 5px 0;
             font-size: 14px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-weight: 600;
         }
-
         .product-info p {
             margin: 0;
             font-weight: bold;
         }
-
         .nav-tabs {
             background: #f5f5f5;
             padding-left: 15px;
         }
-
-        .nav-tabs > li > a {
-            border-radius: 0;
-            border: none;
-            color: #555;
-            padding: 12px 20px;
-            font-weight: 600;
-        }
-
-        .nav-tabs > li.active > a {
-            background: #fff;
-            color: #3c8dbc;
-            border-bottom: 2px solid #3c8dbc;
-        }
-
         .form-group {
             margin-bottom: 10px !important;
         }
-
-        .input-price, .input-quantity {
-            width: 80px;
-            margin: 0 auto;
-            text-align: right;
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .subtotal {
-            font-weight: bold;
+        .quantity-control .form-control {
+            text-align: center;
+            width: 50px;
+            border-left: none;
+            border-right: none;
+            border-radius: 0;
+        }
+        .cart-item-details {
+            display: flex;
+            align-items: center;
+        }
+        .cart-item-details img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        #mobile-cart-button {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1050;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-top: 1px solid #ddd;
+        }
+        @media (max-width: 991px) {
+            #products-container .tab-content {
+                height: calc(100vh - 300px); /* Ajustar altura para dejar espacio al botón flotante */
+            }
+            #modal-cart-mobile .panel {
+                height: auto; /* Anular la altura fija del panel dentro del modal */
+                border: none;
+                box-shadow: none;
+            }
         }
     </style>
 @stop
@@ -380,8 +388,8 @@
             }
 
 
-            // Configurar eventos de clic para los productos
-            $('.product-card').on('click', function() {
+            // Configurar eventos de clic para los productos (excluyendo los agotados)
+            $('.product-card:not(.out-of-stock)').on('click', function() {
                 const now = Date.now();
                 if (now - lastClickTime < CLICK_DELAY) return;
                 lastClickTime = now;
@@ -401,11 +409,32 @@
                 $(this).find('.btn-confirm').removeAttr('disabled');
                 $(this).find('.btn-confirm').val('Confirmar venta');
             });
+
+            // Buscador de productos
+            $('#input-search-products').on('keyup', function() {
+                let value = $(this).val().toLowerCase();
+                $('.product-card-wrapper').filter(function() {
+                    let productName = $(this).find('h5').text().toLowerCase();
+                    let parentDiv = $(this).parent();
+                    let matches = productName.indexOf(value) > -1;
+                    parentDiv.toggle(matches);
+                });
+            });
+
+            // Mover el contenido del carrito al modal en vista móvil
+            if ($(window).width() < 992) {
+                $('#cart-container .panel-body').appendTo('#mobile-cart-content');
+                // Ajustar altura para el modal
+                $('#mobile-cart-content #cart-items').css('height', '40vh');
+                $('#mobile-cart-content #cart-summary').css('height', 'auto');
+            }
+
+
         });
 
         $('#trash-person').on('click', function () {
             // $('#input-dni').val('');
-            $('#select-person_id').val('').trigger('change');
+            $('#select-person_id').val(null).trigger('change');
                        
             toastr.success('Cliente eliminado', 'Eliminado');
         });
@@ -556,11 +585,11 @@
             
             if(Object.keys(cart).length === 0) {
                 $tableBody.append(`
-                    <tr id="tr-empty">
-                        <td colspan="7" style="height: 240px">
-                            <h4 class="text-center text-muted" style="margin-top: 50px">
+                    <tr id="tr-empty" >
+                        <td colspan="4" style="height: 280px">
+                            <h4 class="text-center text-muted" style="margin-top: 80px">
                                 <i class="glyphicon glyphicon-shopping-cart" style="font-size: 50px"></i> <br><br>
-                                Lista de venta vacía
+                                El carrito está vacío
                             </h4>
                         </td>
                     </tr>
@@ -574,55 +603,76 @@
                     const availableStock = product.typeSale === "Venta Con Stock" ? getStock(productId) : 9999;
                     const subtotal = product.price * product.quantity;
                     total += subtotal;
+
+                    let image = product.image ? product.image.replace('.jpg', '-cropped.webp').replace('.png', '-cropped.webp') : '{{ asset('images/default.jpg') }}';
                     
                     $tableBody.append(`
                         <tr class="tr-item" id="tr-item-${productId}">
-                            <td class="td-item">${counter++}</td>
-                            <td>
-                                <b>${product.name}</b> <br>
-                                ${product.typeSale === "Venta Con Stock" ? `<small class="text-muted">Disponible: ${availableStock}</small>` : ''}
+                            <td style="width:120px">
+                                <div class="quantity-control">
+                                    <button type="button" class="btn btn-default btn-sm" onclick="updateQuantity(${productId}, -1)">-</button>
+                                    <input type="number" name="products[${productId}][quantity]" class="form-control input-quantity" 
+                                        value="${product.quantity}" min="1" max="${availableStock}" step="1" required onchange="updateQuantity(${productId}, 0, this.value)">
+                                    <button type="button" class="btn btn-default btn-sm" onclick="updateQuantity(${productId}, 1)">+</button>
+                                </div>
+                            </td>
+                            <td class="cart-item-details">
+                                <img src="${image}" alt="${product.name}">
+                                <div>
+                                    <b>${product.name}</b> <br>
+                                    <small class="text-muted">Bs. ${product.price.toFixed(2)}</small>
+                                </div>
                                 <input type="hidden" name="products[${productId}][id]" value="${productId}">
                                 <input type="hidden" name="products[${productId}][name]" value="${product.name}">
                                 <input type="hidden" name="products[${productId}][typeSale]" value="${product.typeSale}">
-                            </td>
-                            <td style="text-align: right">
                                 <input type="number" name="products[${productId}][price]" class="form-control input-price" readonly
-                                    value="${product.price.toFixed(2)}" min="0.01" step="0.01" required>
+                                    value="${product.price.toFixed(2)}" min="0.01" step="0.01" required style="display:none;">
                             </td>
-                            <td>
-                                <input type="number" name="products[${productId}][quantity]" class="form-control input-quantity" 
-                                    value="${product.quantity}" min="1" max="${availableStock}" step="1" required>
-                                    
-                            </td>
-                            <td class="text-right subtotal">${subtotal.toFixed(2)}</td>
-                            <td class="text-right" style="padding: 8px; text-align: right;">
-                                <button type="button" onclick="removeFromCart(${productId})"  title="Quitar" style="background-color: transparent; border: none;">
+                            <td class="text-right subtotal" style="width: 80px"><b>${subtotal.toFixed(2)}</b></td>
+                            <td class="text-right" style="width: 40px; padding: 8px; text-align: right;">
+                                <button type="button" onclick="removeFromCart(${productId})" title="Quitar" class="btn btn-link btn-sm">
                                     <i class="voyager-trash text-danger"></i>
                                 </button>
                             </td>
                         </tr>
                     `);
                 }
-                
-                // Configurar eventos para actualizar subtotales
-                $('.input-quantity').on('change keyup', function() {
-                    const $input = $(this);
-                    const newQuantity = parseInt($input.val()) || 0;
-                    const maxStock = parseInt($input.attr('max')) || 0;
-                    
-                    if (newQuantity > maxStock) {
-                        toastr.warning(`No hay suficiente stock. Disponible: ${maxStock}`, 'Stock insuficiente');
-                        $input.val(maxStock);
-                    }
-                    
-                    updateSubtotal($(this).closest('tr'));
-                    calculateTotal();
-                });
             }
             
             // Actualizar el total general
             calculateTotal();
             calculateChange();
+
+            // Actualizar contador del botón flotante
+            const itemCount = Object.keys(cart).length;
+            $('#mobile-cart-count').text(itemCount);
+
+        }
+
+        function updateQuantity(productId, change, directValue = null) {
+            if (!cart[productId]) return;
+
+            let newQuantity;
+            if (directValue !== null) {
+                newQuantity = parseInt(directValue);
+            } else {
+                newQuantity = cart[productId].quantity + change;
+            }
+
+            const availableStock = cart[productId].typeSale === "Venta Con Stock" ? getStock(productId) : 9999;
+
+            if (newQuantity <= 0) {
+                removeFromCart(productId);
+                return;
+            }
+
+            if (newQuantity > availableStock) {
+                toastr.warning(`No hay suficiente stock. Disponible: ${availableStock}`, 'Stock insuficiente');
+                newQuantity = availableStock;
+            }
+
+            cart[productId].quantity = newQuantity;
+            updateCartTable();
         }
 
         // Función para actualizar subtotal con validación de stock
@@ -663,13 +713,14 @@
         function calculateTotal() {
             let total = 0;            
             $('.subtotal').each(function() {
-                total += parseFloat($(this).text());
+                total += parseFloat($(this).text().replace(/,/g, ''));
             });
             
             const finalTotal = total;
             
             $('#label-total').text(finalTotal.toFixed(2));
             $('#amountTotalSale').val(finalTotal.toFixed(2));            
+            $('#mobile-cart-total').text(finalTotal.toFixed(2));
             
             // Calcular el cambio nuevamente
             calculateChange();
@@ -686,18 +737,12 @@
     
         function getProductById(productId) {
             const $productCard = $(`.product-card[data-product-id="${productId}"]`);
-            let productName = $productCard.find('h5').text().trim();
-            
-            const middle = Math.floor(productName.length / 2);
-            if (productName.substring(0, middle) === productName.substring(middle)) {
-                productName = productName.substring(0, middle);
-            }
-            
+            if (!$productCard.length) return null;
             return {
                 id: productId,
-                name: productName,
-                price: parseFloat($productCard.find('.text-success').text().replace('Bs. ', '')),
-                image: $productCard.find('img').attr('src') || null
+                name: $productCard.find('h5').first().text().trim(),
+                price: parseFloat($productCard.find('.text-success').text().replace('Bs. ', '').replace(',', '.')),
+                image: $productCard.find('img').attr('src')
             };
         }
 
