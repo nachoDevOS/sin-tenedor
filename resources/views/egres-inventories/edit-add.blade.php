@@ -246,8 +246,14 @@
                 return '<span class="text-center"><i class="fas fa-spinner fa-spin"></i> Buscando...</span>';
             }
             let image = "{{ asset('images/default.jpg') }}";
-            if(option.image){
-                image = "{{ asset('storage') }}/"+option.image.replace('.', '-medium.');
+            // if(option.image){
+            //     image = "{{ asset('storage') }}/"+option.image.replace('.', '-medium.');
+            // }
+
+            if (option.image) {
+                const lastDotIndex = option.image.lastIndexOf('.');
+                const baseName = lastDotIndex !== -1 ? option.image.substring(0, lastDotIndex) : option.image;
+                image = `${window.storagePath}${baseName}-cropped.webp`;
             }
 
                 // Mostrar las opciones encontradas

@@ -18,20 +18,19 @@
                     <td>{{ $item->code }}</td>
                     <td>
                         @if ($item->person)
-                            <table>
-                                @php
-                                    $image = asset('images/default.jpg');
-                                    if($item->person->image){
-                                        $image = asset('storage/'.str_replace('.', '-cropped.', $item->person->image));
-                                    }
-                                @endphp
-                                <tr>
-                                    <td><img src="{{ $image }}" alt="{{ $item->person->first_name }} " style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px"></td>
-                                    <td>
-                                        {{ strtoupper($item->person->first_name) }} {{ $item->person->middle_name??strtoupper($item->person->middle_name) }} {{ strtoupper($item->person->paternal_surname) }}  {{ strtoupper($item->person->maternal_surname) }} 
-                                    </td>
-                                </tr>
-                            </table>
+                            @php
+                                $image = asset('images/default.jpg');
+                                if ($item->person->image) {
+                                    $image = asset('storage/' . str_replace('.avif', '', $item->person->image) . '-cropped.webp');
+                                }
+                            @endphp
+                            <div style="display: flex; align-items: center;">
+                                <img src="{{ $image }}" alt="{{ $item->person->first_name }}" class="image-expandable"
+                                    style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px; object-fit: cover;">
+                                <div>
+                                    {{ strtoupper($item->person->first_name) }} {{ $item->person->middle_name??strtoupper($item->person->middle_name) }} {{ strtoupper($item->person->paternal_surname) }}  {{ strtoupper($item->person->maternal_surname) }} 
+                                </div>
+                            </div>
                         @else
                             Sin Datos 
                         @endif                        

@@ -63,10 +63,6 @@ var personSelected;
                 const baseName = lastDotIndex !== -1 ? option.image.substring(0, lastDotIndex) : option.image;
                 image = `${window.storagePath}${baseName}-cropped.webp`;
             }
-
-            // let image = option.image 
-            //     ? `${window.storagePath}${option.image.replace('.', '-cropped.')}`
-            //     : window.defaultImage;
             return $(`  
                         <div style="display: flex">
                             <div style="margin: 0px 10px">
