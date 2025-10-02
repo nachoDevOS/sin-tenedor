@@ -369,7 +369,8 @@
             // Inicializar Select2 para el select de tipo de pago con iconos (efectivo y qr)
             $('#select-payment_type').select2({
                 templateResult: formatOption,
-                templateSelection: formatOption
+                templateSelection: formatOption,
+                width: '100%'
             });
             
             function formatOption(option) {
