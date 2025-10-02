@@ -370,6 +370,13 @@
             $('#select-payment_type').select2({
                 templateResult: formatOption,
                 templateSelection: formatOption,
+                dropdownParent: $('#modal-cart-mobile'),
+                width: '100%'
+            });
+
+            // Solución para que el buscador funcione dentro de un modal en móviles
+            $('#typeSale').select2({
+                dropdownParent: $('#modal-cart-mobile'),
                 width: '100%'
             });
             
