@@ -379,6 +379,14 @@
                 dropdownParent: $('#modal-cart-mobile'),
                 width: '100%'
             });
+
+            
+
+
+           
+
+            
+
             
             function formatOption(option) {
                 if (!option.id) return option.text;

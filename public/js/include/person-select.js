@@ -2,7 +2,6 @@ var personSelected;
         $(document).ready(function(){
             $('#select-person_id').select2({
                 width: '100%',
-                dropdownParent: $('#modal-cart-mobile'),
                 placeholder: '<i class="fa fa-search"></i> Buscar...',
                 escapeMarkup : function(markup) {
                     return markup;
