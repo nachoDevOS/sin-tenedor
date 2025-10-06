@@ -92,7 +92,7 @@
                             <div id="cart-items" style="height: 45vh; overflow-y: auto; padding: 0 15px;">
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
-                                        <tbody id="table-body">
+                                        <tbody id="table-body" class="cart-items-list">
                                             <tr id="tr-empty">
                                                 <td colspan="4" style="height: 280px">
                                                     <h4 class="text-center text-muted" style="margin-top: 80px">
@@ -110,7 +110,7 @@
                             <div id="cart-summary" style="padding: 0 15px; flex-grow: 1; overflow-y: auto;">
                             <div class="form-group col-md-12">
                                 <label for="observation">Detalle / Observación</label>
-                                <textarea name="observation" id="observation" class="form-control" rows="3"></textarea>
+                                <textarea name="observation" id="observation" class="form-control" rows="2"></textarea>
                             </div>
 
                             <div class="form-group col-md-12">
@@ -332,6 +332,19 @@
                 border: none;
                 box-shadow: none;
             }
+        }
+
+        @keyframes flash-total {
+            0% { transform: scale(1); background-color: transparent; }
+            50% { transform: scale(1.1); background-color: #fffbe6; }
+            100% { transform: scale(1); background-color: transparent; }
+        }
+
+        .total-updated {
+            display: inline-block;
+            padding: 0 5px;
+            border-radius: 5px;
+            animation: flash-total 0.6s ease-out;
         }
     </style>
 @stop
@@ -601,7 +614,7 @@
             
             if(Object.keys(cart).length === 0) {
                 $tableBody.append(`
-                    <tr id="tr-empty" >
+                    <tr id="tr-empty">
                         <td colspan="4" style="height: 280px">
                             <h4 class="text-center text-muted" style="margin-top: 80px">
                                 <i class="glyphicon glyphicon-shopping-cart" style="font-size: 50px"></i> <br><br>
@@ -624,7 +637,7 @@
                     
                     $tableBody.append(`
                         <tr class="tr-item" id="tr-item-${productId}">
-                            <td style="width:120px">
+                            <td style="width:130px">
                                 <div class="quantity-control">
                                     <button type="button" class="btn btn-default btn-sm" onclick="updateQuantity(${productId}, -1)">-</button>
                                     <input type="number" name="products[${productId}][quantity]" class="form-control input-quantity" 
@@ -633,6 +646,9 @@
                                 </div>
                             </td>
                             <td class="cart-item-details">
+                                <button type="button" onclick="removeFromCart(${productId})" title="Quitar" class="btn btn-link btn-sm remove-item-btn">
+                                    <i class="voyager-x"></i>
+                                </button>
                                 <img src="${image}" alt="${product.name}">
                                 <div>
                                     <b>${product.name}</b> <br>
@@ -645,11 +661,6 @@
                                     value="${product.price.toFixed(2)}" min="0.01" step="0.01" required style="display:none;">
                             </td>
                             <td class="text-right subtotal" style="width: 80px"><b>${subtotal.toFixed(2)}</b></td>
-                            <td class="text-right" style="width: 40px; padding: 8px; text-align: right;">
-                                <button type="button" onclick="removeFromCart(${productId})" title="Quitar" class="btn btn-link btn-sm">
-                                    <i class="voyager-trash text-danger"></i>
-                                </button>
-                            </td>
                         </tr>
                     `);
                 }
@@ -738,6 +749,13 @@
             $('#amountTotalSale').val(finalTotal.toFixed(2));            
             $('#mobile-cart-total').text(finalTotal.toFixed(2));
             
+            // Animar el total
+            const $totalElements = $('#label-total, #mobile-cart-total');
+            $totalElements.addClass('total-updated');
+            setTimeout(() => {
+                $totalElements.removeClass('total-updated');
+            }, 600); // Duración de la animación en ms
+
             // Calcular el cambio nuevamente
             calculateChange();
             salectPaytmentStatus();
