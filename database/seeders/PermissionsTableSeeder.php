@@ -53,6 +53,24 @@ class PermissionsTableSeeder extends Seeder
         // Permission::generateFor('posts');
         // Permission::generateFor('pages');
 
+        $permissions = [
+            'browse_vaults'=>'Ver bovedas',
+            'add_vaults'=>'Agregar bovedas',
+            'open_vaults'=> 'Abrir bovedas',
+            'movements_vaults' => 'Movimientos en bovedas',
+            'close_vaults' => 'Cerrar bovedas',
+            'print_vaults' => 'Imprimir reporte de bovedas',
+        ];
+
+        foreach ($permissions as $key => $description) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'keyDescription'=> $description,
+                'table_name' => 'vaults',
+                'tableDescription'=>'Bovedas'
+            ]);
+        }
+
 
         //##################### Ventas  ##########################
 

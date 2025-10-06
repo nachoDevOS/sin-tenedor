@@ -14,6 +14,7 @@ use App\Http\Controllers\ReportSaleController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\VaultController;
 use App\Models\EgresInventory;
 use App\Models\EgresInventoryDetail;
 
@@ -43,6 +44,17 @@ Route::get('/info/{id?}', [ErrorController::class , 'error'])->name('errors');
 
 Route::group(['prefix' => 'admin', 'middleware' => ['loggin', 'system']], function () {
     Voyager::routes();
+
+
+    Route::resource('vaults', VaultController::class);
+
+    Route::post('vaults/{id}/details/store', [VaultController::class, 'details_store'])->name('vaults.details.store');//***para agregar ingreso y egreso a la boveda
+    Route::post('vaults/{id}/open', [VaultController::class, 'open'])->name('vaults.open');
+    Route::get('vaults/{id}/close', [VaultController::class, 'close'])->name('vaults.close');
+    // Route::post('vaults/{id}/close/store', [VaultController::class, 'close_store'])->name('vaults.close.store');//***Para guardar cuando se cierre de boveda
+    Route::get('vaults/{vault}/print/status', [VaultController::class, 'print_status'])->name('vaults.print.status');//***
+
+
 
     Route::get('people', [PersonController::class, 'index'])->name('voyager.people.index');
     Route::get('people/ajax/list', [PersonController::class, 'list']);
