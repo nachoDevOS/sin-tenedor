@@ -87,7 +87,7 @@ class SaleController extends Controller
                     ->whereDate('created_at', today())
                     ->count();
 
-        return $prefix . '-' . str_pad($count + 1, 5, '0', STR_PAD_LEFT);
+        return $prefix . '-' . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
     }
 
     public function store(Request $request)
