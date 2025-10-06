@@ -89,7 +89,7 @@
                     <div class="panel panel-bordered">
                         <div class="panel-body" style="padding: 10px 0px; display: flex; flex-direction: column; height: calc(100vh - 140px);">
                             {{-- Cart Items --}}
-                            <div id="cart-items" style="height: 45vh; overflow-y: auto; padding: 0 15px;">
+                            <div id="cart-items" style="height: 35vh; overflow-y: auto; padding: 0 15px;">
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
                                         <tbody id="table-body" class="cart-items-list">
