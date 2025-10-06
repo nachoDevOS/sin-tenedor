@@ -166,29 +166,14 @@
                                 <h3 class="text-right" id="change-message-error" style="display: none;"><small  style="color: red !important">Ingrese un Monto igual o mayor al total de la venta</small></h3>
                                 <h3 class="text-right"><small>Total a cobrar: Bs.</small> <b id="label-total">0.00</b></h3>
                                 <input type="hidden" id="amountTotalSale" name="amountTotalSale" value="0">
-                            </div>
+                            </div>                           
+                            
                             <div class="form-group col-md-12 text-center">
-                                <button type="button" id="btn-submit" class="btn btn-primary btn-block" data-toggle="modal" data-target="#modal-confirm">Vender <i class="voyager-basket"></i></button>
+                                <button type="submit" id="btn-confirm" class="btn btn-primary btn-block btn-confirm">Vender <i class="voyager-basket"></i></button>
                             </div>
                             </div>
 
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal de confirmación -->
-            <div class="modal fade" tabindex="-1" data-backdrop="static" id="modal-confirm" role="dialog">
-                <div class="modal-dialog modal-primary">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" style="color:rgb(255, 255, 255) !important"><i class="fa-solid fa-cart-shopping"></i> ¿Estás seguro que quieres registrar?</h4>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <input type="submit" class="btn btn-primary btn-confirm" id="btn-confirm" value="Confirmar venta">
-                        </div> 
                     </div>
                 </div>
             </div>
@@ -429,15 +414,15 @@
 
             // Configurar eventos del formulario
             $('#form-sale').submit(function(e){
-                $('.btn-confirm').val('Guardando...');
+                $('.btn-confirm').html('Guardando... <i class="fa fa-spinner fa-spin"></i>');
                 $('.btn-confirm').attr('disabled', true);           
             });
 
             // Evento para el modal de confirmación cuando se cierra vulve a habilitar el botón
-            $('#modal-confirm').on('hidden.bs.modal', function() {
-                $(this).find('.btn-confirm').removeAttr('disabled');
-                $(this).find('.btn-confirm').val('Confirmar venta');
-            });
+            // $('#modal-confirm').on('hidden.bs.modal', function() {
+            //     $(this).find('.btn-confirm').removeAttr('disabled');
+            //     $(this).find('.btn-confirm').val('Confirmar venta');
+            // });
 
             // Buscador de productos
             $('#input-search-products').on('keyup', function() {
