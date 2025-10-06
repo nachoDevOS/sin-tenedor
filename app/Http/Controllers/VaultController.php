@@ -85,7 +85,7 @@ class VaultController extends Controller
             return redirect()->route('vaults.index')->with(['message' => 'Detalle de bóveda guardado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             DB::rollback();
-            $this->logError($th, $request, "Creación de Detalle de Bóveda (ID: {$id})");
+            $this->logError($th, $request, "ID: {$id}");
             return redirect()->route('vaults.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }

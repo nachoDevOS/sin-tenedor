@@ -16,10 +16,20 @@ trait Loggable
      * @param \Illuminate\Http\Request $request La solicitud HTTP actual.
      * @param string $context Un mensaje de contexto para identificar la operación que falló.
      */
-    protected function logError(Throwable $th, Request $request, string $context = 'Error no especificado')
+    protected function logError(Throwable $th, Request $request, string $context = null)
     {
+        // Obtener información sobre quién llamó a esta función (controlador y método)
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $caller = $backtrace[1]; // El índice 1 contiene la información del llamador
+
+        // Construir el contexto automático: App\Http\Controllers\VaultController::details_store
+        $autoContext = $caller['class'] . '::' . $caller['function'];
+
+        // Si se proporciona un contexto manual, se añade al automático.
+        $finalContext = $context ? "{$autoContext} - {$context}" : $autoContext;
+
         $logMessage = [
-            "🚨 ERROR CRÍTICO - {$context}",
+            "🚨 ERROR CRÍTICO - {$finalContext}",
             "==================================================",
             "📋 INFORMACIÓN GENERAL:",
             "   - Usuario: " . (Auth::check() ? Auth::user()->name . ' (ID: ' . Auth::id() . ')' : 'No autenticado'),
