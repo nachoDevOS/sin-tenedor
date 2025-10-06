@@ -637,7 +637,7 @@
                     
                     $tableBody.append(`
                         <tr class="tr-item" id="tr-item-${productId}">
-                            <td style="width:130px">
+                            <td style="width:120px">
                                 <div class="quantity-control">
                                     <button type="button" class="btn btn-default btn-sm" onclick="updateQuantity(${productId}, -1)">-</button>
                                     <input type="number" name="products[${productId}][quantity]" class="form-control input-quantity" 
