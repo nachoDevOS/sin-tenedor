@@ -88,7 +88,7 @@ class VaultController extends Controller
                 "🚨 ERROR CRÍTICO - Creación de Detalle de Bóveda",
                 "==================================================",
                 "📋 INFORMACIÓN GENERAL:",
-                "   - Vault ID: " . $id,
+                "   - ID: " . $id,
                 "   - Usuario: " . Auth::user()->name . ' (ID: ' . (Auth::user()->id ?? 'N/A') . ')',
                 "   - Fecha/Hora: " . now()->format('d/m/Y H:i:s'),
                 "   - IP: " . $request->ip(),
@@ -99,14 +99,19 @@ class VaultController extends Controller
                 "   - Archivo: " . $th->getFile(),
                 "   - Línea: " . $th->getLine(),
                 "--------------------------------------------------",
-                "📊 DATOS DE LA SOLICITUD:",
-                "   - Remitente: " . $request->name_sender,
-                "   - Descripción: " . $request->description,
-                "   - Tipo: " . $request->type,
-                "   - Valores Efectivo: " . json_encode($request->cash_value),
-                "   - Cantidades: " . json_encode($request->quantity),
-                "==================================================",
+                "📊 DATOS DE LA SOLICITUD (Payload):",
             ];
+
+            // Obtener todos los datos de la solicitud, excluyendo campos sensibles.
+            $requestData = $request->except(['password', 'password_confirmation', '_token', '_method']);
+            if (!empty($requestData)) {
+                foreach ($requestData as $key => $value) {
+                    // Si el valor es un array, lo convertimos a JSON para una mejor visualización.
+                    $formattedValue = is_array($value) ? json_encode($value) : $value;
+                    $logMessage[] = "   - {$key}: {$formattedValue}";
+                }
+            }
+            $logMessage[] = "==================================================";
 
             Log::error(implode(PHP_EOL, $logMessage));
             return redirect()->route('vaults.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
