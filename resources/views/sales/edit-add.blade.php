@@ -2,8 +2,8 @@
 
 @section('page_title', 'Añadir Venta')
 
-{{-- @section('page_header')
-    <div class="container-fluid">
+@section('page_header')
+    {{-- <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-bordered">
@@ -22,8 +22,8 @@
                 </div>
             </div>
         </div>
-    </div>
-@stop --}}
+    </div> --}}
+@stop
 
 @section('content')
     <div class="page-content edit-add container-fluid" id="sale-pos-container">
