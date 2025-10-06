@@ -163,7 +163,7 @@
                             
                             <div class="form-group col-md-6">
                                 <h3 class="text-right" id="change-message" style="display: none;"><small>Cambio: Bs.</small> <b id="change-amount">0.00</b></h3>
-                                <h3 class="text-right" id="change-message-error" style="display: none;"><small  style="color: red !important">Ingrese un Monto igual o mayor al total de la venta</small></h3>
+                                <h3 class="text-right" id="change-message-error" style="display: none;"><small  style="color: red !important">Monto faltante: Bs. </small><b id="missing-amount" style="color: red !important">0.00</b></h3>
                                 <h3 class="text-right"><small>Total a cobrar: Bs.</small> <b id="label-total">0.00</b></h3>
                                 <input type="hidden" id="amountTotalSale" name="amountTotalSale" value="0">
                             </div>                           
@@ -710,12 +710,14 @@
             const total = parseFloat($('#amountTotalSale').val()) || 0;
             let total_inputs = input_amountEfectivo+input_amountQr;
             if (total_inputs >= total) {
+                $('#missing-amount').text('0.00');
                 const change = total_inputs - total;
                 $('#change-message-error').hide();
                 $('#change-message').show();
                 $('#change-amount').text(change.toFixed(2));
             }
             else {
+                $('#missing-amount').text((total - total_inputs).toFixed(2));
                 $('#change-message').hide();
                 $('#change-message-error').show();
             }
