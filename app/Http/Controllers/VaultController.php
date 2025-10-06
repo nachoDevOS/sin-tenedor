@@ -83,36 +83,32 @@ class VaultController extends Controller
             return redirect()->route('vaults.index')->with(['message' => 'Detalle de bóveda guardado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             DB::rollback();
-            // LOG PERSONALIZADO - Versión Detallada
-            Log::error('🚨 ERROR CRÍTICO - Creación de Detalle de Bóveda', [
-                '📋 INFORMACIÓN GENERAL' => [
-                    'Vault ID' => $id,
-                    'Usuario' => Auth::user()->name . ' (ID: ' . (Auth::user()->id ?? 'N/A') . ')',
-                    'Fecha/Hora' => now()->format('d/m/Y H:i:s'),
-                    'IP' => $request->ip(),
-                    'URL' => $request->fullUrl()
-                ],
-                '🔍 DETALLES DEL ERROR' => [
-                    'Mensaje' => $th->getMessage(),
-                    'Archivo' => $th->getFile(),
-                    'Línea' => $th->getLine(),
-                    'Código Error' => $th->getCode(),
-                    'Tipo de Excepción' => get_class($th)
-                ],
-                '📊 DATOS DE LA SOLICITUD' => [
-                    'Remitente' => $request->name_sender,
-                    'Descripción' => $request->description,
-                    'Tipo' => $request->type,
-                    'Valores Efectivo' => $request->cash_value,
-                    'Cantidades' => $request->quantity,
-                    'Total Items' => count($request->cash_value ?? [])
-                ],
-                '🔧 INFORMACIÓN TÉCNICA' => [
-                    'User Agent' => $request->userAgent(),
-                    'Método' => $request->method(),
-                    'Headers' => $request->headers->all()
-                ]
-            ]);
+            
+            $logMessage = [
+                "🚨 ERROR CRÍTICO - Creación de Detalle de Bóveda",
+                "==================================================",
+                "📋 INFORMACIÓN GENERAL:",
+                "   - Vault ID: " . $id,
+                "   - Usuario: " . Auth::user()->name . ' (ID: ' . (Auth::user()->id ?? 'N/A') . ')',
+                "   - Fecha/Hora: " . now()->format('d/m/Y H:i:s'),
+                "   - IP: " . $request->ip(),
+                "   - URL: " . $request->fullUrl(),
+                "--------------------------------------------------",
+                "🔍 DETALLES DEL ERROR:",
+                "   - Mensaje: " . $th->getMessage(),
+                "   - Archivo: " . $th->getFile(),
+                "   - Línea: " . $th->getLine(),
+                "--------------------------------------------------",
+                "📊 DATOS DE LA SOLICITUD:",
+                "   - Remitente: " . $request->name_sender,
+                "   - Descripción: " . $request->description,
+                "   - Tipo: " . $request->type,
+                "   - Valores Efectivo: " . json_encode($request->cash_value),
+                "   - Cantidades: " . json_encode($request->quantity),
+                "==================================================",
+            ];
+
+            Log::error(implode(PHP_EOL, $logMessage));
             return redirect()->route('vaults.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }
