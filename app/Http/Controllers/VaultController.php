@@ -9,13 +9,15 @@ use App\Models\VaultClosure;
 use App\Models\VaultClosureDetail;
 use App\Models\VaultDetail;
 use App\Models\VaultDetailCash;
+use App\Traits\Loggable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class VaultController extends Controller
 {
+    use Loggable;
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -83,37 +85,7 @@ class VaultController extends Controller
             return redirect()->route('vaults.index')->with(['message' => 'Detalle de bóveda guardado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             DB::rollback();
-            
-            $logMessage = [
-                "🚨 ERROR CRÍTICO - Creación de Detalle de Bóveda",
-                "==================================================",
-                "📋 INFORMACIÓN GENERAL:",
-                "   - ID: " . $id,
-                "   - Usuario: " . Auth::user()->name . ' (ID: ' . (Auth::user()->id ?? 'N/A') . ')',
-                "   - Fecha/Hora: " . now()->format('d/m/Y H:i:s'),
-                "   - IP: " . $request->ip(),
-                "   - URL: " . $request->fullUrl(),
-                "--------------------------------------------------",
-                "🔍 DETALLES DEL ERROR:",
-                "   - Mensaje: " . $th->getMessage(),
-                "   - Archivo: " . $th->getFile(),
-                "   - Línea: " . $th->getLine(),
-                "--------------------------------------------------",
-                "📊 DATOS DE LA SOLICITUD (Payload):",
-            ];
-
-            // Obtener todos los datos de la solicitud, excluyendo campos sensibles.
-            $requestData = $request->except(['password', 'password_confirmation', '_token', '_method']);
-            if (!empty($requestData)) {
-                foreach ($requestData as $key => $value) {
-                    // Si el valor es un array, lo convertimos a JSON para una mejor visualización.
-                    $formattedValue = is_array($value) ? json_encode($value) : $value;
-                    $logMessage[] = "   - {$key}: {$formattedValue}";
-                }
-            }
-            $logMessage[] = "==================================================";
-
-            Log::error(implode(PHP_EOL, $logMessage));
+            $this->logError($th, $request, "Creación de Detalle de Bóveda (ID: {$id})");
             return redirect()->route('vaults.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }
