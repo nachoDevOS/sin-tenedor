@@ -37,6 +37,10 @@ class Cashier extends Model
         return $this->hasOne(VaultDetail::class, 'cashier_id');
     }
 
+    public function sales(){
+        return $this->hasMany(Sale::class, 'cashier_id');
+    }
+
     // public function userclose(){
     //     return $this->belongsTo(User::class, 'closeUser_id');
     // }

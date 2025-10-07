@@ -82,7 +82,7 @@
             // $monthInteractive = $global_index['monthInteractive'];
 
 
-            // dd($globalFuntion_cashierMoney['cashierIn']);
+            // dump($globalFuntion_cashier);
         @endphp
 
 
@@ -120,30 +120,30 @@
                                             <table width="100%" cellpadding="20">
                                                 <tr>
                                                     <td><small>Dinero Asignado a Caja</small></td>
-                                                    <td class="text-right"><h3>{{ number_format($globalFuntion_cashierMoney['cashierIn'], 2, '.', '') }} <small>Bs.</small></h3></td>
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['cashierIn'], 2, ',', '') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                                 <tr>
                                                     <td><small>Dinero disponible en Caja</small></td>
-                                                    {{-- <td class="text-right"><h3>{{ number_format($globalFuntion_cashierMoney['amountCashier'], 2, ',', '.') }} <small>Bs.</small></h3></td> --}}
+                                                    {{-- <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['amountCashier'], 2, ',', '.') }} <small>Bs.</small></h4></td> --}}
                                                 </tr>
                                             </table>
                                             <hr>
                                             <table width="100%" cellpadding="20">
                                                 <tr>
-                                                    <td><small>Cobros Diarios, Prendario y Ventas "Efectivo"</small></td>
-                                                    {{-- <td class="text-right"><h3>{{ number_format($global_cashier['amountEfectivo'], 2, ',', '.') }} <small>Bs.</small></h3></td> --}}
+                                                    <td><small>Ventas "Efectivo"</small></td>
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['amountEfectivo'], 2, ',', '') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                                     <tr>
-                                                    <td><small>Prestamos Diario y Prendario Entregados</small></td>
-                                                    {{-- <td class="text-right"><h3>{{ number_format($global_cashier['amountEgres'], 2, '.', '') }} <small>Bs.</small></h3></td> --}}
+                                                    <td><small>Ventas "Qr"</small></td>
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['amountQr'], 2, ',', '') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                                     <tr>
                                                     <td><small>Gastos Realizados</small></td>
-                                                    {{-- <td class="text-right"><h3>{{ number_format($global_cashier['cashierOut'], 2, ',', '.') }} <small>Bs.</small></h3></td> --}}
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['cashierOut'], 2, ',', '') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                             </table>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4 col-md-offset-1" >
                                             <canvas id="myChart"></canvas>
                                         </div>
                                     </div>

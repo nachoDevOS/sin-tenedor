@@ -77,7 +77,9 @@ class SaleController extends Controller
                         $q->where('deleted_at', null);
                     }]);
             }])->get();
-        $cashier = $this->cashierUserOpen(Auth::user()->id);
+
+        $cashier = $this->cashier('user', Auth::user()->id, 'status = "abierta"');
+
         return view('sales.edit-add', compact('categories', 'cashier'));
     }
 
@@ -102,7 +104,8 @@ class SaleController extends Controller
             return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
 
-        $cashier = $this->cashierUserOpen(Auth::user()->id);
+        $cashier = $this->cashier('user', Auth::user()->id, 'status = "abierta"');
+
         if (!$cashier) {
             return redirect()->route('sales.index')->with(['message' => 'Usted no cuenta con caja abierta.', 'alert-type' => 'warning']);
         }
@@ -133,6 +136,7 @@ class SaleController extends Controller
                 'typeSale'=>$request->typeSale,
                 'ticket' => $this->ticket($request->typeSale),
                 'person_id'=>$request->person_id??NULL,
+                'cashier_id'=>$cashier->id,
             
                 'amountReceived'=>$amountReceivedQr+$amountReceivedEfectivo,
 

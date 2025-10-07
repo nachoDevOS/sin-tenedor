@@ -27,4 +27,9 @@ class SaleTransaction extends Model
         'deleteObservation',
     ];
 
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class, 'transaction_id');
+    }
+
 }

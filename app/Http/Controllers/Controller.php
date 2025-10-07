@@ -64,7 +64,14 @@ class Controller extends BaseController
                             $q->where('deleted_at', NULL);
                         },'vault_details.cash' => function($q){
                             $q->where('deleted_at', NULL);
-                        }
+                        },'sales' => function($q) {                
+                            $q->whereHas('saleTransactions', function($q) {
+                                $q->whereIn('paymentType', ['Efectivo', 'Qr']);
+                            })
+                            ->with(['saleTransactions' => function($q) {
+                                $q->where('deleted_at', NULL);
+                            }]);
+                        },
                     ])
                     ->whereRaw($id?$query:1)
                     ->where('deleted_at', null)
@@ -77,24 +84,45 @@ class Controller extends BaseController
     public function cashierMoney($type, $id, $status)
     {
         $cashier = $this->cashier($type, $id, $status);
-        $availableMoney = 0;
+
 
         if($cashier){
             $cashierIn = $cashier->movements->where('type', 'ingreso')->where('deleted_at', NULL)->where('status', 'Aceptado')->sum('amount');
 
-            // $amountCashier = ($cashierIn + $loanPaymentEfectivo + $pawnPaymentEfectivo + $salePaymentEfectivo + $salaryPurchasePaymentEfectivo) - $cashierOut  - $loans -$pawns - $pawnsMoneyAditional-$salaryPurchase;
+            //::::::::::::Ingresos::::::::::
+            // $amountEfectivo = $cashier->sales->where('deleted_at', NULL)->where('saleTransactions.typeSale', 'Efectivo')->sum('amount');
+
+
+            $amountEfectivo = $cashier->sales
+                ->flatMap(function($sale) {
+                    return $sale->saleTransactions->where('paymentType', 'Efectivo')->pluck('amount');
+                })
+                ->sum();
+
+            $amountQr = $cashier->sales
+                ->flatMap(function($sale) {
+                    return $sale->saleTransactions->where('paymentType', 'Qr')->pluck('amount');
+                })
+                ->sum();
+
+            $cashierOut =0;
+
+
+
+            // $amountCashier = ($cashierIn + $loanPaymentEfectivo) - $cashierOut  - $loans -$pawns - $pawnsMoneyAditional-$salaryPurchase;
         }
 
         return response()->json([
             'return' => $cashier?true:false,
             // 'cashier' => $cashier?$cashier:null,
             // // datos en valores
-            // 'amountEfectivo' => $cashier?$amountEfectivo:null,//Para obtener el total de dinero en efectivo recaudado en general
-            // 'amountQr' => $cashier?$amountQr:null, //Para obtener el total de dinero en QR recaudado en general
+            'amountEfectivo' => $cashier?$amountEfectivo:null,//Para obtener el total de dinero en efectivo recaudado en general
+            'amountQr' => $cashier?$amountQr:null, //Para obtener el total de dinero en QR recaudado en general
             // 'amountCashier'=>$cashier?$amountCashier:null, //dinero disponible en caja para su uso 'solo dinero que hay en la caja disponible y cobro solo en efectivos'
 
             // 'amountEgres' =>$cashier?$amountEgres:null, // dinero prestado de prenda y diario
-            // 'cashierOut'=>$cashier?$cashierOut:null, //Gastos Adicionales
+
+            'cashierOut'=>$cashier?$cashierOut:null, //Gastos Adicionales
 
             'cashierIn'=>$cashier?$cashierIn:null// Dinero total abonado a las cajas
         ]);
