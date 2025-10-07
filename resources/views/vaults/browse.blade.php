@@ -177,6 +177,9 @@
         </div>
     </form>
 
+    {{-- @php
+        dump($vault->id);
+    @endphp --}}
 
     {{-- vault add register modal --}}
     <form action="{{ route('vaults.details.store', ['id' => $vault ? $vault->id : 0]) }}" method="post">

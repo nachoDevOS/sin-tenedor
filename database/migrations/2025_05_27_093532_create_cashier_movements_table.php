@@ -13,18 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cashiers', function (Blueprint $table) {
+        Schema::create('cashier_movements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vault_id')->nullable()->constrained('vaults');
-            $table->foreignId('user_id')->nullable()->constrained('users');  // Cajero 
-            $table->string('title')->nullable();
-            // $table->decimal('amount', 10, 2)->nullable();
-            $table->text('observations')->nullable();
-            $table->string('status')->nullable();
-            $table->dateTime('view')->nullable(); 
+            $table->foreignId('cashier_id')->nullable()->constrained('cashiers');
+            // $table->foreignId('user_id')->nullable()->constrained('users');
+            // $table->foreignId('cashier_movement_category_id')->nullable()->constrained('cashier_movement_categories');
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->text('description')->nullable();
+            $table->string('type')->nullable(); //ingreso o egreso
+            $table->string('status')->nullable(); //aprobado, pendiente, rechazado
 
-            $table->datetime('closed_at')->nullable();
-            $table->foreignId('closeUser_id')->nullable()->constrained('users');
+            // $table->foreignId('transferCashier_id')->nullable()->constrained('cashiers');
+
 
             $table->timestamps();            
             $table->foreignId('registerUser_id')->nullable()->constrained('users');
@@ -44,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cashiers');
+        Schema::dropIfExists('cashier_movements');
     }
 };

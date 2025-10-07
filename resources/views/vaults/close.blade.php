@@ -1,7 +1,7 @@
 @extends('voyager::master')
 
 @section('page_title', 'Cierre de Bóveda')
-@if (auth()->user()->hasPermission('browse_vaults'))
+
 @section('page_header')
     <div class="container-fluid">
         <div class="row">
@@ -120,7 +120,7 @@
 
                                         // dd($vault_close);
                                     @endphp
-                                    <table class="table table-bordered" id="dataStyle">
+                                    <table class="table table-bordered" id="dataTable">
                                         <thead>
                                             <tr>
                                                 <th>Corte</th>
@@ -210,7 +210,7 @@
                                                 <small>Descripción: </small> <small><b>{{ $detail->description ?? 'S/N' }}</b></small> <br>
                                                 <small>Fecha: </small> <small><b>{{ date('d-m-Y H:i:s', strtotime($detail->created_at)) }}</b></small>
                                             </p>
-                                            <table class="table table-bordered" id="dataStyle">
+                                            <table class="table table-bordered" id="dataTable">
                                                 <thead>
                                                     <tr>
                                                         <th>Corte</th>
@@ -265,8 +265,3 @@
 @stop
 
 
-@else
-    @section('content')
-        <h1>No tienes permiso</h1>
-    @stop
-@endif

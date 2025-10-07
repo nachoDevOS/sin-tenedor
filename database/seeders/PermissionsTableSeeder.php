@@ -71,6 +71,26 @@ class PermissionsTableSeeder extends Seeder
             ]);
         }
 
+        $permissions = [
+            'browse_cashiers'=> 'Ver cajeros',
+            'add_cashiers'=> 'Agregar cajeros',
+            'read_cashiers'=> 'Ver detalle de cajeros',
+            // 'open_cashiers',
+            // 'movements_cashiers',
+            // 'close_vaults',
+            // 'print_vaults',
+            
+        ];
+
+        foreach ($permissions as $key => $description) {
+            Permission::firstOrCreate([
+                'key'        => $key,
+                'keyDescription'=> $description,
+                'table_name' => 'cashiers',
+                'tableDescription'=>'Cajeros'
+            ]);
+        }
+
 
         //##################### Ventas  ##########################
 

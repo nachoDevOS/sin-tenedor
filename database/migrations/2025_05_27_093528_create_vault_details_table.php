@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('vault_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users');
+            // $table->foreignId('user_id')->nullable()->constrained('users');
             $table->foreignId('vault_id')->nullable()->constrained('vaults');
             $table->foreignId('cashier_id')->nullable()->constrained('cashiers');
             $table->string('bill_number')->nullable();

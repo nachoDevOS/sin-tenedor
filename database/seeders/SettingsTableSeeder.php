@@ -134,11 +134,44 @@ class SettingsTableSeeder extends Seeder
                 'id' => 18,
                 'key' => 'system.code',
                 'display_name' => 'Código',
-                'value' => 'code-1',
+                'value' => 'https://sintenedor.soluciondigital.dev',
                 'details' => NULL,
                 'type' => 'text',
                 'order' => 6,
                 'group' => 'System',
+            ),
+            11 => 
+            array (
+                'id' => 19,
+                'key' => 'company.name',
+                'display_name' => 'Nombre',
+                'value' => 'Solucion Digital',
+                'details' => NULL,
+                'type' => 'text',
+                'order' => 7,
+                'group' => 'Company',
+            ),
+            12 => 
+            array (
+                'id' => 20,
+                'key' => 'company.url',
+                'display_name' => 'URL',
+                'value' => 'soluciondigital.dev',
+                'details' => NULL,
+                'type' => 'text',
+                'order' => 8,
+                'group' => 'Company',
+            ),
+            13 => 
+            array (
+                'id' => 21,
+                'key' => 'company.phone',
+                'display_name' => 'Celular',
+                'value' => NULL,
+                'details' => NULL,
+                'type' => 'text',
+                'order' => 9,
+                'group' => 'Company',
             ),
         ));
         

@@ -12,6 +12,7 @@ use App\Models\SaleTransaction;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
@@ -76,7 +77,8 @@ class SaleController extends Controller
                         $q->where('deleted_at', null);
                     }]);
             }])->get();
-        return view('sales.edit-add', compact('categories'));
+        $cashier = $this->cashierUserOpen(Auth::user()->id);
+        return view('sales.edit-add', compact('categories', 'cashier'));
     }
 
     public function ticket($typeSale)
@@ -99,6 +101,13 @@ class SaleController extends Controller
         if ($request->amountTotalSale > $amountReceivedEfectivo+$amountReceivedQr) {
             return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
+
+        $cashier = $this->cashierUserOpen(Auth::user()->id);
+        if (!$cashier) {
+            return redirect()->route('sales.index')->with(['message' => 'Usted no cuenta con caja abierta.', 'alert-type' => 'warning']);
+        }
+
+
         $ok = false;
         foreach ($request->products as $key => $value) {
             if ($value['typeSale'] == "Venta Con Stock") {

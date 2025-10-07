@@ -35,8 +35,7 @@ class System
         }
         else
         {
-            $payment = new Controller();
-            if($payment->payment_alert() == 'finalizado')
+            if($soliciondigital->payment_alert() == 'finalizado')
             {
                 $blockedMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
                 $allowedRoutes = ['admin/login', 'admin/logout', 'admin/settings']; // Rutas permitidas

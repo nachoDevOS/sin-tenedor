@@ -53,6 +53,7 @@ class VaultController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollBack();
+            $this->logError($th, $request);
             return redirect()->route('vaults.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }
@@ -71,7 +72,6 @@ class VaultController extends Controller
                 'status' => 'aprobado'
             ]);
 
-
             for ($i=0; $i < count($request->cash_value); $i++) { 
                 // if($request->quantity[$i]){
                     VaultDetailCash::create([
@@ -82,35 +82,33 @@ class VaultController extends Controller
                 // }
             }
             DB::commit();
-            return redirect()->route('vaults.index')->with(['message' => 'Detalle de bóveda guardado exitosamente.', 'alert-type' => 'success']);
+            return redirect()->route('vaults.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             DB::rollback();
-            $this->logError($th, $request, "ID: {$id}");
+            $this->logError($th, $request);
             return redirect()->route('vaults.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }
 
 
-    public function open($id, Request $request){
-        // return 1111;
-        DB::beginTransaction();
+    public function open(Request $request, $id){
+        $this->custom_authorize('open_vaults');        DB::beginTransaction();
         try {
 
             Vault::where('id', $id)->update([
                 'status' => 'activa',
-                // 'closed_at' => Carbon::now()
             ]);
             DB::commit();
             return redirect()->route('vaults.index')->with(['message' => 'Bóveda abierta exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             DB::rollback();
-            // dd($th);
+            $this->logError($th, $request);
             return redirect()->route('vaults.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }
 
     public function close($id){
-        return $id;
+        $this->custom_authorize('browse_vaults');
         $vault_closure = VaultClosure::with('details')->where('vault_id', $id)->orderBy('id', 'DESC')->first();
         $date = $vault_closure ? $vault_closure->created_at : NULL;
         // return $vault_closure;
@@ -126,7 +124,9 @@ class VaultController extends Controller
     } 
 
     //***Para guardar cuando se cierre de boveda
-    public function close_store($id, Request $request){
+    public function close_store(Request $request, $id){
+        $this->custom_authorize('close_vaults');
+
         $cashier_open = Cashier::whereRaw("status = 'abierta' or status = 'apertura pendiente'")->where('deleted_at', NULL)->count();
         // return $cashier_open;
         if($cashier_open){
@@ -158,7 +158,7 @@ class VaultController extends Controller
             return redirect()->route('vaults.index')->with(['message' => 'Bóveda cerrada exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
             DB::rollback();
-            // dd(0);
+            $this->logError($th, $request);
             return redirect()->route('vaults.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }

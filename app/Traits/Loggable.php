@@ -16,7 +16,7 @@ trait Loggable
      * @param \Illuminate\Http\Request $request La solicitud HTTP actual.
      * @param string $context Un mensaje de contexto para identificar la operación que falló.
      */
-    protected function logError(Throwable $th, Request $request, string $context = null)
+    protected function logError(Throwable $th, Request $request)
     {
         // Obtener información sobre quién llamó a esta función (controlador y método)
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
@@ -26,7 +26,7 @@ trait Loggable
         $autoContext = $caller['class'] . '::' . $caller['function'];
 
         // Si se proporciona un contexto manual, se añade al automático.
-        $finalContext = $context ? "{$autoContext} - {$context}" : $autoContext;
+        $finalContext = $autoContext;
 
         $logMessage = [
             "🚨 ERROR CRÍTICO - {$finalContext}",

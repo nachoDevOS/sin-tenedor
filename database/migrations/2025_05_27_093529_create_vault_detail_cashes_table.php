@@ -13,18 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cashiers', function (Blueprint $table) {
+        Schema::create('vault_detail_cashes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vault_id')->nullable()->constrained('vaults');
-            $table->foreignId('user_id')->nullable()->constrained('users');  // Cajero 
-            $table->string('title')->nullable();
-            // $table->decimal('amount', 10, 2)->nullable();
-            $table->text('observations')->nullable();
-            $table->string('status')->nullable();
-            $table->dateTime('view')->nullable(); 
-
-            $table->datetime('closed_at')->nullable();
-            $table->foreignId('closeUser_id')->nullable()->constrained('users');
+            $table->foreignId('vault_detail_id')->nullable()->constrained('vault_details');
+            $table->decimal('cash_value', 10, 2)->nullable();
+            $table->decimal('quantity', 10, 2)->nullable();
 
             $table->timestamps();            
             $table->foreignId('registerUser_id')->nullable()->constrained('users');
@@ -44,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cashiers');
+        Schema::dropIfExists('vault_detail_cashes');
     }
 };

@@ -242,6 +242,8 @@ class IndexController extends Controller
             'productTop5Day' => $productTop5Day,
             'weekDays' => $weekDays,
 
+
+            // Para mostrar el monto de las ventas
             'amountQrDay' => $amountQrDay, // total ventas del día por tipo de pago Qr
             'amountEfectivoDay' => $amountEfectivoDay // total ventas del día por tipo de pago Efectivo
         ]);

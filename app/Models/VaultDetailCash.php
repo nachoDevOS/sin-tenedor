@@ -10,6 +10,8 @@ use App\Traits\RegistersUserEvents;
 class VaultDetailCash extends Model
 {
     use HasFactory, SoftDeletes, RegistersUserEvents;
+    protected $dates = ['deleted_at'];
+
     protected $fillable = [
         'vault_detail_id', 'cash_value', 'quantity',
         'registerUser_id',

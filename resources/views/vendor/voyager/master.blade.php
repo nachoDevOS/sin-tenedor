@@ -164,7 +164,7 @@
                 <div class="side-body padding-top">
 
                     @php
-                        $aux = new \App\Http\Controllers\Controller();
+                        $aux = new \App\Http\Controllers\SolucionDigitalController();
 
                         $solucionDigital = Illuminate\Support\Facades\DB::connection('solucionDigital')
                             ->table('settings')

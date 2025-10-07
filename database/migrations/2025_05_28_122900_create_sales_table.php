@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->foreignId('person_id')->nullable()->constrained('people');
+            $table->foreignId('cashier_id')->nullable()->constrained('cashiers');
 
             $table->string('code')->nullable();
             $table->string('ticket')->nullable();

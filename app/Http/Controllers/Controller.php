@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
+use App\Models\Cashier;
 
 use Illuminate\Support\Facades\DB;
 
@@ -22,45 +23,77 @@ class Controller extends BaseController
     }
 
 
-    public function payment_alert()
+    // Funcion para ver la caja en estado abierta
+    public function cashierUserOpen($user_id)
     {
-        $soliciondigital = new SolucionDigitalController();
-        $data = $soliciondigital->settings_code();
-        $date = $data->finish;
-
-        $now = new DateTime();
-        $value= null;
-        $d = DateTime::createFromFormat('Y-m-d H:i:s', $date.' 23:59:59');
-    
-        if($data->type == 'Demo')
-        {
-            return $value;
-        }
-
-        if($d && $d->format('Y-m-d') === $date )
-        {
-            if($now > $d)
-            {
-                $value = "finalizado";
-            }
-            else
-            {
-                $difference = $now->diff($d);
-                if($difference->days <= 3)
-                {
-                    $value = $difference->days;
-                }
-                else
-                {
-                    $value = "vigente";
-                }
-            }
-        }
-        else
-        {
-            $value = null;
-        }
-        return $value;
+        return Cashier::with(['movements' => function($q){
+            $q->where('deleted_at', NULL);
+        }])
+        ->where('user_id', $user_id)
+        ->where('status', 'abierta')
+        ->where('deleted_at', NULL)->first();
     }
+
+    //Para obtener el detalle de cualquier caja y en cualquier estado que no se encuentre eliminada (id de la caja, Estado de la caja)
+    public function cashierId($id, $status)
+    {
+        return Cashier::with([
+            'movements',
+            // 'details' => function($q){
+            //     $q->where('deleted_at', NULL);
+            // },
+            // 'loan_payments' => function($q){                
+            //     $q->whereHas('transaction', function($q) {
+            //         $q->whereIn('type', ['Efectivo', 'Qr']);
+            //     })
+            //     ->with(['loanDay.loan.people', 'agent']);
+            // },
+            // 'loans' => function($q){
+            //     $q->with(['people'])
+            //     ->where('status', 'entregado');
+            // },
+            // 'pawn' => function($q){
+            //     $q->with(['person', 'details.featuresLists', 'details.type', 'user']); // Cargar la relación 'people' dentro de 'pawn'
+            // },            
+            // 'pawnMoneyAditional' => function($q){          //Para los aumento en algunos prestamos     
+            //     $q->with(['pawnRegister.person']);
+            // },
+            // 'pawnPayment' => function($q) {
+            //     $q->whereHas('transaction', function($q) {
+            //         $q->whereIn('type', ['Efectivo', 'Qr']);
+            //     })
+            //     ->with(['pawnRegister.person', 'agent']);
+            // },
+            // 'salePayment' => function($q) {
+            //     $q->whereHas('transaction', function($q) {
+            //             $q->whereIn('type', ['Efectivo', 'Qr']);
+            //         })
+            //         ->with(['sale.person', 'register']);
+            // },
+
+            // 'salaryPurchase' => function($q){ //Para obtener los prestamos que se leentregan a los maestros
+            //     $q->with(['person']);
+            // },
+
+            // 'salaryPurchasePayment' => function($q) {
+            //     $q->whereHas('transaction', function($q) {
+            //         $q->whereIn('type', ['Efectivo', 'Qr']);
+            //     })
+            //     ->with(['salaryPurchase.person', 'agent']);
+            // },
+
+            'user'
+        ])
+        ->where('id', $id)
+        ->where('deleted_at', null)
+        ->whereRaw($status?'status = "'.$status.'"':1)
+        ->first();        
+    }
+
+
+
+
+
+    
 
 }
