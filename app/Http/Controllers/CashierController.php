@@ -12,6 +12,7 @@ use App\Models\VaultDetail;
 use App\Models\VaultDetailCash;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\Loggable;
+use Illuminate\Support\Carbon;
 
 class CashierController extends Controller
 {
@@ -73,7 +74,8 @@ class CashierController extends Controller
     public function store(Request $request)
     {
         $this->custom_authorize('add_cashiers');
-        $cashier = $this->cashierUserOpen($request->user_id, 'abierta');
+        $cashier = $this->cashier('user', $request->user_id, 'status = "abierta" or status = "apertura pendiente"');
+
         if ($cashier) {
             return redirect()
                 ->route('cashiers.index')
@@ -145,4 +147,58 @@ class CashierController extends Controller
         $cashier = $this->cashierId($id, null);        
         return view('cashiers.read' , compact('cashier'));
     }
+
+
+    //*** Para que los cajeros Acepte o rechase el dinero dado por Boveda o gerente
+    public function change_status($id, Request $request){
+        DB::beginTransaction();
+        try {
+            if($request->status == 'abierta'){
+                $message = 'Caja aceptada exitosamente.';
+                Cashier::where('id', $id)->update([
+                    'status' => $request->status,
+                    'view' => Carbon::now()
+                ]);
+            }else{
+                $cashier = Cashier::with(['vault_detail.cash' => function($q){
+                    $q->where('deleted_at', NULL);
+                }])->where('id', $id)->first();
+
+                $message = 'Caja rechazada exitosamente.';
+                Cashier::where('id', $id)->update([
+                    'status' => 'rechazada',
+                    'deleted_at' => Carbon::now(),
+                    'deleteUser_id' => Auth::user()->id,
+                    'deleteRole' => Auth::user()->role->name,
+                ]);
+
+                $vault_detail = VaultDetail::create([
+                    // 'user_id' => Auth::user()->id,
+                    'vault_id' => $cashier->vault_detail->vault_id,
+                    'cashier_id' => $cashier->id,
+                    'description' => 'Rechazo de apertura de caja de '.$cashier->title.'.',
+                    'type' => 'ingreso',
+                    'status' => 'aprobado'
+                ]);
+
+                foreach ($cashier->vault_detail->cash as $item) {
+                    if($item->quantity > 0){
+                        VaultDetailCash::create([
+                            'vault_detail_id' => $vault_detail->id,
+                            'cash_value' => $item->cash_value,
+                            'quantity' => $item->quantity
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('voyager.dashboard')->with(['message' => $message, 'alert-type' => 'success']);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            $this->logError($th, $request);
+            return redirect()->route('voyager.dashboard')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        }
+    }
+
 }

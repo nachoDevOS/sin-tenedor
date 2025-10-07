@@ -67,8 +67,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin', 'system']], functi
     // Route::post('cashiers/expense/store', [CashierController::class, 'expense_store'])->name('cashiers.expense.store'); // Agregar gasto
     // Route::delete('cashiers/{cashier}/expense/{expense}/delete', [CashierController::class, 'cashierExpenseDelete'])->name('cashiers-expense.delete'); // Agregar gasto
 
-    // Route::post('cashiers/{cashier}/change/status', [CashierController::class, 'change_status'])->name('cashiers.change.status');//*** Para que los cajeros Acepte o rechase el dinero dado por Boveda o gerente
-    // Route::get('cashiers/{cashier}/close/', [CashierController::class, 'close'])->name('cashiers.close');//***para cerrar la caja el cajero vista 
+    Route::post('cashiers/{cashier}/change/status', [CashierController::class, 'change_status'])->name('cashiers.change.status');//*** Para que los cajeros Acepte o rechase el dinero dado por Boveda o gerente
+    Route::get('cashiers/{cashier}/close/', [CashierController::class, 'close'])->name('cashiers.close');//***para cerrar la caja el cajero vista 
     // Route::post('cashiers/{cashier}/close/store', [CashierController::class, 'close_store'])->name('cashiers.close.store'); //para que el cajerop cierre la caja 
     // Route::post('cashiers/{cashier}/close/revert', [CashierController::class, 'close_revert'])->name('cashiers.close.revert'); //para revertir el cajero para q su caja vuelva 
     Route::get('cashiers/{cashier}/confirm_close', [CashierController::class, 'confirm_close'])->name('cashiers.confirm_close'); //Para confirmar el cierre de caja

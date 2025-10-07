@@ -28,84 +28,76 @@ class Controller extends BaseController
         $cashier = Cashier::with(['movements' => function($q){
             $q->where('deleted_at', NULL);
         }])
-        ->where('user_id', Auth::user()->id)
-        ->where('status', 'abierta')
+        // ->where('user_id', Auth::user()->id)
+        // ->where('status', 'abierta')
         ->where('deleted_at', NULL)->first();
 
-        // return $cashierOpen;
-        return response()->json(['return' => $cashier]);
+        return $cashier;
+        // return response()->json(['cashier' => $cashier]);
 
     }
 
 
     // Funcion para ver la caja en estado abierta
-    public function cashierUserOpen($user_id, $status)
+    public function cashiers($user_id, $status)
     {
         $cashier = Cashier::with(['movements' => function($q){
             $q->where('deleted_at', NULL);
         }])
         ->where('user_id', $user_id)
         ->whereRaw($status?'status = "'.$status.'"':1)
-        // ->where('status', 'abierta')
+       
         ->where('deleted_at', NULL)->first();
 
-        return response()->json(['return' => $cashier]);
+        return $cashier;
     }
 
-    //Para obtener el detalle de cualquier caja y en cualquier estado que no se encuentre eliminada (id de la caja, Estado de la caja)
-    public function cashierId($id, $status)
+    //Para obtener el detalle de cualquier caja y en cualquier estado que no se encuentre eliminada (Tipo de ID, cashier_id o user_id , status)
+    public function cashier($type, $id, $status)
     {
-        return Cashier::with([
-            'movements',
-            // 'details' => function($q){
-            //     $q->where('deleted_at', NULL);
-            // },
-            // 'loan_payments' => function($q){                
-            //     $q->whereHas('transaction', function($q) {
-            //         $q->whereIn('type', ['Efectivo', 'Qr']);
-            //     })
-            //     ->with(['loanDay.loan.people', 'agent']);
-            // },
-            // 'loans' => function($q){
-            //     $q->with(['people'])
-            //     ->where('status', 'entregado');
-            // },
-            // 'pawn' => function($q){
-            //     $q->with(['person', 'details.featuresLists', 'details.type', 'user']); // Cargar la relación 'people' dentro de 'pawn'
-            // },            
-            // 'pawnMoneyAditional' => function($q){          //Para los aumento en algunos prestamos     
-            //     $q->with(['pawnRegister.person']);
-            // },
-            // 'pawnPayment' => function($q) {
-            //     $q->whereHas('transaction', function($q) {
-            //         $q->whereIn('type', ['Efectivo', 'Qr']);
-            //     })
-            //     ->with(['pawnRegister.person', 'agent']);
-            // },
-            // 'salePayment' => function($q) {
-            //     $q->whereHas('transaction', function($q) {
-            //             $q->whereIn('type', ['Efectivo', 'Qr']);
-            //         })
-            //         ->with(['sale.person', 'register']);
-            // },
+        $query = 'id = '.$id;
+        if($type == 'user'){
+            $query = 'user_id = '.$id;
+        }
 
-            // 'salaryPurchase' => function($q){ //Para obtener los prestamos que se leentregan a los maestros
-            //     $q->with(['person']);
-            // },
+        $cashier = Cashier::with(['movements' => function($q){
+                            $q->where('deleted_at', NULL);
+                        },'vault_details.cash' => function($q){
+                            $q->where('deleted_at', NULL);
+                        }
+                    ])
+                    ->whereRaw($id?$query:1)
+                    ->where('deleted_at', null)
+                    ->whereRaw($status?$status:1)
+                    ->first();    
+        
+        return $cashier;
+    }
 
-            // 'salaryPurchasePayment' => function($q) {
-            //     $q->whereHas('transaction', function($q) {
-            //         $q->whereIn('type', ['Efectivo', 'Qr']);
-            //     })
-            //     ->with(['salaryPurchase.person', 'agent']);
-            // },
+    public function cashierMoney($type, $id, $status)
+    {
+        $cashier = $this->cashier($type, $id, $status);
+        $availableMoney = 0;
 
-            'user'
-        ])
-        ->where('id', $id)
-        ->where('deleted_at', null)
-        ->whereRaw($status?'status = "'.$status.'"':1)
-        ->first();        
+        if($cashier){
+            $cashierIn = $cashier->movements->where('type', 'ingreso')->where('deleted_at', NULL)->where('status', 'Aceptado')->sum('amount');
+
+            // $amountCashier = ($cashierIn + $loanPaymentEfectivo + $pawnPaymentEfectivo + $salePaymentEfectivo + $salaryPurchasePaymentEfectivo) - $cashierOut  - $loans -$pawns - $pawnsMoneyAditional-$salaryPurchase;
+        }
+
+        return response()->json([
+            'return' => $cashier?true:false,
+            // 'cashier' => $cashier?$cashier:null,
+            // // datos en valores
+            // 'amountEfectivo' => $cashier?$amountEfectivo:null,//Para obtener el total de dinero en efectivo recaudado en general
+            // 'amountQr' => $cashier?$amountQr:null, //Para obtener el total de dinero en QR recaudado en general
+            // 'amountCashier'=>$cashier?$amountCashier:null, //dinero disponible en caja para su uso 'solo dinero que hay en la caja disponible y cobro solo en efectivos'
+
+            // 'amountEgres' =>$cashier?$amountEgres:null, // dinero prestado de prenda y diario
+            // 'cashierOut'=>$cashier?$cashierOut:null, //Gastos Adicionales
+
+            'cashierIn'=>$cashier?$cashierIn:null// Dinero total abonado a las cajas
+        ]);
     }
 
 

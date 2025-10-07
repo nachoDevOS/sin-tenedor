@@ -38,14 +38,19 @@ class AppServiceProvider extends ServiceProvider
             $new = new IndexController();
             $controller = new Controller();
 
+            $globalFuntion_cashier = $controller->cashier('user', Auth::user()?Auth::user()->id:null, 'status <> "cerrada"');
+            $view->with('globalFuntion_cashier', $globalFuntion_cashier);
+
+            $globalFuntion_cashierMoney = $controller->cashierMoney('user', Auth::user()?Auth::user()->id:null, 'status = "abierta"');
+            $view->with('globalFuntion_cashierMoney', $globalFuntion_cashierMoney->original);
+
 
             $global_index = $new->IndexSystem();
             // $global_cashier = $global_cashier->availableMoney(Auth::user()->id, 'user');
             $view->with('global_index', $global_index->original); //Para retornar en formato json
             // $view->with('global_index', $global_index); //Para retornar en formato de array
 
-            $global_cashierOpen = $controller->cashierOpen();
-            $view->with('global_cashierOpenUser', $global_cashierOpen->original);
+            
 
         });
 
