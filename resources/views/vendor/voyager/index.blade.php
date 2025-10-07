@@ -84,6 +84,66 @@
 
             // dump($globalFuntion_cashier);
         @endphp
+        <!-- KPI Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="panel panel-bordered dashboard-kpi">
+                    <div class="panel-body text-center">
+                        <div class="kpi-icon">
+                            <i class="voyager-dollar"></i>
+                        </div>
+                        <h3 class="kpi-value">Bs. {{ number_format($amountDaytotal, 2, ',', '.') }}</h3>
+                        <p class="kpi-label">Ventas Total del Día</p>
+                        {{-- <div class="kpi-trend trend-up">
+                            <i class="voyager-up"></i> 12.5%
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-bordered dashboard-kpi">
+                    <div class="panel-body text-center">
+                        <div class="kpi-icon">
+                            <i class="voyager-bag"></i>
+                        </div>
+                        <h3 class="kpi-value">{{ $saleDaytotal }}</h3>
+                        <p class="kpi-label">Pedidos del Día</p>
+                        {{-- <div class="kpi-trend trend-up">
+                            <i class="voyager-up"></i> 5.2%
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-bordered dashboard-kpi">
+                    <div class="panel-body text-center">
+                        <div class="kpi-icon">
+                            <i class="voyager-bar-chart"></i>
+                        </div>
+                        <h3 class="kpi-value">Bs.
+                            {{ $amountDaytotal ? number_format($amountDaytotal / $saleDaytotal, 2, ',', '.') : 0 }}</h3>
+                        <p class="kpi-label">Ticket Promedio</p>
+                        {{-- <div class="kpi-trend trend-up">
+                            <i class="voyager-up"></i> 8.7%
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="panel panel-bordered dashboard-kpi">
+                    <div class="panel-body text-center">
+                        <div class="kpi-icon">
+                            <i class="voyager-person"></i>
+                        </div>
+                        <h3 class="kpi-value">{{ $customer }}</h3>
+                        <p class="kpi-label">Clientes</p>
+                        {{-- <div class="kpi-trend trend-down">
+                            <i class="voyager-down"></i> 3.1%
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
@@ -124,7 +184,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td><small>Dinero disponible en Caja</small></td>
-                                                    {{-- <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['amountCashier'], 2, ',', '.') }} <small>Bs.</small></h4></td> --}}
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['amountCashier'], 2, ',', '.') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                             </table>
                                             <hr>
@@ -143,7 +203,7 @@
                                                 </tr>
                                             </table>
                                         </div>
-                                        <div class="col-md-4 col-md-offset-1" >
+                                        <div class="col-md-2 col-md-offset-2" >
                                             <canvas id="myChart"></canvas>
                                         </div>
                                     </div>
@@ -361,66 +421,7 @@
             </div>
         @endif
 
-        <!-- KPI Cards -->
-        <div class="row">
-            <div class="col-md-3">
-                <div class="panel panel-bordered dashboard-kpi">
-                    <div class="panel-body text-center">
-                        <div class="kpi-icon">
-                            <i class="voyager-dollar"></i>
-                        </div>
-                        <h3 class="kpi-value">Bs. {{ number_format($amountDaytotal, 2, ',', '.') }}</h3>
-                        <p class="kpi-label">Ventas Total del Día</p>
-                        {{-- <div class="kpi-trend trend-up">
-                            <i class="voyager-up"></i> 12.5%
-                        </div> --}}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="panel panel-bordered dashboard-kpi">
-                    <div class="panel-body text-center">
-                        <div class="kpi-icon">
-                            <i class="voyager-bag"></i>
-                        </div>
-                        <h3 class="kpi-value">{{ $saleDaytotal }}</h3>
-                        <p class="kpi-label">Pedidos del Día</p>
-                        {{-- <div class="kpi-trend trend-up">
-                            <i class="voyager-up"></i> 5.2%
-                        </div> --}}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="panel panel-bordered dashboard-kpi">
-                    <div class="panel-body text-center">
-                        <div class="kpi-icon">
-                            <i class="voyager-bar-chart"></i>
-                        </div>
-                        <h3 class="kpi-value">Bs.
-                            {{ $amountDaytotal ? number_format($amountDaytotal / $saleDaytotal, 2, ',', '.') : 0 }}</h3>
-                        <p class="kpi-label">Ticket Promedio</p>
-                        {{-- <div class="kpi-trend trend-up">
-                            <i class="voyager-up"></i> 8.7%
-                        </div> --}}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="panel panel-bordered dashboard-kpi">
-                    <div class="panel-body text-center">
-                        <div class="kpi-icon">
-                            <i class="voyager-person"></i>
-                        </div>
-                        <h3 class="kpi-value">{{ $customer }}</h3>
-                        <p class="kpi-label">Clientes</p>
-                        {{-- <div class="kpi-trend trend-down">
-                            <i class="voyager-down"></i> 3.1%
-                        </div> --}}
-                    </div>
-                </div>
-            </div>
-        </div>
+        
 
         <div class="row">
             <!-- Gráfico de ventas por día de la semana -->
@@ -538,13 +539,16 @@
                 $(document).ready(function() {
                     const data = {
                         labels: [
-                            
+                            'Dinero en Caja',
                             'Dinero Disponible en Caja',
+                            'Ventas en Efectivo',
+                            'Ventas en Qr',
+                            'Gastos',
                         ],
                         datasets: [{
                             label: 'Bs.',
                             data: [
-                                "{{ $globalFuntion_cashierMoney['cashierIn'] }}"
+                                "{{ $globalFuntion_cashierMoney['cashierIn'] }}",
                             ],
                             backgroundColor: [
                                 'rgb(12, 55, 101)',

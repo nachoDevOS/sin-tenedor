@@ -109,7 +109,7 @@ class Controller extends BaseController
 
 
 
-            // $amountCashier = ($cashierIn + $loanPaymentEfectivo) - $cashierOut  - $loans -$pawns - $pawnsMoneyAditional-$salaryPurchase;
+            $amountCashier = ($cashierIn + $amountEfectivo) - $cashierOut;
         }
 
         return response()->json([
@@ -118,7 +118,7 @@ class Controller extends BaseController
             // // datos en valores
             'amountEfectivo' => $cashier?$amountEfectivo:null,//Para obtener el total de dinero en efectivo recaudado en general
             'amountQr' => $cashier?$amountQr:null, //Para obtener el total de dinero en QR recaudado en general
-            // 'amountCashier'=>$cashier?$amountCashier:null, //dinero disponible en caja para su uso 'solo dinero que hay en la caja disponible y cobro solo en efectivos'
+            'amountCashier'=>$cashier?$amountCashier:null, //dinero disponible en caja para su uso 'solo dinero que hay en la caja disponible y cobro solo en efectivos'
 
             // 'amountEgres' =>$cashier?$amountEgres:null, // dinero prestado de prenda y diario
 
