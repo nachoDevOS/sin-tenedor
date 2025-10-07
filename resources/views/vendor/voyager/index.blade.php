@@ -203,7 +203,7 @@
                                                 </tr>
                                             </table>
                                         </div>
-                                        <div class="col-md-2 col-md-offset-2" >
+                                        <div class="col-md-3 col-md-offset-2" >
                                             <canvas id="myChart"></canvas>
                                         </div>
                                     </div>
@@ -539,7 +539,7 @@
                 $(document).ready(function() {
                     const data = {
                         labels: [
-                            'Dinero en Caja',
+                            'Dinero asignado a Caja',
                             'Dinero Disponible en Caja',
                             'Ventas en Efectivo',
                             'Ventas en Qr',
@@ -548,10 +548,18 @@
                         datasets: [{
                             label: 'Bs.',
                             data: [
-                                "{{ $globalFuntion_cashierMoney['cashierIn'] }}",
+                                "{{ $globalFuntion_cashierMoney['cashierIn'] }}", // Dinero en Caja
+                                "{{ $globalFuntion_cashierMoney['amountCashier'] }}", // Dinero Disponible
+                                "{{ $globalFuntion_cashierMoney['amountEfectivo'] }}", // Ventas Efectivo
+                                "{{ $globalFuntion_cashierMoney['amountQr'] }}", // Ventas QR
+                                "{{ $globalFuntion_cashierMoney['cashierOut'] }}", // Gastos
                             ],
                             backgroundColor: [
                                 'rgb(12, 55, 101)',
+                                'rgb(54, 162, 235)',
+                                'rgb(255, 206, 86)',
+                                'rgb(75, 192, 192)',
+                                'rgb(255, 99, 132)'
                             ],
                             hoverOffset: 4
                         }]
