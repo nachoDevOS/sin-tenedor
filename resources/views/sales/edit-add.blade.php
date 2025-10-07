@@ -32,11 +32,9 @@
             <div class="row">
                 @if (!$cashier)
                     <div class="col-md-12 col-sm-12">
-                        <div class="panel panel-bordered alert alert-warning" style="text-align: left">
-                            <strong>Información:</strong>
-                            <p>Al registar un monto adicional, el sistema actualizara los intereses cuando se genere un
-                                nuevo
-                                interes en el mes correspondiente.</p>
+                        <div class="panel panel-bordered alert alert-warning">
+                            <strong><i class="voyager-info-circled"></i> Advertencia:</strong>
+                            <p class="mt-1">No puedes realizar ventas porque no tienes una caja abierta. Por favor, dirígete a la sección de <a href="{{ route('cashiers.index') }}">cajas</a> para aperturar una.</p>
                         </div>
                     </div>
                 @endif

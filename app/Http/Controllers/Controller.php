@@ -22,16 +22,34 @@ class Controller extends BaseController
         }
     }
 
+    // Funcion para ver la caja en estado abierta
+    public function cashierOpen()
+    {
+        $cashier = Cashier::with(['movements' => function($q){
+            $q->where('deleted_at', NULL);
+        }])
+        ->where('user_id', Auth::user()->id)
+        ->where('status', 'abierta')
+        ->where('deleted_at', NULL)->first();
+
+        // return $cashierOpen;
+        return response()->json(['return' => $cashier]);
+
+    }
+
 
     // Funcion para ver la caja en estado abierta
-    public function cashierUserOpen($user_id)
+    public function cashierUserOpen($user_id, $status)
     {
-        return Cashier::with(['movements' => function($q){
+        $cashier = Cashier::with(['movements' => function($q){
             $q->where('deleted_at', NULL);
         }])
         ->where('user_id', $user_id)
-        ->where('status', 'abierta')
+        ->whereRaw($status?'status = "'.$status.'"':1)
+        // ->where('status', 'abierta')
         ->where('deleted_at', NULL)->first();
+
+        return response()->json(['return' => $cashier]);
     }
 
     //Para obtener el detalle de cualquier caja y en cualquier estado que no se encuentre eliminada (id de la caja, Estado de la caja)

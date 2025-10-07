@@ -73,7 +73,7 @@ class CashierController extends Controller
     public function store(Request $request)
     {
         $this->custom_authorize('add_cashiers');
-        $cashier = $this->cashierUserOpen($request->user_id);
+        $cashier = $this->cashierUserOpen($request->user_id, 'abierta');
         if ($cashier) {
             return redirect()
                 ->route('cashiers.index')
