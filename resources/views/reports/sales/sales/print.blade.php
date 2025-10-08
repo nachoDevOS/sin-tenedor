@@ -173,14 +173,14 @@
     </div>
 
     @if ($detail == 0)
-        <table class="sales-table">
+        <table class="sales-table print-friendly">
             <thead>
                 <tr>
                     <th style="width: 5%">N°</th>
                     <th style="width: 15%">CÓDIGO</th>
                     <th style="width: 32%">CLIENTE</th>
-                    <th style="width: 15%">FECHA DE VENTA</th>
-                    <th style="width: 8%">TICKET</th>
+                    <th style="width: 16%">FECHA DE VENTA</th>
+                    <th style="width: 7%">TICKET</th>
                     <th style="width: 15%">TOTAL</th>
                 </tr>
             </thead>
@@ -227,14 +227,14 @@
             </tbody>
         </table>
     @else
-        <table class="sales-table">
+        <table class="sales-table print-friendly">
             <thead>
                 <tr>
                     <th style="width: 5%; font-size: 11px">N°</th>
                     <th style="width: 15%; font-size: 11px">CÓDIGO</th>
                     <th style="width: 32%; font-size: 11px">CLIENTE</th>
-                    <th style="width: 15%; font-size: 11px">FECHA DE VENTA</th>
-                    <th style="width: 8%; font-size: 11px">TICKET</th>
+                    <th style="width: 16%; font-size: 11px">FECHA DE VENTA</th>
+                    <th style="width: 7%; font-size: 11px">TICKET</th>
                     <th style="width: 15%; font-size: 11px">TOTAL</th>
                 </tr>
             </thead>

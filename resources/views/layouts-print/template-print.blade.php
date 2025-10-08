@@ -1,173 +1,155 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>@yield('page_title') | {{Voyager::setting('admin.title') }}</title>
-    <!-- Favicon -->
-    <?php $admin_favicon = Voyager::setting('admin.icon_image'); ?>
-    @if($admin_favicon == '')
-        <link rel="shortcut icon" href="{{ voyager_asset('images/logo-icon-light.png')}}" type="image/png">
-    @else
-        <link rel="shortcut icon" href="{{ Voyager::image($admin_favicon) }}" type="image/png">
-    @endif
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            position: relative;
-            background-color: #566573;
-        }
-
-        .background {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px 0;
-            position: relative;
-        }
-
-        .sheet {
-            width: 850px;
-            background-color: white;
-            padding: 30px 50px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .watermark {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.2;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .watermark img {
-            width: 350px;
-            max-width: 100%;
-        }
-
-        /* Estilos para botones */
-        .button-container {
-            text-align: right;
-            margin-bottom: 20px;
-        }
-
-        .btn-print, .btn-cancel {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-print {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-print:hover {
-            background-color: #218838;
-            transform: translateY(-1px);
-        }
-
-        .btn-cancel {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .btn-cancel:hover {
-            background-color: #c82333;
-            transform: translateY(-1px);
-        }
-
-        .no-print {
-            display: block;
-        }
-
-        @media print {
-            body {
-                background-color: white !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .watermark {
-                display: block !important;
-                opacity: 0.1 !important;
-                position: absolute !important;
-                top: 40% !important;
-            }
-            .sheet {
-                width: 100% !important;
-                padding: 10px !important;
-                margin: 0 !important;
-            }
-            .background {
-                padding: 0 !important;
-                min-height: 100% !important;
-                display: block !important;
-            }
-        }
-    </style>
-    @yield('css')
-</head>
-<body>
-    <!-- Watermark -->
-    <div class="watermark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>@yield('page_title') | {{ env('APP_NAME', 'MAMORE') }}</title>
+        <!-- Favicon -->
         <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
         @if($admin_favicon == '')
-            <img src="{{ voyager_asset('images/logo-icon-light.png') }}" />
+            <link rel="shortcut icon" href="{{ asset('images/icon.png') }}" type="image/png">
         @else
-            <img src="{{ Voyager::image($admin_favicon) }}" style="width: 200px;"/>
+            <link rel="shortcut icon" href="{{ Voyager::image($admin_favicon) }}" type="image/png">
         @endif
-    </div>
+        <style>
+            body{
+                margin: 0px auto;
+                font-family: Arial, sans-serif;
+            }
+            .container {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                background: rgb(115,117,117);
+                background: linear-gradient(90deg, rgba(115,117,117,1) 0%, rgba(173,173,173,1) 50%, rgba(115,117,117,1) 100%);
+            }
+            .sheet {
+                padding: 30px;
+                width: 750px;
+                background-color: white
+            }
+            .content {
+                text-align: justify;
+                padding: 0px 34px;
+                font-size: 13px;
+                min-height: 100vh;
+            }
+            #logo{
+                margin: 0px;
+                height: 60px;
+            }
+            .page-head {
+                text-align: center;
+            }
+            .page-head h3 {
+                margin-top: 0px !important
+            }
+            #watermark {
+                position: fixed;
+                width: 100%;
+                text-align: center;
+                top: 350px;
+                opacity: 0.1;
+                z-index:  0;
+            }
+            #watermark img{
+                position: relative;
+                width: 300px;
+            }
 
-    <!-- Contenido principal -->
-    <div class="background">
-        <div class="sheet">
-            <!-- Botones en la parte superior -->
-            <div class="button-container no-print">
-                <button class="btn-cancel" onclick="window.close()">
-                    Cancelar <i class="fa fa-close"></i>
-                </button>
-                <button class="btn-print" onclick="window.print()">
-                    Imprimir <i class="fa fa-print"></i>
-                </button>
-            </div>
+            .btn {
+                padding: 8px 15px
+            }
+            .text-center{
+                text-align: center;
+            }
+            ol p{
+                margin: 10px
+            }
+            .table-signature {
+                width: 100%;
+                text-align: center;
+                margin-top: 80px;
+                margin-bottom: 50px;
+            }
 
-            <!-- Contenido del reporte -->
-            <div class="content">
+            @page {
+                size: letter;
+                margin: 10mm 10mm 10mm 10mm;
+            }
+            @media print {
+                body{
+                    margin: 0px auto;
+                }
+                .options {
+                    display: none
+                }
+                .sheet {
+                    padding: 0px;
+                    width: 100%;
+                    background-color: white
+                }
+                .container {
+                    background-color: transparent
+                }
+                .content {
+                    min-height: auto;
+                }
+                .table-signature {
+                    margin-bottom: 0px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="watermark">
+            <img src="{{ asset('images/icon.png') }}" /> 
+        </div>
+        <div class="container">
+            <div class="sheet">
+                <div class="options" style="position: fixed; bottom: 10px; right: 20px">
+                   
+                    <button type="button" class="btn btn-print">Imprimir</button>
+
+                </div>
                 @yield('content')
             </div>
         </div>
-    </div>
 
-    <script>
-        document.body.addEventListener('keypress', function(e) {
-            switch (e.key) {
-                case 'Enter':
+
+        @yield('css')
+
+        <script>
+            window.onafterprint = function(event) {
+                console.log('before print');
+            };
+        </script>
+
+        <script src="{{ asset('js/jquery-3.4.1.min.js')}}" ></script>
+        <script>
+            $(document).ready(function () {
+                $('#location-id').change(function () {
+                    $('#label-location').html($(this).val());
+                });
+
+                $('.btn-edit').click(function(){
+                    document.designMode = 'on';
+                    $(this).css('display', 'none');
+                    $('.btn-print').css('display', 'none');
+                    $('.btn-save').css('display', 'block');
+                });
+                $('.btn-save').click(function(){
+                    document.designMode = 'off';
+                    $(this).css('display', 'none');
+                    $('textarea[name="text"]').text($('.content').html());
+                    $('#form-submit').trigger('submit');
+                });
+                $('.btn-print').click(function(){
                     window.print();
-                    break;
-                case 'Escape':
-                    window.close();
-                    break;
-                default:
-                    break;
-            }
-        });
-    </script>
-
-    @yield('script')
-</body>
+                });
+            });
+        </script>
+        @yield('script')
+    </body>
 </html>
