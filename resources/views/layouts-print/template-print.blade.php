@@ -104,7 +104,13 @@
     </head>
     <body>
         <div id="watermark">
-            <img src="{{ asset('images/icon.png') }}" /> 
+
+            @if($admin_favicon == '')
+                <img src="{{ asset('images/icon.png') }}" /> 
+            @else
+                <img src="{{ Voyager::image($admin_favicon) }}" /> 
+            @endif
+            
         </div>
         <div class="container">
             <div class="sheet">
