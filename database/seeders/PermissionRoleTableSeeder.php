@@ -57,7 +57,9 @@ class PermissionRoleTableSeeder extends Seeder
         $role = Role::where('name', 'cashier')->firstOrFail();
         $permissions = Permission::whereRaw('table_name = "admin" or
 
-                                            table_name = "sales" or                                           
+                                            table_name = "sales" or   
+                                            table_name = "egres_inventories" or
+
 
                                             `key` = "browse_people" or
                                             `key` = "read_people" or

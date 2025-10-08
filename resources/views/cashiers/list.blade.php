@@ -16,9 +16,9 @@
             <tbody>
                 @forelse ($cashier as $item)
                     <tr>
-                        <td>{{$item->id}}</td>
-                        <td style="width: 200pt; text-align: center">{{strtoupper($item->user->name)}}</td>
-                        <td style="text-align: center">{{strtoupper($item->title)}}</td>
+                        <td>{{ $item->id }}</td>
+                        <td style="width: 200pt; text-align: center">{{ strtoupper($item->user->name) }}</td>
+                        <td style="text-align: center">{{ strtoupper($item->title) }}</td>
                         <td style="text-align: center">
                             @if ($item->status == 'abierta')
                                 <label class="label label-success">Abierta</label>
@@ -37,12 +37,48 @@
                             {{-- <label class="label label-success">{{$item->status}}</label> --}}
 
                         </td>
-                        <td style="text-align: center">{{date('d/m/Y H:i:s', strtotime($item->created_at))}}<br><small>{{\Carbon\Carbon::parse($item->created_at)->diffForHumans()}}</small></td>
-                        <td style="text-align: center">@if($item->closed_at){{date('d/m/Y H:i:s', strtotime($item->closed_at))}}<br><small>{{\Carbon\Carbon::parse($item->closed_at)->diffForHumans()}}@endif </small></td>
+                        <td style="text-align: center">
+                            {{ date('d/m/Y H:i:s', strtotime($item->created_at)) }}<br><small>{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small>
+                        </td>
+                        <td style="text-align: center">
+                            @if ($item->closed_at)
+                                {{ date('d/m/Y H:i:s', strtotime($item->closed_at)) }}
+                                <br><small>{{ \Carbon\Carbon::parse($item->closed_at)->diffForHumans() }}
+                            @endif </small>
+                        </td>
                         <td>
-                            @if ($item->amount)
-                                <b>Monto de cierre: </b> {{ $item->amount_real }}<br>
-                                <b>Saldo: </b> <span class="@if($item->balance > 0) text-success @endif @if($item->balance < 0) text-danger @endif">{{ $item->balance }}</span>
+                            @php
+                                $missing_amount = 0;
+                                $cash = ['200', '100', '50', '20', '10', '5', '2', '1', '0.5', '0.2', '0.1'];
+
+                                foreach ($cash as $c) {
+                                    $details = $item->details->where('cash_value', $c)->first();
+
+                                    if ($details) {
+                                        $missing_amount += $details->quantity * $c;
+                                    }
+                                }
+
+                                $cashierIn = $item->movements->where('type', 'ingreso')->where('deleted_at', NULL)->where('status', 'Aceptado')->sum('amount');
+                                $cashierOut =0;
+
+                                $paymentEfectivo = $item->sales
+                                    ->flatMap(function($sale) {
+                                        return $sale->saleTransactions->where('paymentType', 'Efectivo')->pluck('amount');
+                                    })
+                                    ->sum();
+
+                                $paymentQr = $item->sales
+                                    ->flatMap(function($sale) {
+                                        return $sale->saleTransactions->where('paymentType', 'Qr')->pluck('amount');
+                                    })
+                                    ->sum();
+                                $amountCashier = ($cashierIn + $paymentEfectivo) - $cashierOut;
+
+                            @endphp
+                            @if ($item->status=='cerrada')
+                                <b>Monto de cierre: </b> {{ $missing_amount }}<br>
+                                <b>Saldo: </b> <span class="@if ($missing_amount > $amountCashier) text-success @endif @if ($missing_amount < $amountCashier) text-danger @endif">{{ $missing_amount-$amountCashier }}</span>
                             @endif
                         </td>
                         <td style="text-align: right">
@@ -50,21 +86,31 @@
                                 <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
                                     Mas <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu" role="menu" style="left: -90px !important" >
+                                <ul class="dropdown-menu" role="menu" style="left: -90px !important">
                                     @php
-                                        $x=0;
+                                        $x = 0;
                                     @endphp
                                     @foreach ($item->vault_details as $aux)
                                         @php
                                             $x++;
                                         @endphp
-                                        <li><a href="#" onclick="openWindow({{$aux->id}})" style="color: blue"  data-toggle="modal" title="Imprimir Comprobante" ><i class="fa-solid fa-print"></i> {{$x==1?'Imprimir Comporbante de Apertura':'Imprimir Comporbante de Abono #'.$x}}</a></li>
+                                        <li><a href="#" onclick="openWindow({{ $aux->id }})"
+                                                style="color: blue" data-toggle="modal" title="Imprimir Comprobante"><i
+                                                    class="fa-solid fa-print"></i>
+                                                {{ $x == 1 ? 'Imprimir Comporbante de Apertura' : 'Imprimir Comporbante de Abono #' . $x }}</a>
+                                        </li>
                                     @endforeach
                                     @if ($item->status == 'abierta')
-                                        <li><a href="#" class="btn-agregar-gasto" data-cashier_id="{{ $item->id }}" data-toggle="modal" data-target="#agregar-gasto-modal" title="Agregar gasto" ><i class="voyager-dollar"></i> Agregar gasto</a></li>
+                                        <li><a href="#" class="btn-agregar-gasto"
+                                                data-cashier_id="{{ $item->id }}" data-toggle="modal"
+                                                data-target="#agregar-gasto-modal" title="Agregar gasto"><i
+                                                    class="voyager-dollar"></i> Agregar gasto</a></li>
                                     @endif
                                     @if ($item->status == 'cerrada')
-                                        <li><a href="#" onclick="closeWindow({{$item->id}})" style="color: red" data-toggle="modal" title="Imprimir Comprobante de Cierre" ><i class="fa-solid fa-print"></i> Imprimir Comprobante de Cierre</a></li>
+                                        <li><a href="#" onclick="closeWindow({{ $item->id }})"
+                                                style="color: red" data-toggle="modal"
+                                                title="Imprimir Comprobante de Cierre"><i class="fa-solid fa-print"></i>
+                                                Imprimir Comprobante de Cierre</a></li>
                                     @endif
                                 </ul>
                             </div>
@@ -74,11 +120,12 @@
                                 </a>
                             @endif --}}
                             @if (auth()->user()->hasPermission('read_cashiers'))
-                                <a href="{{route('cashiers.show', ['cashier'=>$item->id])}}" title="Editar" class="btn btn-sm btn-warning">
+                                <a href="{{ route('cashiers.show', ['cashier' => $item->id]) }}" title="Editar"
+                                    class="btn btn-sm btn-warning">
                                     <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>
                                 </a>
                             @endif
-                            {{-- @if ($item->status == "cierre pendiente")
+                            {{-- @if ($item->status == 'cierre pendiente')
                                 <a href="{{route('cashiers.confirm_close',['cashier' => $item->id])}}" title="Ver" class="btn btn-sm btn-dark">
                                     <i class="voyager-lock"></i> <span class="hidden-xs hidden-sm">Confirmar Cierre de Caja</span>
                                 </a>
@@ -89,13 +136,14 @@
                     <tr>
                         <td colspan="8">
                             <h5 class="text-center" style="margin-top: 50px">
-                                <img src="{{ asset('images/empty.png') }}" width="120px" alt="" style="opacity: 0.8">
+                                <img src="{{ asset('images/empty.png') }}" width="120px" alt=""
+                                    style="opacity: 0.8">
                                 <br><br>
                                 No hay resultados
                             </h5>
                         </td>
                     </tr>
-                @endforelse                                   
+                @endforelse
             </tbody>
         </table>
     </div>
@@ -103,8 +151,9 @@
 
 <div class="col-md-12">
     <div class="col-md-4" style="overflow-x:auto">
-        @if(count($cashier)>0)
-            <p class="text-muted">Mostrando del {{$cashier->firstItem()}} al {{$cashier->lastItem()}} de {{$cashier->total()}} registros.</p>
+        @if (count($cashier) > 0)
+            <p class="text-muted">Mostrando del {{ $cashier->firstItem() }} al {{ $cashier->lastItem() }} de
+                {{ $cashier->total() }} registros.</p>
         @endif
     </div>
     <div class="col-md-8" style="overflow-x:auto">
@@ -116,18 +165,18 @@
 
 <script>
     var page = "{{ request('page') }}";
-    $(document).ready(function(){
+    $(document).ready(function() {
 
-        $('.page-link').click(function(e){
+        $('.page-link').click(function(e) {
             e.preventDefault();
             let link = $(this).attr('href');
-            if(link){
+            if (link) {
                 page = link.split('=')[1];
                 list(page);
             }
         });
 
-        $('.btn-agregar-gasto').click(function(){
+        $('.btn-agregar-gasto').click(function() {
             let cashier_id = $(this).data('cashier_id');
             $('#form-agregar-gasto input[name="cashier_id"]').val(cashier_id);
         });

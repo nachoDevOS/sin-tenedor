@@ -7,7 +7,7 @@
     <div class="report-header">
         <div class="logo-container">
             <?php
-            $admin_favicon = Voyager::setting('admin.icon_image');
+                $admin_favicon = Voyager::setting('admin.icon_image');
             ?>
             @if ($admin_favicon == '')
                 <img src="{{ asset('images/icon.png') }}" alt="{{ Voyager::setting('admin.title') }}" width="70px">

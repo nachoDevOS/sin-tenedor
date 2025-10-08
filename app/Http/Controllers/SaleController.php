@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cashier;
 use App\Models\Category;
 use App\Models\ItemSale;
 use App\Models\ItemSaleStock;
@@ -238,6 +239,11 @@ class SaleController extends Controller
             }])
             ->where('id',$id)
             ->first();
+        $cashier = Cashier::where('status', 'abierta')->where('id', $sale->cashier_id)->first();
+        if(!$cashier)
+        {
+            return redirect()->back()->with(['message' => 'La caja se encuentra cerrada..', 'alert-type' => 'error']);
+        }
      
         DB::beginTransaction();
         try {        
@@ -249,7 +255,9 @@ class SaleController extends Controller
             }
             $sale->delete();
             DB::commit();
-            return redirect()->route('sales.index')->with(['message' => 'Eliminado exitosamente.', 'alert-type' => 'success']);
+            // return redirect()->route('sales.index')->with(['message' => 'Eliminado exitosamente.', 'alert-type' => 'success']);
+            return redirect()->back()->with(['message' => 'Eliminado exitosamente.', 'alert-type' => 'success']);
+            
         } catch (\Throwable $e) {
             DB::rollBack();
             return redirect()->route('sales.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);

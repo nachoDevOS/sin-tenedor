@@ -173,12 +173,7 @@
                                     <p style="margin-top: 20px">Saldo</p>
                                 </div>
                                 <div class="col-md-6">
-                                    @php
-                                        $balance = $missing_amount - $amountCashier;
-                                    @endphp
-                                    <h3 @class(['text-right', 'text-success' => $balance > 0, 'text-danger' => $balance < 0, 'text-info' => $balance == 0]) style="padding-right: 20px">
-                                        {{ number_format($balance, 2, ',', '.') }}
-                                    </h3>
+                                    <h3 class="text-right @if($missing_amount > $amountCashier) text-success @endif @if($amountCashier >$missing_amount) text-danger @endif " style="padding-right: 20px">{{ number_format($missing_amount-$amountCashier, 2, ',', '.') }}</h3>
                                 </div>
                             </div>
                             <button type="button" class="btn btn-danger btn-block btn-confirm" data-toggle="modal" data-target="#close_modal">Cerrar caja <i class="voyager-lock"></i></button>

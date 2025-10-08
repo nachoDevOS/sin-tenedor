@@ -159,7 +159,18 @@
                                         <tr
                                             @if ($item->deleted_at) style="text-decoration: line-through; color: red;" @endif>
                                             <td style="text-align: center; font-size: 11px">{{ $count }}</td>
-                                            <td style="font-size: 11px">{{ $item->code }}</td>
+                                            <td style="font-size: 11px">
+                                                @if ($item->deleted_at == null && $cashier->status == 'abierta')
+                                                    <a href="#"
+                                                        onclick="deleteItem('{{ route('sales.destroy', ['sale' => $item->id]) }}')"
+                                                        title="Eliminar" data-toggle="modal" data-target="#modal-delete"
+                                                        class="btn btn-sm btn-danger delete">
+                                                        <i class="voyager-trash"></i>
+                                                    </a>
+                                                @endif
+
+                                                {{ $item->code }}
+                                            </td>
                                             <td style="font-size: 11px">
                                                 @if ($item->person)
                                                     {{ strtoupper($item->person->first_name) }}
@@ -222,12 +233,14 @@
                                     <tr>
                                         <td colspan="7" class="text-right"><b>TOTAL QR/TRANSFERENCIA</b></td>
                                         <td class="text-right">
-                                            <b>{{ number_format($total_movements_qr, 2, ',', '.') }}</b></td>
+                                            <b>{{ number_format($total_movements_qr, 2, ',', '.') }}</b>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td colspan="7" class="text-right"><b>TOTAL EFECTIVO</b></td>
                                         <td class="text-right">
-                                            <b>{{ number_format($total_movements_efectivo, 2, ',', '.') }}</b></td>
+                                            <b>{{ number_format($total_movements_efectivo, 2, ',', '.') }}</b>
+                                        </td>
                                     </tr>
                             </tbody>
                         </table>
@@ -278,7 +291,7 @@
                                     <h4>Dinero en efectivo disponible</h4>
                                 </td>
                                 <td style="text-align: right">
-                                    <h4>{{ number_format($cashierInput+$total_movements_efectivo, 2, ',', '.') }}</h4>
+                                    <h4>{{ number_format($cashierInput + $total_movements_efectivo, 2, ',', '.') }}</h4>
                                 </td>
                             </tr>
                             @if ($cashier->amount)
@@ -313,12 +326,16 @@
 {{-- @include('partials.modal-delete')
     @include('partials.modal-mapsView') --}}
 
+    @include('partials.modal-delete')
+
+
 
 
 @stop
 
 @section('javascript')
 <script>
+
     function deleteItem(url) {
         $('#delete_form').attr('action', url);
     }
