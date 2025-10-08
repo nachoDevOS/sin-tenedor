@@ -154,7 +154,7 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span
                                 aria-hidden="true">&times;</span></button>
                         <i class="fa-solid fa-vault"></i> Crear bóveda
-                    </div>yyy
+                    </div>
                     <div class="modal-body">
                         <div class="form-group">
                             {{-- <label for="name">Nombre de remitente</label> --}}
