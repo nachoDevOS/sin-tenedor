@@ -1,88 +1,42 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ingreso de bóveda</title>
-    <link rel="shortcut icon" href="{{ asset('images/icon.png') }}" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-        body{
-            margin: 0px auto;
-            font-family: Arial, sans-serif;
-            font-weight: 100;
-            max-width: 740px;
-        }
-        #watermark {
-            position: absolute;
-            opacity: 0.1;
-            z-index:  -1000;
-        }
-        #watermark img{
-            position: relative;
-            width: 200px;
-            height: 200px;
-            left: 205px;
-        }
-        .show-print{
-            display: none;
-            padding-top: 15px
-        }
-        .btn-print{
-            padding: 5px 10px
-        }
-        @media print{
-            .hide-print, .btn-print{
-                display: none
-            }
-            .show-print, .border-bottom{
-                display: block
-            }
-            .border-bottom{
-                border-bottom: 1px solid rgb(90, 90, 90);
-                padding: 20px 0px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="hide-print" style="text-align: right; padding: 10px 0px">
-        <button class="btn-print" onclick="window.close()">Cancelar <i class="fa fa-close"></i></button>
-        <button class="btn-print" onclick="window.print()"> Imprimir <i class="fa fa-print"></i></button>
-    </div>
+@extends('layouts-print.template-print')
+
+@section('page_title', Str::ucfirst($detail->type).' de bóveda')
+
+@section('content')
     <div style="height: 45vh">
         <table width="100%">
             <tr>
-                <td><img src="{{ asset('images/icon.png') }}" alt="GADBENI" width="80px"></td>
+                <td><img src="{{ asset('images/icon.png') }}" alt="{{setting('admin.title')}}" width="80px"></td>
                 <td style="text-align: right">
                     <h3 style="margin-bottom: 0px; margin-top: 5px">
-                        CAJAS - GOBERNACIÓN<br> <small>INGRESO A BÓVEDA </small> <br>
+                        CAJAS - {{setting('admin.title')}}<br> <small>{{ Str::upper($detail->type) }} A BÓVEDA </small> <br>
                         <small style="font-size: 11px; font-weight: 100">Impreso por: {{ Auth::user()->name }} <br> {{ date('d/M/Y H:i:s') }}</small>
                     </h3>
                 </td>
             </tr>
         </table>
-        <div id="watermark">
-            <img src="{{ asset('images/icon.png') }}" height="100%" width="100%" /> 
-        </div>
+        @if ($detail->deleted_at)
+            <div style="text-align: center">
+                <h1 style="color: red">ELIMINADO</h1>
+            </div>
+        @endif
 
         <hr style="margin: 0px">
         <table width="100%" cellpadding="10" style="font-size: 11px">
             <tr>
                 <td colspan="2">
-                    <table width="100%">
+                    <table width="100%" cellpadding="10">
                         <tr>
                             <td><b>Registrado por: </b></td>
                             <td>{{ $detail->user->name }}</td>
                             <td><b>N&deg; de cheque: </b></td>
-                            <td>{{ $detail->bill_number }}</td>
+                            <td>{{ $detail->bill_number ?? 'S/N' }}</td>
                             <td><b>Nombre del remitente: </b></td>
                             <td>{{ $detail->name_sender ?? 'No definido' }}</td>
                         </tr>
                         <tr>
                             <td><b>Descripción: </b></td>
-                            <td colspan="5">{{ $detail->description ?? 'No hay descripción' }}</td>
+                            <td colspan="5">{!! $detail->description ?? 'No hay descripción' !!}</td>
                         </tr>
                     </table>
                 </td>
@@ -90,7 +44,7 @@
             <tr>
                 <td width="70%">
                     <div>
-                        <h3>Detalles de ingreso</h3>
+                        <h3>Detalles de {{ $detail->type }}</h3>
                         <table width="100%">
                             <thead>
                                 <tr>
@@ -139,18 +93,25 @@
             </tr>
         </table>
     </div>
-    <script>
-        document.body.addEventListener('keypress', function(e) {
-            switch (e.key) {
-                case 'Enter':
-                    window.print();
-                    break;
-                case 'Escape':
-                    window.close();
-                default:
-                    break;
+@endsection
+
+@section('css')
+    <style>
+        .show-print{
+            display: none;
+            padding-top: 15px
+        }
+        @media print{
+            .hide-print, .btn-print{
+                display: none
             }
-        });
-    </script>
-</body>
-</html>
+            .show-print, .border-bottom{
+                display: block
+            }
+            .border-bottom{
+                border-bottom: 1px solid rgb(90, 90, 90);
+                padding: 20px 0px;
+            }
+        }
+    </style>
+@endsection

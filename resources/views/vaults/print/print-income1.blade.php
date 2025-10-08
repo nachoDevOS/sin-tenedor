@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Cierre de bóveda</title>
+    <title>Ingreso de bóveda</title>
     <link rel="shortcut icon" href="{{ asset('images/icon.png') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
@@ -51,14 +51,13 @@
         <button class="btn-print" onclick="window.close()">Cancelar <i class="fa fa-close"></i></button>
         <button class="btn-print" onclick="window.print()"> Imprimir <i class="fa fa-print"></i></button>
     </div>
-    @for ($i = 0; $i < 2; $i++)
-    <div style="height: 45vh" @if ($i == 1) class="show-print" @else class="border-bottom" @endif>
+    <div style="height: 45vh">
         <table width="100%">
             <tr>
-                <td><img src="{{ asset('images/icon.png') }}" alt="GADBENI" width="120px"></td>
+                <td><img src="{{ asset('images/icon.png') }}" alt="{{setting('admin.title')}}" width="80px"></td>
                 <td style="text-align: right">
                     <h3 style="margin-bottom: 0px; margin-top: 5px">
-                        CAJAS - GOBERNACIÓN<br> <small>CIERRE DE BÓVEDA </small> <br>
+                        CAJAS - {{setting('admin.title')}}<br> <small>INGRESO A BÓVEDA </small> <br>
                         <small style="font-size: 11px; font-weight: 100">Impreso por: {{ Auth::user()->name }} <br> {{ date('d/M/Y H:i:s') }}</small>
                     </h3>
                 </td>
@@ -71,60 +70,52 @@
         <hr style="margin: 0px">
         <table width="100%" cellpadding="10" style="font-size: 11px">
             <tr>
+                <td colspan="2">
+                    <table width="100%">
+                        <tr>
+                            <td><b>Registrado por: </b></td>
+                            <td>{{ $detail->user->name }}</td>
+                            <td><b>N&deg; de cheque: </b></td>
+                            <td>{{ $detail->bill_number }}</td>
+                            <td><b>Nombre del remitente: </b></td>
+                            <td>{{ $detail->name_sender ?? 'No definido' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Descripción: </b></td>
+                            <td colspan="5">{{ $detail->description ?? 'No hay descripción' }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
                 <td width="70%">
                     <div>
-                        @php
-                            $cash_value = [
-                                '200.00' => 0,
-                                '100.00' => 0,
-                                '50.00' => 0,
-                                '20.00' => 0,
-                                '10.00' => 0,
-                                '5.00' => 0,
-                                '2.00' => 0,
-                                '1.00' => 0,
-                                '0.50' => 0,
-                                '0.20' => 0,
-                                '0.10' => 0,
-                            ];
-                            if($closure){
-                                // dd($closure);
-                                foreach($closure->details as $detail){
-                                    $cash_value[$detail->cash_value] += $detail->quantity;
-                                }
-                            }
-                        @endphp
-                        <h3>Detalles de cierre de bóveda</h3>
+                        <h3>Detalles de ingreso</h3>
                         <table width="100%">
                             <thead>
                                 <tr>
                                     <th>Corte</th>
-                                    <th style="text-align: right">Cantidad</th>
-                                    <th style="text-align: right">Subtotal (Bs.)</th>
+                                    <th style="text-align:right">Cantidad</th>
+                                    <th style="text-align:right">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @php
                                     $total = 0;
                                 @endphp
-                                @foreach ($cash_value as $title => $value)
+                                @foreach ($detail->cash as $item)
+                                @php
+                                    $total += $item->cash_value * $item->quantity;
+                                @endphp
                                     <tr>
-                                        <td>
-                                            <b>
-                                                <img src="{{ asset('images/cash/'.number_format($title, $title >= 1 ? 0 : 1).'.jpg') }}" alt="{{ $title }}" width="30px">
-                                                &nbsp; {{ $title }}
-                                            </b>
-                                        </td>
-                                        <td style="text-align: right">{{ $value }}</td>
-                                        <td style="text-align: right"><b>{{ number_format($title * $value, 2, ',', '.') }}</b></td>
+                                        <td><img src="{{ asset('images/cash/'.number_format($item->cash_value, $item->cash_value < 1 ? 1 : 0, '.', '.').'.jpg') }}" alt="{{ $item->cash_value }} Bs." width="70px"> {{ $item->cash_value }} Bs.</td>
+                                        <td style="text-align:right">{{ number_format($item->quantity, 0) }}</td>
+                                        <td style="text-align:right">{{ number_format($item->cash_value * $item->quantity, 2, ',', '.') }}</td>
                                     </tr>
-                                    @php
-                                        $total += $title * $value;
-                                    @endphp
                                 @endforeach
                                 <tr>
-                                    <td colspan="2"><h4>TOTAL</h4></td>
-                                    <td><h3 style="text-align: right">{{ number_format($total, 2, ',', '.') }}</h3></td>
+                                    <td colspan="2">TOTAL</td>
+                                    <td style="text-align:right"><h4>Bs. {{ number_format($total, 2, ',', '.') }}</h4></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -142,13 +133,12 @@
                     <div>
                         <p style="text-align: center; margin-top: 0px"><b><small>ENTREGADO POR</small></b></p>
                         <br>
-                        <p style="text-align: center">.............................................. <br> <small>{{ strtoupper($closure->user->name) }}</small> <br> <small>{{ $closure->user->ci }}</small> <br> <b>{{ strtoupper($closure->user->role->display_name) }}</b> </p>
+                        <p style="text-align: center">.............................................. <br> <small>{{ strtoupper($detail->user->name) }}</small> <br> <small>{{ $detail->user->ci }}</small> <br> <b>{{ strtoupper($detail->user->role->display_name) }}</b> </p>
                     </div>
                 </td>
             </tr>
         </table>
     </div>
-    @endfor
     <script>
         document.body.addEventListener('keypress', function(e) {
             switch (e.key) {
