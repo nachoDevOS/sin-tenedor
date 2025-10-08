@@ -12,6 +12,7 @@
         @else
             <link rel="shortcut icon" href="{{ Voyager::image($admin_favicon) }}" type="image/png">
         @endif
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <style>
             body{
                 margin: 0px auto;
@@ -115,8 +116,8 @@
         <div class="container">
             <div class="sheet">
                 <div class="options" style="position: fixed; bottom: 10px; right: 20px">
-                   
-                    <button type="button" class="btn btn-print">Imprimir</button>
+                    <button type="button" class="btn" onclick="window.close()">Cancelar <i class="fa fa-close"></i></button>
+                    <button type="button" class="btn btn-print">Imprimir <i class="fa fa-print"></i></button>
 
                 </div>
                 @yield('content')

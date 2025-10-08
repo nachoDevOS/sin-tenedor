@@ -316,6 +316,17 @@
 
 @section('css')
     <style>
+
+        table, th, td {
+            border-collapse: collapse;
+        }
+        /* @media print { div{ page-break-inside: avoid; } }  */
+        
+        /* Para evitar que se corte la impresion */
+        table.print-friendly tr td, table.print-friendly tr th {
+            page-break-inside: avoid;
+        }
+
         /* Estilos adicionales para impresión */
         @media print {
             body {
