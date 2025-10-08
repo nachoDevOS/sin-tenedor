@@ -145,7 +145,7 @@ class CashierController extends Controller
 
     public function show($id)
     {
-        $cashier = $this->cashierId($id, null);        
+        $cashier = $this->cashier('cashier', $id, null);        
         return view('cashiers.read' , compact('cashier'));
     }
 
@@ -287,6 +287,17 @@ class CashierController extends Controller
 
 
         return view('cashiers.print-close-details', compact('cashier',));
+    }
+
+    public function confirm_close($id)
+    {
+        $cashier = $this->cashier('cashier', $id, '');
+
+        if($cashier->status == 'cierre pendiente'){
+            return view('cashiers.confirm_close', compact('cashier'));
+        }else{
+            return redirect()->route('cashiers.index')->with(['message' => 'La caja ya no está abierta.', 'alert-type' => 'warning']);
+        }
     }
 
 }

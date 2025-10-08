@@ -38,7 +38,7 @@
                     <td>
                         {{-- Se recomienda precargar la relación 'role' en el controlador para evitar consultas N+1 --}}
                         {{-- Ejemplo en controlador: User::with('role')->paginate(); --}}
-                        {{ $item->role->name ?? 'Sin Permiso' }}
+                        {{ $item->role->display_name ?? 'Sin Permiso' }}
                     </td>
                     <td style="text-align: center">
                         @if ($item->status==1)  

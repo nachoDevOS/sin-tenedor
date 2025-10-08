@@ -569,8 +569,7 @@
             if ($typeSale === 'Qr') {
                 $('#input-amountEfectivo').val(0);
                 $('#input-amountEfectivo').attr('readonly', true); // Hacer el campo de solo lectura
-                $('#input-amountEfectivo').attr('min',
-                    0); // Asignar el valor minimo al monto total de la venta si es por Qr la venta
+                $('#input-amountEfectivo').attr('min', 0); // Asignar el valor minimo al monto total de la venta si es por Qr la venta
                 $('#input-amountEfectivo').attr('max',
                     0); // Asignar el valor máximo al monto total de la venta si es por Qr la venta
 
@@ -584,13 +583,15 @@
             if ($typeSale == 'Ambos') { // Ambos
                 $('#input-amountEfectivo').removeAttr('readonly');
                 $('#input-amountEfectivo').val(0);
+                $('#input-amountEfectivo').attr('min', 0);
                 $('#input-amountEfectivo').attr('max', total);
+
+                
 
 
 
                 $('#input-amountQr').attr('readonly', true); // Hacer el campo de solo lectura
-                $('#input-amountQr').attr('min',
-                    0); // Asignar el valor minimo al monto total de la venta si es por Qr la venta
+                $('#input-amountQr').attr('min',0); // Asignar el valor minimo al monto total de la venta si es por Qr la venta
                 $('#input-amountQr').attr('max',
                     total); // Asignar el valor máximo al monto total de la venta si es por Qr la venta
             }

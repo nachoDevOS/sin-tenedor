@@ -151,8 +151,8 @@
                             if ($item->deleted_at == null) {
                                 $total_movements_qr += $pagoQr;
                                 $total_movements_efectivo += $pagoEfectivo;
-                                
-                                $total_movements += $pagoQr+$pagoEfectivo;
+
+                                $total_movements += $pagoQr + $pagoEfectivo;
                             } else {
                                 $total_movements_deleted += $item->amount;
                             }
@@ -170,7 +170,6 @@
                     <tr>
                         <td style="text-align: center" colspan="8">No hay datos disponibles en la tabla</td>
                     </tr>
-
                 @endempty
                 <tr>
                     <td colspan="7" class="text-right"><span class="text-danger"><b>TOTAL ANULADO</b></span></td>

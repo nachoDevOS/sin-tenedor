@@ -68,11 +68,11 @@
                                     @endif
                                 </ul>
                             </div>
-                            @if ($item->status == 'abierta')
+                            {{-- @if ($item->status == 'abierta')
                                 <a href="{{route('cashiers.amount', ['cashier'=>$item->id])}}" title="Editar" class="btn btn-sm btn-success">
                                     <i class="voyager-dollar"></i> <span class="hidden-xs hidden-sm">Abonar</span>
                                 </a>
-                            @endif
+                            @endif --}}
                             @if (auth()->user()->hasPermission('read_cashiers'))
                                 <a href="{{route('cashiers.show', ['cashier'=>$item->id])}}" title="Editar" class="btn btn-sm btn-warning">
                                     <i class="voyager-eye"></i> <span class="hidden-xs hidden-sm">Ver</span>

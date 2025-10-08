@@ -23,34 +23,34 @@ class Controller extends BaseController
     }
 
     // Funcion para ver la caja en estado abierta
-    public function cashierOpen()
-    {
-        $cashier = Cashier::with(['movements' => function($q){
-            $q->where('deleted_at', NULL);
-        }])
-        // ->where('user_id', Auth::user()->id)
-        // ->where('status', 'abierta')
-        ->where('deleted_at', NULL)->first();
+    // public function cashierOpen()
+    // {
+    //     $cashier = Cashier::with(['movements' => function($q){
+    //         $q->where('deleted_at', NULL);
+    //     }])
+    //     // ->where('user_id', Auth::user()->id)
+    //     // ->where('status', 'abierta')
+    //     ->where('deleted_at', NULL)->first();
 
-        return $cashier;
-        // return response()->json(['cashier' => $cashier]);
+    //     return $cashier;
+    //     // return response()->json(['cashier' => $cashier]);
 
-    }
+    // }
 
 
     // Funcion para ver la caja en estado abierta
-    public function cashiers($user_id, $status)
-    {
-        $cashier = Cashier::with(['movements' => function($q){
-            $q->where('deleted_at', NULL);
-        }])
-        ->where('user_id', $user_id)
-        ->whereRaw($status?'status = "'.$status.'"':1)
+    // public function cashiers($user_id, $status)
+    // {
+    //     $cashier = Cashier::with(['movements' => function($q){
+    //         $q->where('deleted_at', NULL);
+    //     }])
+    //     ->where('user_id', $user_id)
+    //     ->whereRaw($status?'status = "'.$status.'"':1)
        
-        ->where('deleted_at', NULL)->first();
+    //     ->where('deleted_at', NULL)->first();
 
-        return $cashier;
-    }
+    //     return $cashier;
+    // }
 
     //Para obtener el detalle de cualquier caja y en cualquier estado que no se encuentre eliminada (Tipo de ID, cashier_id o user_id , status)
     public function cashier($type, $id, $status)

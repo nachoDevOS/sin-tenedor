@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-@section('page_title', 'Cierre de caja')
+@section('page_title', 'Confimar cierre de caja')
 
 @section('page_header')
     <div class="container-fluid">
@@ -10,7 +10,7 @@
                     <div class="panel-body" style="padding: 0px">
                         <div class="col-md-8" style="padding: 0px">
                             <h1 class="page-title">
-                                <i class="voyager-lock"></i> Cierre de caja
+                                <i class="voyager-lock"></i> Confimar cierre de caja
                             </h1>
                         </div>
                         <div class="col-md-4" style="margin-top: 30px">
@@ -45,22 +45,46 @@
                                 })
                                 ->sum();
                             $amountCashier = ($cashierIn + $paymentEfectivo) - $cashierOut;
-
                         @endphp
-                        <div class="col-md-6" style="height: 650px; overflow-y: auto">
-                            <form name="form_close" id="form-close" action="{{ route('cashiers.close.store', ['cashier' => $cashier->id]) }}" method="post">
+                        <div class="col-md-6">
+                            <form name="form_close" action="{{ route('cashiers.confirm_close.store', ['cashier' => $cashier->id]) }}" method="post">
                                 @csrf
-                                <input type="hidden" name="amount_cashier" value="{{ $amountCashier }}">
-                                <input type="hidden" name="amount_real">
                                 <table id="dataStyle" class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Corte</th>
                                             <th>Cantidad</th>
-                                            <th style="width: 200px">Sub Total</th>
+                                            <th>Sub Total</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="lista_cortes"></tbody>
+                                    @php
+                                        $cash = ['200', '100', '50', '20', '10', '5', '2', '1', '0.5', '0.2', '0.1'];
+                                        $missing_amount = 0;
+                                    @endphp
+                                    <tbody>
+                                        @foreach ($cash as $item)
+                                        <tr>
+                                            <td><h4 style="margin: 0px"><img src=" {{ url('images/cash/'.$item.'.jpg') }} " alt="{{ $item }} Bs." width="70px"> {{ $item }} Bs. </h4></td>
+                                            <td>
+                                                @php
+                                                    $details = $cashier->details->where('cash_value', $item)->first();
+                                                @endphp
+                                                {{ $details ? $details->quantity : 0 }}
+                                            </td>
+                                            <td>
+                                                {{ $details ? number_format($details->quantity * $item, 2, ',', '.') : 0 }}
+                                                <input type="hidden" name="cash_value[]" value="{{ $item }}">
+                                                <input type="hidden" name="quantity[]" value="{{ $details ? $details->quantity : 0 }}">
+                                            </td>
+                                            @php
+                                            if($details){
+                                                $missing_amount += $details->quantity * $item;
+                                            }
+                                            @endphp
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                    {{-- {{$missing_amount}} --}}
                                 </table>
 
                                 {{-- confirm modal --}}
@@ -73,6 +97,15 @@
                                             </div>
                                             <div class="modal-body">
                                                 <p>Esta acción cerrará la caja y no podrá realizar modificaciones posteriores</p>
+                                                <div class="form-group">
+                                                    <label for="">Bóveda</label>
+                                                    <select name="vault_id" class="form-control select2">
+                                                        @foreach (\App\Models\Vault::where('status', 'activa')->get() as $item)
+                                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <small>Elija la bóveda en la que se va a guardar el dinero</small>
+                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -83,7 +116,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="col-md-6 div-details" style="padding-top: 10px">
+                        <div class="col-md-6 div-details" style="padding-top: 20px">
                             <div class="row">
                                 <div class="col-md-6">
                                     <p style="margin-top: 20px">Dinero Asignado a caja por el Administrador</p>
@@ -127,32 +160,20 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p style="margin-top: 20px">Monto a entregar en efectivo</p>
+                                    <p style="margin-top: 20px">Total a enviar bóveda</p>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="panel-heading" style="border-bottom:0;">
-                                        <h3 class="text-right" style="padding-right: 20px" id="label-total">0,00</h3>
+                                        <h3 class="text-right" style="padding-right: 20px">{{ number_format($missing_amount, 2, ',', '.') }}</h3>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p style="margin-top: 20px">Monto sobrante</p>
+                                    <p style="margin-top: 20px">Saldo</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="panel-heading" style="border-bottom:0;">
-                                        <h3 class="text-right" style="padding-right: 20px" id="label-plus_amount">0,00</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p style="margin-top: 20px">Monto faltante</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="panel-heading" style="border-bottom:0;">
-                                        <h3 class="text-right" style="padding-right: 20px" id="label-missing_amount">0,00</h3>
-                                    </div>
+                                    <h3 class="text-right @if($missing_amount > $amountCashier) text-success @endif @if($amountCashier >$missing_amount) text-danger @endif " style="padding-right: 20px">{{ number_format($missing_amount-$amountCashier, 2, ',', '.') }}</h3>
                                 </div>
                             </div>
                             <button type="button" class="btn btn-danger btn-block btn-confirm" data-toggle="modal" data-target="#close_modal">Cerrar caja <i class="voyager-lock"></i></button>
@@ -179,43 +200,7 @@
     <script src="{{ asset('js/cash_value.js') }}"></script>
     <script>
         $(document).ready(function() {
-            window.addEventListener("keypress", function(event){
-                if (event.keyCode == 13){
-                    event.preventDefault();
-                }
-            }, false);
 
-
-            
-            $('.input-corte').keyup(function(){
-                getMissingAmount()
-            });
-            $('.input-corte').change(function(){
-                getMissingAmount()
-            });
         });
-
-        function getMissingAmount(){
-            let total = parseFloat("{{ $amountCashier }}");
-            let total_cashier = parseFloat($('#label-total').text());
-            let missing_amount = total - total_cashier;
-            let plus_amount = total_cashier - total;
-
-            $('#form-close input[name="amount_real"]').val(total_cashier);
-
-            $('#label-missing_amount').text(missing_amount > 0 ? missing_amount.toFixed(2) : 0);
-            $('#label-plus_amount').text(plus_amount > 0 ? plus_amount.toFixed(2) : 0);
-            if(missing_amount > 0){
-                $('#label-missing_amount').addClass('text-danger');
-            }else{
-                $('#label-missing_amount').removeClass('text-danger');                
-            }
-            // if(total == total_cashier){
-            //     $('.btn-confirm').removeAttr('disabled');
-            // }else{
-            //     $('.btn-confirm').attr('disabled', 'disabled');
-            // }
-            plus_amount > 0 ? $('#label-plus_amount').addClass('text-success') : $('#label-plus_amount').removeClass('text-success');
-        }
     </script>
 @stop
