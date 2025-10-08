@@ -8,140 +8,6 @@
         $formatter = new Luecano\NumeroALetras\NumeroALetras();
     @endphp
 
-    <style>
-        .report-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .logo-container img {
-            max-height: 80px;
-        }
-        
-        .title-container {
-            text-align: center;
-            flex-grow: 1;
-        }
-        
-        .report-title {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: #2c3e50;
-        }
-        
-        .report-subtitle {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #7f8c8d;
-        }
-        
-        .report-date {
-            font-size: 14px;
-            color: #95a5a6;
-        }
-        
-        .qr-container {
-            text-align: right;
-        }
-        
-        .print-info {
-            font-size: 10px;
-            color: #95a5a6;
-            margin-top: 5px;
-        }
-        
-        .sales-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 12px;
-        }
-        
-        .sales-table th {
-            background-color: #34495e;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-weight: 600;
-        }
-        
-        .sales-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #ecf0f1;
-        }
-        
-        .sales-table tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        
-        .item-row {
-            background-color: #f1f3f5 !important;
-        }
-        
-        .item-row th {
-            background-color: #bdc3c7 !important;
-            color: #2c3e50;
-            padding: 5px;
-        }
-        
-        .total-row {
-            font-weight: 600;
-            background-color: #eaf2f8 !important;
-        }
-        
-        .text-right {
-            text-align: right;
-        }
-        
-        .text-center {
-            text-align: center;
-        }
-        
-        .currency {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-        }
-        
-        .no-records {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            font-style: italic;
-        }
-        
-        
-        @media print {
-            body {
-                font-size: 10px;
-            }
-            .report-header {
-                border-bottom: 1px solid #ddd;
-            }
-            
-            .sales-table th {
-                background-color: #34495e !important;
-                color: white !important;
-                -webkit-print-color-adjust: exact;
-            }
-            
-            .item-row th {
-                background-color: #bdc3c7 !important;
-                -webkit-print-color-adjust: exact;
-            }
-            
-            .total-row {
-                background-color: #eaf2f8 !important;
-                -webkit-print-color-adjust: exact;
-            }
-        }
-    </style>
-
     <div class="report-header">
         <div class="logo-container">
             <?php 
@@ -316,24 +182,122 @@
 
 @section('css')
     <style>
-
         table, th, td {
             border-collapse: collapse;
         }
-        /* @media print { div{ page-break-inside: avoid; } }  */
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
         
-        /* Para evitar que se corte la impresion */
+        .logo-container img {
+            max-height: 80px;
+        }
+        
+        .title-container {
+            text-align: center;
+            flex-grow: 1;
+        }
+        
+        .report-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .report-subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+        }
+        
+        .report-date {
+            font-size: 14px;
+            color: #95a5a6;
+        }
+        
+        .qr-container {
+            text-align: right;
+        }
+        
+        .print-info {
+            font-size: 10px;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
+        
+        .sales-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+        
+        .sales-table th {
+            background-color: #34495e;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .sales-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .sales-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .item-row {
+            background-color: #f1f3f5 !important;
+        }
+        
+        .item-row th {
+            background-color: #bdc3c7 !important;
+            color: #2c3e50;
+            padding: 5px;
+        }
+        
+        .total-row {
+            font-weight: 600;
+            background-color: #eaf2f8 !important;
+        }
+        
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        
+        .currency {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+        
+        .no-records {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
         table.print-friendly tr td, table.print-friendly tr th {
             page-break-inside: avoid;
         }
 
-        /* Estilos adicionales para impresión */
         @media print {
             body {
-                font-size: 12px;
+                font-size: 10px;
             }
             
             .report-header {
+                margin-bottom: 10px;
                 margin-bottom: 10px;
             }
             
@@ -344,6 +308,22 @@
             .sales-table th, 
             .sales-table td {
                 padding: 5px 8px;
+            }
+
+            .sales-table th {
+                background-color: #34495e !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+            }
+            
+            .item-row th {
+                background-color: #bdc3c7 !important;
+                -webkit-print-color-adjust: exact;
+            }
+            
+            .total-row {
+                background-color: #eaf2f8 !important;
+                -webkit-print-color-adjust: exact;
             }
         }
     </style>

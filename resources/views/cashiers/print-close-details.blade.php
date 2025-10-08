@@ -4,12 +4,34 @@
 
 
 @section('content')
-<div id="qr_code" class="text-right">
-        {!! QrCode::size(80)->generate('Caja Nro '.$cashier->id.', usuario '.$cashier->user->name.'. Monto de cierre '.$cashier->amount_real); !!} <br>
-        <strong>Caja N&deg; {{ $cashier->id }}</strong> <br>
-        <small>{{ date('d/m/Y h:i:s a') }}</small>
+    <div class="report-header">
+        <div class="logo-container">
+            <?php 
+                $admin_favicon = Voyager::setting('admin.icon_image'); 
+            ?>
+            @if($admin_favicon == '')
+                <img src="{{ asset('images/icon.png')}}" alt="{{Voyager::setting('admin.title') }}" width="70px">
+            @else
+                <img src="{{ Voyager::image($admin_favicon) }}" alt="{{Voyager::setting('admin.title') }}" width="70px">
+            @endif
+        </div>
+        
+        <div class="title-container">
+            <h1 class="report-title">{{Voyager::setting('admin.title') }}</h1>
+            <h2 class="report-subtitle">CIERRE DE CAJA</h2>
+            <p class="report-date">
+                <b>Fecha de cierre:</b> {{ date('d/m/Y', strtotime($cashier->closed_at)) }}
+            </p>
+        </div>
+        
+        <div class="qr-container">
+            {!! QrCode::size(80)->generate('Caja Nro '.$cashier->id.', usuario '.$cashier->user->name.'. Monto de cierre '.$cashier->amount_real); !!} <br>
+            <strong>Caja N&deg; {{ $cashier->id }}</strong>
+            <p class="print-info">Impreso por: {{ Auth::user()->name }}<br>{{ date('d/m/Y h:i:s a') }}</p>
+        </div>
     </div>
     <div class="content">
+        
         <table width="100%">
             <tr>
                 <td><b>Descripción</b></td>
