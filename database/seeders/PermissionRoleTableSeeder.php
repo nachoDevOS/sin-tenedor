@@ -52,5 +52,21 @@ class PermissionRoleTableSeeder extends Seeder
                                             `key` = "browse_clear-cache"')
                                             ->get();
         $role->permissions()->sync($permissions->pluck('id')->all());
+
+
+        $role = Role::where('name', 'cashier')->firstOrFail();
+        $permissions = Permission::whereRaw('table_name = "admin" or
+
+                                            table_name = "sales" or                                           
+
+                                            table_name = "people" or
+
+                                            table_name = "report_sales" or
+                                            table_name = "report_inventories" or
+
+
+                                            `key` = "browse_clear-cache"')
+                                            ->get();
+        $role->permissions()->sync($permissions->pluck('id')->all());
     }
 }
