@@ -39,7 +39,7 @@ class Cashier extends Model
     }
 
     public function sales(){
-        return $this->hasMany(Sale::class, 'cashier_id');
+        return $this->hasMany(Sale::class, 'cashier_id')->withTrashed();
     }
 
     public function details(){

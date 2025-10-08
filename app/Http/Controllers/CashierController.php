@@ -279,8 +279,7 @@ class CashierController extends Controller
         $cashier = Cashier::with(['details' => function($q){
                         $q->where('deleted_at', NULL);
                     }, 'sales' => function($q){
-                        $q->where('deleted_at', NULL)
-                        ->with(['person', 'register', 'saleDetails', 'saleTransactions']);
+                        $q->with(['person', 'register', 'saleDetails', 'saleTransactions']);
                     }])
                     ->where('id', $id)
                     ->first();

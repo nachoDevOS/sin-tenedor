@@ -123,27 +123,44 @@
                     $count = 1;
                     $total_movements = 0;
                     $total_movements_qr = 0;
+                    $total_movements_efectivo = 0;
                     $total_movements_deleted = 0;
                 @endphp
                 @forelse ($cashier->sales as $item)
-                    <tr>
+                    <tr @if ($item->deleted_at) style="text-decoration: line-through; color: red;" @endif>
                         <td style="text-align: center; font-size: 11px">{{ $count }}</td>
                         <td style="font-size: 11px">{{ $item->code }}</td>
                         <td style="font-size: 11px">
                             @if ($item->person)
-                                {{ strtoupper($item->person->first_name) }} 
-                                {{ $item->person->middle_name ? strtoupper($item->person->middle_name) : '' }} 
-                                {{ strtoupper($item->person->paternal_surname) }}  
+                                {{ strtoupper($item->person->first_name) }}
+                                {{ $item->person->middle_name ? strtoupper($item->person->middle_name) : '' }}
+                                {{ strtoupper($item->person->paternal_surname) }}
                                 {{ strtoupper($item->person->maternal_surname) }}
                             @else
-                                Sin Datos 
-                            @endif 
+                                Sin Datos
+                            @endif
                         </td>
                         <td style="text-align: center; font-size: 11px">
-                            {{date('d/m/Y h:i a', strtotime($item->dateSale))}}
+                            {{ date('d/m/Y h:i a', strtotime($item->dateSale)) }}
                         </td>
                         <td style="text-align: center; font-size: 11px">{{ $item->ticket }}</td>
-                        
+
+                        @php
+                            $pagoQr = $item->saleTransactions->where('paymentType', 'Qr')->sum('amount');
+                            $pagoEfectivo = $item->saleTransactions->where('paymentType', 'Efectivo')->sum('amount');
+                            if ($item->deleted_at == null) {
+                                $total_movements_qr += $pagoQr;
+                                $total_movements_efectivo += $pagoEfectivo;
+                                
+                                $total_movements += $pagoQr+$pagoEfectivo;
+                            } else {
+                                $total_movements_deleted += $item->amount;
+                            }
+                        @endphp
+                        <td class="text-right">{{ number_format($pagoQr, 2, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($pagoEfectivo, 2, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($item->amount, 2, ',', '.') }}</td>
+
 
                     </tr>
                     @php
@@ -153,7 +170,7 @@
                     <tr>
                         <td style="text-align: center" colspan="8">No hay datos disponibles en la tabla</td>
                     </tr>
-                    
+
                 @endempty
                 <tr>
                     <td colspan="7" class="text-right"><span class="text-danger"><b>TOTAL ANULADO</b></span></td>
@@ -162,7 +179,8 @@
                 </tr>
                 <tr>
                     <td colspan="7" class="text-right"><b>TOTAL COBROS</b></td>
-                    <td class="text-right"><b>{{ number_format($total_movements_qr + $total_movements, 2, ',', '.') }}</b>
+                    <td class="text-right">
+                        <b>{{ number_format($total_movements, 2, ',', '.') }}</b>
                     </td>
                 </tr>
                 <tr>
@@ -171,11 +189,11 @@
                 </tr>
                 <tr>
                     <td colspan="7" class="text-right"><b>TOTAL EFECTIVO</b></td>
-                    <td class="text-right"><b>{{ number_format($total_movements, 2, ',', '.') }}</b></td>
+                    <td class="text-right"><b>{{ number_format($total_movements_efectivo, 2, ',', '.') }}</b></td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
+</div>
 @endsection
 
 @section('css')
