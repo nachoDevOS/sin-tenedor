@@ -126,7 +126,7 @@
                     <div style="display: flex; border: 1px solid #ddd; padding: 10px 0px; margin-top: 10px">
                         @foreach ($cashier->vault_detail->cash as $cash)
                             <div style="width: 33%; text-aign: center">
-                                <div style="text-align: center">{{ $cash->cash_value >= 1 ? intval($cash->cash_value) : number_format($cash->cash_value, 2, '.', '') }}</div>
+                                <div style="text-align: center">{{ $cash->cash_value >= 1 ? intval($cash->cash_value) : number_format($cash->cash_value, 2, ',', '.') }}</div>
                                 <div style="text-align: center">&darr;</div>
                                 <div style="text-align: center"><b>{{ intval($cash->quantity) }}</b></div>
                             </div>

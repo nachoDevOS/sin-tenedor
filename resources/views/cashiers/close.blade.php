@@ -115,7 +115,7 @@
                                     <p style="margin-top: 20px">Dinero Asignado a caja por el Administrador</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <h3 class="text-right" style="padding-right: 20px">{{ number_format($cashierIn, 2, ',', '') }}</h3>
+                                    <h3 class="text-right" style="padding-right: 20px">{{ number_format($cashierIn, 2, ',', '.') }}</h3>
                                 </div>
                             </div>
                             <div class="row">
@@ -123,7 +123,7 @@
                                     <p style="margin-top: 20px">Ingresos por cobros en efectivo</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <h3 class="text-right" style="padding-right: 20px">{{ number_format($paymentEfectivo, 2, ',', '') }}</h3>
+                                    <h3 class="text-right" style="padding-right: 20px">{{ number_format($paymentEfectivo, 2, ',', '.') }}</h3>
                                 </div>
                             </div>
                             <div class="row">
@@ -131,7 +131,7 @@
                                     <p style="margin-top: 20px">Ingresos por cobros en Qr</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <h3 class="text-right" style="padding-right: 20px">{{ number_format($paymentQr, 2, ',', '') }}</h3>
+                                    <h3 class="text-right" style="padding-right: 20px">{{ number_format($paymentQr, 2, ',', '.') }}</h3>
                                 </div>
                             </div>
                             <div class="row">

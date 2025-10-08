@@ -118,7 +118,7 @@
                                     @endforelse
                                     <tr>
                                         <td colspan="4" style="text-align: right"><b>TOTAL</b></td>
-                                        <td style="text-align: right">{{ number_format($cashierInput, 2, '.', '') }}</td>
+                                        <td style="text-align: right">{{ number_format($cashierInput, 2, ',', '.') }}</td>
                                     </tr>
                                 </tbody>
                             </table>

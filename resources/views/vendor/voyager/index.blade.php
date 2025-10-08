@@ -180,7 +180,7 @@
                                             <table width="100%" cellpadding="20">
                                                 <tr>
                                                     <td><small>Dinero Asignado a Caja</small></td>
-                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['cashierIn'], 2, ',', '') }} <small>Bs.</small></h4></td>
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['cashierIn'], 2, ',', '.') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                                 <tr>
                                                     <td><small>Dinero disponible en Caja</small></td>
@@ -191,15 +191,15 @@
                                             <table width="100%" cellpadding="20">
                                                 <tr>
                                                     <td><small>Ventas "Efectivo"</small></td>
-                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['paymentEfectivo'], 2, ',', '') }} <small>Bs.</small></h4></td>
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['paymentEfectivo'], 2, ',', '.') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                                     <tr>
                                                     <td><small>Ventas "Qr"</small></td>
-                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['paymentQr'], 2, ',', '') }} <small>Bs.</small></h4></td>
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['paymentQr'], 2, ',', '.') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                                     <tr>
                                                     <td><small>Gastos Realizados</small></td>
-                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['cashierOut'], 2, ',', '') }} <small>Bs.</small></h4></td>
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['cashierOut'], 2, ',', '.') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -271,7 +271,7 @@
                                                                 {{ $details ? $details->quantity : 0 }}
                                                             </td>
                                                             <td>
-                                                                {{ $details ? number_format($details->quantity * $item, 2, '.', '') : 0 }}
+                                                                {{ $details ? number_format($details->quantity * $item, 2, ',', '.') : 0 }}
                                                                 <input type="hidden" name="cash_value[]"
                                                                     value="{{ $item }}">
                                                                 <input type="hidden" name="quantity[]"
@@ -297,7 +297,7 @@
                                             </div>
                                             <br>
                                             <h2 id="h3" class="text-right">Total en caja: Bs.
-                                                {{ number_format($total, 2, '.', '') }} </h2>
+                                                {{ number_format($total, 2, ',', '.') }} </h2>
                                             <br>
                                             <div class="text-right">
                                                 <button type="button" data-toggle="modal"

@@ -149,7 +149,7 @@
         
         <div class="qr-container">
             @php
-                $qrContent = "Ticket: {$sale->ticket} | Total: Bs. " . number_format($sale->amount, 2, '.', '') . " | Fecha: " . date('d/m/Y H:i', strtotime($sale->dateSale));
+                $qrContent = "Ticket: {$sale->ticket} | Total: Bs. " . number_format($sale->amount, 2, ',', '.') . " | Fecha: " . date('d/m/Y H:i', strtotime($sale->dateSale));
             @endphp
             {!! QrCode::size(70)->generate($qrContent) !!}
             <div style="font-size: 9px; margin-top: 3px;">
