@@ -59,7 +59,12 @@ class PermissionRoleTableSeeder extends Seeder
 
                                             table_name = "sales" or                                           
 
-                                            table_name = "people" or
+                                            `key` = "browse_people" or
+                                            `key` = "read_people" or
+                                            `key` = "add_people" or
+                                            `key` = "edit_people" or
+
+
 
                                             table_name = "report_sales" or
                                             table_name = "report_inventories" or
