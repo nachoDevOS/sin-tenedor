@@ -2,15 +2,13 @@
 
 @section('page_title', 'Cierre de caja')
 
-@section('qr_code')
-    <div id="qr_code" class="text-right">
+
+@section('content')
+<div id="qr_code" class="text-right">
         {!! QrCode::size(80)->generate('Caja Nro '.$cashier->id.', usuario '.$cashier->user->name.'. Monto de cierre '.$cashier->amount_real); !!} <br>
         <strong>Caja N&deg; {{ $cashier->id }}</strong> <br>
         <small>{{ date('d/m/Y h:i:s a') }}</small>
     </div>
-@endsection
-
-@section('content')
     <div class="content">
         <table width="100%">
             <tr>
