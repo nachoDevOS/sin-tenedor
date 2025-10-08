@@ -104,108 +104,78 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th colspan="6">COBROS REALIZADOS</th>
+                    <th colspan="8">Ventas</th>
                 </tr>
                 <tr>
                     <th>N&deg;</th>
-                    <th>N&deg; Transacción</th>
                     <th>Código</th>
-                    <th>Hora Pago</th>
                     <th>Cliente</th>
-                    <th style="width: 80px">Monto Cobrado</th>
+                    <th>Fecha</th>
+                    <th>Ticket</th>
+                    <th>Pago Qr</th>
+                    <th>Pago Efectivo</th>
+                    <th>Total</th>
+
                 </tr>
             </thead>
             <tbody>
                 @php
-                    $cont = 1;
+                    $count = 1;
                     $total_movements = 0;
                     $total_movements_qr = 0;
                     $total_movements_deleted = 0;
                 @endphp
-            @empty($trans)
+                @forelse ($cashier->sales as $item)
+                    <tr>
+                        <td style="text-align: center; font-size: 11px">{{ $count }}</td>
+                        <td style="font-size: 11px">{{ $item->code }}</td>
+                        <td style="font-size: 11px">
+                            @if ($item->person)
+                                {{ strtoupper($item->person->first_name) }} 
+                                {{ $item->person->middle_name ? strtoupper($item->person->middle_name) : '' }} 
+                                {{ strtoupper($item->person->paternal_surname) }}  
+                                {{ strtoupper($item->person->maternal_surname) }}
+                            @else
+                                Sin Datos 
+                            @endif 
+                        </td>
+                        <td style="text-align: center; font-size: 11px">
+                            {{date('d/m/Y h:i a', strtotime($item->dateSale))}}
+                        </td>
+                        <td style="text-align: center; font-size: 11px">{{ $item->ticket }}</td>
+                        
+
+                    </tr>
+                    @php
+                        $count++;
+                    @endphp
+                @empty
+                    <tr>
+                        <td style="text-align: center" colspan="8">No hay datos disponibles en la tabla</td>
+                    </tr>
+                    
+                @endempty
                 <tr>
-                    <td colspan="6">No hay datos disponibles en la tabla</td>
+                    <td colspan="7" class="text-right"><span class="text-danger"><b>TOTAL ANULADO</b></span></td>
+                    <td class="text-right"><b
+                            class="text-danger">{{ number_format($total_movements_deleted, 2, ',', '.') }}</b></td>
                 </tr>
-            @endempty
-            <tr>
-                <td colspan="5" class="text-right"><span class="text-danger"><b>TOTAL ANULADO</b></span></td>
-                <td class="text-right"><b
-                        class="text-danger">{{ number_format($total_movements_deleted, 2, ',', '.') }}</b></td>
-            </tr>
-            <tr>
-                <td colspan="5" class="text-right"><b>TOTAL COBROS</b></td>
-                <td class="text-right"><b>{{ number_format($total_movements_qr + $total_movements, 2, ',', '.') }}</b>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="5" class="text-right"><b>TOTAL QR/TRANSFERENCIA</b></td>
-                <td class="text-right"><b>{{ number_format($total_movements_qr, 2, ',', '.') }}</b></td>
-            </tr>
-            <tr>
-                <td colspan="5" class="text-right"><b>TOTAL EFECTIVO</b></td>
-                <td class="text-right"><b>{{ number_format($total_movements, 2, ',', '.') }}</b></td>
-            </tr>
-        </tbody>
-    </table>
-    <br>
-    <table class="table">
-        <thead>
-            <tr>
-                <th colspan="8">PRESTAMOS ENTREGADOS</th>
-            </tr>
-            <tr>
-                <th>N&deg;</th>
-                <th>Codigo</th>
-                <th>Fecha Solicitud</th>
-                <th>Fecha Entrega</th>
-                <th>Nombre Completo</th>
-                <th class="text-right">Monto Prestado</th>
-                <th class="text-right">Interes a Cobrar</th>
-                <th class="text-right">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-                $cont = 1;
-                $loans = 0;
-                $interes = 0;
-                $total = 0;
-            @endphp
-
-            <tr>
-                <td colspan="5" style="text-align: right"><b>TOTAL</b></td>
-                <td style="text-align: right"><b>{{ number_format($loans, 2, ',', '.') }}</b></td>
-                <td style="text-align: right"><b>{{ number_format($interes, 2, ',', '.') }}</b></td>
-                <td style="text-align: right"><b>{{ number_format($total, 2, ',', '.') }}</b></td>
-            </tr>
-        </tbody>
-    </table>
-    <br>
-    <table class="table">
-        <thead>
-            <tr>
-                <th colspan="5">GASTOS REALIZADOS</th>
-            </tr>
-            <tr>
-                <th>ID</th>
-                <th>Fecha y Hora de Registro</th>
-                <th>Registrado Por</th>
-                <th>Detalle</th>
-                <th class="text-right">Monto</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-                $gastos_totales = 0;
-            @endphp
-
-            <tr>
-                <td colspan="4"><b>TOTAL</b></td>
-                <td class="text-right"><b>{{ number_format($gastos_totales, 2, ',', '.') }}</b></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                <tr>
+                    <td colspan="7" class="text-right"><b>TOTAL COBROS</b></td>
+                    <td class="text-right"><b>{{ number_format($total_movements_qr + $total_movements, 2, ',', '.') }}</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="text-right"><b>TOTAL QR/TRANSFERENCIA</b></td>
+                    <td class="text-right"><b>{{ number_format($total_movements_qr, 2, ',', '.') }}</b></td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="text-right"><b>TOTAL EFECTIVO</b></td>
+                    <td class="text-right"><b>{{ number_format($total_movements, 2, ',', '.') }}</b></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 @endsection
 
 @section('css')
