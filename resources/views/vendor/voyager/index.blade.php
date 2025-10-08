@@ -191,11 +191,11 @@
                                             <table width="100%" cellpadding="20">
                                                 <tr>
                                                     <td><small>Ventas "Efectivo"</small></td>
-                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['amountEfectivo'], 2, ',', '') }} <small>Bs.</small></h4></td>
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['paymentEfectivo'], 2, ',', '') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                                     <tr>
                                                     <td><small>Ventas "Qr"</small></td>
-                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['amountQr'], 2, ',', '') }} <small>Bs.</small></h4></td>
+                                                    <td class="text-right"><h4>{{ number_format($globalFuntion_cashierMoney['paymentQr'], 2, ',', '') }} <small>Bs.</small></h4></td>
                                                 </tr>
                                                     <tr>
                                                     <td><small>Gastos Realizados</small></td>
@@ -380,13 +380,13 @@
                                 <a href="#" style="margin: 0px" data-toggle="modal"
                                     data-target="#cashier-revert-modal" class="btn btn-success"><i
                                         class="voyager-key"></i> Reabrir caja</a>
-                                <a href="{{ route('cashiers.print', $cashier->id) }}" style="margin: 0px"
+                                <a href="{{ route('cashiers.print', $globalFuntion_cashier->id) }}" style="margin: 0px"
                                     class="btn btn-danger" target="_blank"><i class="fa fa-print"></i> Imprimir</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <form action="{{ route('cashiers.close.revert', ['cashier' => $cashier->id]) }}" method="post">
+                <form action="{{ route('cashiers.close.revert', ['cashier' => $globalFuntion_cashier->id]) }}" method="post">
                     @csrf
                     <div class="modal fade" tabindex="-1" id="cashier-revert-modal" role="dialog">
                         <div class="modal-dialog modal-success">
@@ -550,8 +550,8 @@
                             data: [
                                 "{{ $globalFuntion_cashierMoney['cashierIn'] }}", // Dinero en Caja
                                 "{{ $globalFuntion_cashierMoney['amountCashier'] }}", // Dinero Disponible
-                                "{{ $globalFuntion_cashierMoney['amountEfectivo'] }}", // Ventas Efectivo
-                                "{{ $globalFuntion_cashierMoney['amountQr'] }}", // Ventas QR
+                                "{{ $globalFuntion_cashierMoney['paymentEfectivo'] }}", // Ventas Efectivo
+                                "{{ $globalFuntion_cashierMoney['paymentQr'] }}", // Ventas QR
                                 "{{ $globalFuntion_cashierMoney['cashierOut'] }}", // Gastos
                             ],
                             backgroundColor: [

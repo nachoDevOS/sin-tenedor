@@ -90,16 +90,16 @@ class Controller extends BaseController
             $cashierIn = $cashier->movements->where('type', 'ingreso')->where('deleted_at', NULL)->where('status', 'Aceptado')->sum('amount');
 
             //::::::::::::Ingresos::::::::::
-            // $amountEfectivo = $cashier->sales->where('deleted_at', NULL)->where('saleTransactions.typeSale', 'Efectivo')->sum('amount');
+            // $paymentEfectivo = $cashier->sales->where('deleted_at', NULL)->where('saleTransactions.typeSale', 'Efectivo')->sum('amount');
 
 
-            $amountEfectivo = $cashier->sales
+            $paymentEfectivo = $cashier->sales
                 ->flatMap(function($sale) {
                     return $sale->saleTransactions->where('paymentType', 'Efectivo')->pluck('amount');
                 })
                 ->sum();
 
-            $amountQr = $cashier->sales
+            $paymentQr = $cashier->sales
                 ->flatMap(function($sale) {
                     return $sale->saleTransactions->where('paymentType', 'Qr')->pluck('amount');
                 })
@@ -109,15 +109,15 @@ class Controller extends BaseController
 
 
 
-            $amountCashier = ($cashierIn + $amountEfectivo) - $cashierOut;
+            $amountCashier = ($cashierIn + $paymentEfectivo) - $cashierOut;
         }
 
         return response()->json([
             'return' => $cashier?true:false,
             // 'cashier' => $cashier?$cashier:null,
             // // datos en valores
-            'amountEfectivo' => $cashier?$amountEfectivo:null,//Para obtener el total de dinero en efectivo recaudado en general
-            'amountQr' => $cashier?$amountQr:null, //Para obtener el total de dinero en QR recaudado en general
+            'paymentEfectivo' => $cashier?$paymentEfectivo:null,//Para obtener el total de dinero en efectivo recaudado en general
+            'paymentQr' => $cashier?$paymentQr:null, //Para obtener el total de dinero en QR recaudado en general
             'amountCashier'=>$cashier?$amountCashier:null, //dinero disponible en caja para su uso 'solo dinero que hay en la caja disponible y cobro solo en efectivos'
 
             // 'amountEgres' =>$cashier?$amountEgres:null, // dinero prestado de prenda y diario

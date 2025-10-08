@@ -115,6 +115,7 @@
             font-style: italic;
         }
         
+        
         @media print {
             .report-header {
                 border-bottom: 1px solid #ddd;
@@ -140,9 +141,11 @@
 
     <div class="report-header">
         <div class="logo-container">
-            <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
+            <?php 
+                $admin_favicon = Voyager::setting('admin.icon_image'); 
+            ?>
             @if($admin_favicon == '')
-                <img src="{{ voyager_asset('images/logo-icon-light.png')}}" alt="{{Voyager::setting('admin.title') }}" width="70px">
+                <img src="{{ asset('images/icon.png')}}" alt="{{Voyager::setting('admin.title') }}" width="70px">
             @else
                 <img src="{{ Voyager::image($admin_favicon) }}" alt="{{Voyager::setting('admin.title') }}" width="70px">
             @endif
@@ -272,7 +275,7 @@
                         <tr>
                             <td colspan="2"></td>
                             <td style="font-size: 11px">{{ $product->itemSale->name }}</td>
-                            <td style="font-size: 11px" class="text-right">{{ number_format($product->quantity, 2, ',', '.') }}</td>  
+                            <td style="font-size: 11px" class="text-right currency">{{ number_format($product->quantity, 2, ',', '.') }}</td>  
                             <td style="font-size: 11px" class="text-right currency">{{ number_format($product->price, 2, ',', '.') }}</td>  
                             <td style="font-size: 11px" class="text-right currency">Bs. {{ number_format($product->amount, 2, ',', '.') }}</td>  
                         </tr>

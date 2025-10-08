@@ -10,6 +10,7 @@ use App\Traits\RegistersUserEvents;
 class Cashier extends Model
 {
     use HasFactory, RegistersUserEvents, SoftDeletes;
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'vault_id', 'user_id', 'title', 'observations', 'status', 'closed_at', 'deleted_at', 'closeUser_id', 'view',
@@ -41,6 +42,10 @@ class Cashier extends Model
         return $this->hasMany(Sale::class, 'cashier_id');
     }
 
+    public function details(){
+        return $this->hasMany(CashierDetail::class);
+    }
+
     // public function userclose(){
     //     return $this->belongsTo(User::class, 'closeUser_id');
     // }
@@ -48,10 +53,6 @@ class Cashier extends Model
     // public function vault()
     // {
     //     return $this->belongsTo(Vault::class, 'vault_id');
-    // }
-
-    // public function details(){
-    //     return $this->hasMany(CashierDetail::class);
     // }
 
 

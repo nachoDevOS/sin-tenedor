@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('page_title') | {{Voyager::setting('admin.title') }}</title>
     <!-- Favicon -->
-    <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
+    <?php $admin_favicon = Voyager::setting('admin.icon_image'); ?>
     @if($admin_favicon == '')
         <link rel="shortcut icon" href="{{ voyager_asset('images/logo-icon-light.png')}}" type="image/png">
     @else

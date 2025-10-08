@@ -10,6 +10,7 @@ use App\Traits\RegistersUserEvents;
 class CashierMovement extends Model
 {
     use HasFactory, RegistersUserEvents, SoftDeletes;
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'cashier_id', 'amount', 'description', 'type', 'deleted_at', 'status',

@@ -69,14 +69,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['loggin', 'system']], functi
 
     Route::post('cashiers/{cashier}/change/status', [CashierController::class, 'change_status'])->name('cashiers.change.status');//*** Para que los cajeros Acepte o rechase el dinero dado por Boveda o gerente
     Route::get('cashiers/{cashier}/close/', [CashierController::class, 'close'])->name('cashiers.close');//***para cerrar la caja el cajero vista 
-    // Route::post('cashiers/{cashier}/close/store', [CashierController::class, 'close_store'])->name('cashiers.close.store'); //para que el cajerop cierre la caja 
-    // Route::post('cashiers/{cashier}/close/revert', [CashierController::class, 'close_revert'])->name('cashiers.close.revert'); //para revertir el cajero para q su caja vuelva 
+    Route::post('cashiers/{cashier}/close/store', [CashierController::class, 'close_store'])->name('cashiers.close.store'); //para que el cajerop cierre la caja 
+    Route::post('cashiers/{cashier}/close/revert', [CashierController::class, 'close_revert'])->name('cashiers.close.revert'); //para revertir el cajero para q su caja vuelva 
     Route::get('cashiers/{cashier}/confirm_close', [CashierController::class, 'confirm_close'])->name('cashiers.confirm_close'); //Para confirmar el cierre de caja
     // Route::post('cashiers/{cashier}/confirm_close/store', [CashierController::class, 'confirm_close_store'])->name('cashiers.confirm_close.store');
 
     Route::get('cashiers/print/open/{id?}', [CashierController::class, 'print_open'])->name('print.open');//para imprimir el comprobante cuando se abre una caja
     Route::get('cashiers/print/close/{id?}', [CashierController::class, 'print_close'])->name('print.close');//Para imprimir cierre de caja
-    // Route::get('cashiers/{id}/print', [CashierController::class, 'print'])->name('cashiers.print');
+    Route::get('cashiers/{id}/print', [CashierController::class, 'print'])->name('cashiers.print');//Para el cierre pendiente de caja por el cajero
 
     // Route::delete('cashiers/{cashier}/loans/transaction/{transaction}/delete', [CashierController::class, 'deleteTransaction'])->name('cashiers-loan.transaction.delete');//Para eliminar pagos de prestamos sin prenda
     // Route::delete('cashiers/{cashier}loans/{loan}/delete', [CashierController::class, 'deleteLoan'])->name('cashiers-loan.delete');//para pider eliminar prestamos cuando no tenga dias pagados 
