@@ -117,6 +117,9 @@
         
         
         @media print {
+            body {
+                font-size: 10px;
+            }
             .report-header {
                 border-bottom: 1px solid #ddd;
             }

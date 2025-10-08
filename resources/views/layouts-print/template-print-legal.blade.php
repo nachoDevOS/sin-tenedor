@@ -32,7 +32,7 @@
             .content {
                 text-align: justify;
                 padding: 0px 34px;
-                font-size: 13px;
+                font-size: 11px;
             }
             #logo{
                 margin: 0px;
@@ -53,7 +53,7 @@
             }
             #watermark img{
                 position: relative;
-                width: 300px;
+                width: 200px;
                 left: 205px;
             }
 

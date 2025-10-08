@@ -21,8 +21,8 @@
         }
         #watermark img{
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 200px;
+            height: 200px;
             left: 205px;
         }
         .show-print{
@@ -86,7 +86,7 @@
         <div id="watermark">
             <img src="{{ asset('images/icon.png') }}" height="100%" width="100%" /> 
         </div>
-        <table width="100%" cellpadding="10" style="font-size: 12px">
+        <table width="100%" cellpadding="10" style="font-size: 11px">
             <tr>
                 <td width="70%">
                     <table width="100%" cellpadding="5">

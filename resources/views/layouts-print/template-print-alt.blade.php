@@ -31,7 +31,7 @@
         }
         #watermark img{
             position: relative;
-            width: 350px;
+            width: 200px;
         }
         #label-location{
             display: none;

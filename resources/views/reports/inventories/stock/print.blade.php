@@ -7,43 +7,38 @@
         $months = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');    
     @endphp
 
-    <table width="100%">
-        <tr>
-            <td style="width: 25%">
-                <?php 
-                    $admin_favicon = Voyager::setting('admin.icon_image', '');
-                ?>
-                @if($admin_favicon == '')
-                    <img src="{{ voyager_asset('images/logo-icon-light.png')}}" alt="{{Voyager::setting('admin.title') }}" width="70px">
+    <div class="report-header">
+        <div class="logo-container">
+            <?php 
+                $admin_favicon = Voyager::setting('admin.icon_image'); 
+            ?>
+            @if($admin_favicon == '')
+                <img src="{{ asset('images/icon.png')}}" alt="{{Voyager::setting('admin.title') }}" width="70px">
+            @else
+                <img src="{{ Voyager::image($admin_favicon) }}" alt="{{Voyager::setting('admin.title') }}" width="70px">
+            @endif
+        </div>
+        
+        <div class="title-container">
+            <h1 class="report-title">{{Voyager::setting('admin.title') }}</h1>
+            <h2 class="report-subtitle">REPORTE DE STOCK DE ITEMS DISPONIBLE DEL ALMACEN</h2>
+            {{-- <p class="report-date">
+                @if ($start == $finish)
+                    {{ date('d', strtotime($start)) }} de {{ $months[intval(date('m', strtotime($start)))] }} de {{ date('Y', strtotime($start)) }}
                 @else
-                    <img src="{{ Voyager::image($admin_favicon) }}" alt="{{Voyager::setting('admin.title') }}" width="70px">
+                    {{ date('d', strtotime($start)) }} de {{ $months[intval(date('m', strtotime($start)))] }} de {{ date('Y', strtotime($start)) }} Al 
+                    {{ date('d', strtotime($finish)) }} de {{ $months[intval(date('m', strtotime($finish)))] }} de {{ date('Y', strtotime($finish)) }}
                 @endif
-            </td>
-            <td style="text-align: center;  width:50%">
-                <h3 style="margin-bottom: 0px; margin-top: 5px">
-                    {{Voyager::setting('admin.title') }}
-                </h3>
-                <h4 style="margin-bottom: 0px; margin-top: 5px">
-                    REPORTE DE STOCK DE ITEMS DISPONIBLE DEL ALMACEN
-                </h4>
-                {{-- <small style="margin-bottom: 0px; margin-top: 5px">
-                    @if ($start == $finish)
-                        {{ date('d', strtotime($start)) }} de {{ $months[intval(date('m', strtotime($start)))] }} de {{ date('Y', strtotime($start)) }}
-                    @else
-                        {{ date('d', strtotime($start)) }} de {{ $months[intval(date('m', strtotime($start)))] }} de {{ date('Y', strtotime($start)) }} Al {{ date('d', strtotime($finish)) }} de {{ $months[intval(date('m', strtotime($finish)))] }} de {{ date('Y', strtotime($finish)) }}
-                    @endif
-                </small> --}}
-            </td>
-            <td style="text-align: right; width:25%">
-                <h3 style="margin-bottom: 0px; margin-top: 5px">
-                    <div id="qr_code">
-                        {{-- {!! QrCode::size(80)->generate('Total Cobrado: Bs'.number_format($amountTotal,2, ',', '.').', Recaudado en Fecha '.date('d', strtotime($start)).' de '.strtoupper($months[intval(date('m', strtotime($start)))] ).' de '.date('Y', strtotime($start))); !!} --}}
-                    </div>
-                    <small style="font-size: 8px; font-weight: 100">Impreso por: {{ Auth::user()->name }} <br> {{ date('d/m/Y h:i:s a') }}</small>
-                </h3>
-            </td>
-        </tr>
-    </table>
+            </p> --}}
+        </div>
+        
+        <div class="qr-container">
+            <div id="qr_code">
+                {{-- {!! QrCode::size(80)->generate('Total Cobrado: Bs'.number_format($amountTotal,2, ',', '.').', Recaudado en Fecha '.date('d', strtotime($start)).' de '.strtoupper($months[intval(date('m', strtotime($start)))] ).' de '.date('Y', strtotime($start))); !!} --}}
+            </div>
+            <p class="print-info">Impreso por: {{ Auth::user()->name }}<br>{{ date('d/m/Y h:i:s a') }}</p>
+        </div>
+    </div>
     
     <table style="width: 100%; font-size: 10px" border="1" class="print-friendly" cellspacing="0" cellpadding="2">
         <thead>
@@ -87,11 +82,81 @@
         table, th, td {
             border-collapse: collapse;
         }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .logo-container img {
+            max-height: 80px;
+        }
+        
+        .title-container {
+            text-align: center;
+            flex-grow: 1;
+        }
+        
+        .report-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .report-subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+        }
+        
+        .report-date {
+            font-size: 14px;
+            color: #95a5a6;
+        }
+        
+        .qr-container {
+            text-align: right;
+        }
+        
+        .print-info {
+            font-size: 10px;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
+
+        @media print {
+            .report-header {
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .sales-table th {
+                background-color: #34495e !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+
+
+        table, th, td {
+            border-collapse: collapse;
+        }
         /* @media print { div{ page-break-inside: avoid; } }  */
         
         /* Para evitar que se corte la impresion */
         table.print-friendly tr td, table.print-friendly tr th {
             page-break-inside: avoid;
+        }
+
+        @media print {
+            body {
+                font-size: 10px;
+            }
         }
           
     </style>

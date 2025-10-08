@@ -54,7 +54,7 @@
             }
             #watermark img{
                 position: relative;
-                width: 300px;
+                width: 200px;
                 left: 210px;
             }
 

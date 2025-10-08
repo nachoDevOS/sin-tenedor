@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('page_title') | {{ env('APP_NAME', 'MAMORE') }}</title>
+        <title>@yield('page_title') | {{ Voyager::setting('admin.title') }}</title>
         <!-- Favicon -->
         <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
         @if($admin_favicon == '')
@@ -32,7 +32,7 @@
             .content {
                 text-align: justify;
                 padding: 0px 34px;
-                font-size: 13px;
+                font-size: 11px;
                 min-height: 100vh;
             }
             #logo{
@@ -55,7 +55,7 @@
             }
             #watermark img{
                 position: relative;
-                width: 300px;
+                width: 200px;
             }
 
             .btn {
