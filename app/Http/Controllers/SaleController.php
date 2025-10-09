@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class SaleController extends Controller
 {
@@ -31,8 +32,8 @@ class SaleController extends Controller
         return view('sales.browse');
     }
 
-    public function list(){
-
+    public function list()
+    {
         $this->custom_authorize('browse_sales');
 
         $search = request('search') ?? null;
@@ -40,44 +41,58 @@ class SaleController extends Controller
         $status = request('status') ?? null;
         $typeSale = request('typeSale') ?? null;
 
-        $data = Sale::with(['person','register', 'saleDetails'=>function($q){
-                            $q->where('deleted_at', null);
-                        }])
-                        ->where(function($query) use ($search){
-                            $query->OrWhereRaw($search ? "id = '$search'" : 1)
-                            ->OrWhereRaw($search ? "code like '%$search%'" : 1)
-                            ->OrWhereRaw($search ? "ticket like '%$search%'" : 1);
-                        })
-                        ->where('deleted_at', NULL)
-                        ->whereRaw($typeSale? "typeSale = '$typeSale'" : 1)
-                        ->whereRaw($status? "status = '$status'" : 1)
-                        ->orderBy('id', 'DESC')
-                        ->paginate($paginate);
+        $data = Sale::with([
+            'person',
+            'register',
+            'saleDetails' => function ($q) {
+                $q->where('deleted_at', null);
+            },
+        ])
+            ->where(function ($query) use ($search) {
+                $query
+                    ->OrWhereRaw($search ? "id = '$search'" : 1)
+                    ->OrWhereRaw($search ? "code like '%$search%'" : 1)
+                    ->OrWhereRaw($search ? "ticket like '%$search%'" : 1);
+            })
+            ->where('deleted_at', null)
+            ->whereRaw($typeSale ? "typeSale = '$typeSale'" : 1)
+            ->whereRaw($status ? "status = '$status'" : 1)
+            ->orderBy('id', 'DESC')
+            ->paginate($paginate);
 
         return view('sales.list', compact('data'));
     }
 
     public function show($id)
     {
-        $sale = Sale::with(['person', 'register', 'saleTransactions', 'saleDetails' => function($q){
-                $q->where('deleted_at', null)
-                ->with(['itemSale']);
-            }])
-            ->where('id',$id)
+        $sale = Sale::with([
+            'person',
+            'register',
+            'saleTransactions',
+            'saleDetails' => function ($q) {
+                $q->where('deleted_at', null)->with(['itemSale']);
+            },
+        ])
+            ->where('id', $id)
             ->first();
 
-        return view('sales.read',compact('sale'));
+        return view('sales.read', compact('sale'));
     }
 
     public function create()
     {
         $this->custom_authorize('add_sales');
-        $categories = Category::with(['itemSales' => function($query) {
-                $query->where('deleted_at', null) // Solo productos en ventas activos
-                    ->with(['itemSalestocks'=>function($q){
-                        $q->where('deleted_at', null);
-                    }]);
-            }])->get();
+        $categories = Category::with([
+            'itemSales' => function ($query) {
+                $query
+                    ->where('deleted_at', null) // Solo productos en ventas activos
+                    ->with([
+                        'itemSalestocks' => function ($q) {
+                            $q->where('deleted_at', null);
+                        },
+                    ]);
+            },
+        ])->get();
 
         $cashier = $this->cashier('user', Auth::user()->id, 'status = "abierta"');
 
@@ -86,167 +101,157 @@ class SaleController extends Controller
 
     public function ticket($typeSale)
     {
-        $prefix = $typeSale == 'Mesa'? 'M':'L';
-        $count = Sale::withTrashed()
-                    ->where('typeSale', $typeSale)
-                    ->whereDate('created_at', today())
-                    ->count();
+        $prefix = $typeSale == 'Mesa' ? 'M' : 'L';
+        $count = Sale::withTrashed()->where('typeSale', $typeSale)->whereDate('created_at', today())->count();
 
         return $prefix . '-' . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
     }
 
     public function store(Request $request)
     {
-        $amountReceivedEfectivo = $request->amountReceivedEfectivo? $request->amountReceivedEfectivo : 0;
-        $amountReceivedQr = $request->amountReceivedQr? $request->amountReceivedQr : 0;
+        $amountReceivedEfectivo = $request->amountReceivedEfectivo ? $request->amountReceivedEfectivo : 0;
+        $amountReceivedQr = $request->amountReceivedQr ? $request->amountReceivedQr : 0;
 
         $this->custom_authorize('add_sales');
-        if ($request->amountTotalSale > $amountReceivedEfectivo+$amountReceivedQr) {
-            return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+        if ($request->amountTotalSale > $amountReceivedEfectivo + $amountReceivedQr) {
+            return redirect()
+                ->route('sales.create')
+                ->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
 
         $cashier = $this->cashier('user', Auth::user()->id, 'status = "abierta"');
 
         if (!$cashier) {
-            return redirect()->route('sales.index')->with(['message' => 'Usted no cuenta con caja abierta.', 'alert-type' => 'warning']);
+            return redirect()
+                ->route('sales.index')
+                ->with(['message' => 'Usted no cuenta con caja abierta.', 'alert-type' => 'warning']);
         }
-
 
         $ok = false;
         foreach ($request->products as $key => $value) {
-            if ($value['typeSale'] == "Venta Con Stock") {
-                $cant = ItemSaleStock::where('itemSale_id', $value['id'])
-                        ->where('deleted_at', null)
-                        ->where('stock', '>', 0)
-                        ->get()->sum('stock');
-                if($value['quantity'] > $cant)
-                {
-                    $ok=true;
+            if ($value['typeSale'] == 'Venta Con Stock') {
+                $cant = ItemSaleStock::where('itemSale_id', $value['id'])->where('deleted_at', null)->where('stock', '>', 0)->get()->sum('stock');
+                if ($value['quantity'] > $cant) {
+                    $ok = true;
                 }
             }
         }
         if ($ok) {
-            return redirect()->route('sales.create')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+            return redirect()
+                ->route('sales.create')
+                ->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
         DB::beginTransaction();
         try {
             $transaction = Transaction::create([
-                'status' => 'Completado'
+                'status' => 'Completado',
             ]);
             $sale = Sale::create([
-                'typeSale'=>$request->typeSale,
+                'typeSale' => $request->typeSale,
                 'ticket' => $this->ticket($request->typeSale),
-                'person_id'=>$request->person_id??NULL,
-                'cashier_id'=>$cashier->id,
-            
-                'amountReceived'=>$amountReceivedQr+$amountReceivedEfectivo,
+                'person_id' => $request->person_id ?? null,
+                'cashier_id' => $cashier->id,
 
-                'amountChange'=>($amountReceivedEfectivo + $amountReceivedQr) - $request->amountTotalSale,
-                'dateSale'=>Carbon::now(),
-                'amount'=>$request->amountTotalSale,
-                'observation'=>$request->observation,
-                'status'=>'Entregado'
+                'amountReceived' => $amountReceivedQr + $amountReceivedEfectivo,
+
+                'amountChange' => $amountReceivedEfectivo + $amountReceivedQr - $request->amountTotalSale,
+                'dateSale' => Carbon::now(),
+                'amount' => $request->amountTotalSale,
+                'observation' => $request->observation,
+                'status' => 'Entregado',
             ]);
             // return $request;
-            if($request->paymentType == 'Efectivo' || $request->paymentType == 'Ambos')
-            {
+            if ($request->paymentType == 'Efectivo' || $request->paymentType == 'Ambos') {
                 SaleTransaction::create([
-                    'sale_id'=>$sale->id,
-                    'transaction_id'=>$transaction->id,
-                    'amount'=>$request->amountTotalSale - $amountReceivedQr,
-                    'paymentType'=>'Efectivo'
+                    'sale_id' => $sale->id,
+                    'transaction_id' => $transaction->id,
+                    'amount' => $request->amountTotalSale - $amountReceivedQr,
+                    'paymentType' => 'Efectivo',
                 ]);
             }
-            if($request->paymentType == 'Qr' || $request->paymentType == 'Ambos')
-            {
+            if ($request->paymentType == 'Qr' || $request->paymentType == 'Ambos') {
                 SaleTransaction::create([
-                    'sale_id'=>$sale->id,
-                    'transaction_id'=>$transaction->id,
-                    'amount'=>$amountReceivedQr,
-                    'paymentType'=>'Qr'
+                    'sale_id' => $sale->id,
+                    'transaction_id' => $transaction->id,
+                    'amount' => $amountReceivedQr,
+                    'paymentType' => 'Qr',
                 ]);
             }
-
-
 
             foreach ($request->products as $key => $value) {
                 $saleDetail = SaleDetail::create([
-                    'sale_id'=>$sale->id,
-                    'item_id'=>$value['id'],
-                    'typeSaleItem'=>$value['typeSale'],
-                    'price'=>$value['price'],
-                    'quantity'=>$value['quantity'],
-                    'amount'=>$value['quantity'] * $value['price']
+                    'sale_id' => $sale->id,
+                    'item_id' => $value['id'],
+                    'typeSaleItem' => $value['typeSale'],
+                    'price' => $value['price'],
+                    'quantity' => $value['quantity'],
+                    'amount' => $value['quantity'] * $value['price'],
                 ]);
 
-                if ($value['typeSale'] == "Venta Con Stock") 
-                {
+                if ($value['typeSale'] == 'Venta Con Stock') {
                     $aux = $value['quantity'];
-                    $cant = ItemSaleStock::where('itemSale_id', $value['id'])
-                            ->where('deleted_at', null)
-                            ->where('stock', '>', 0)
-                            ->orderBy('id', 'ASC')
-                            ->get();
+                    $cant = ItemSaleStock::where('itemSale_id', $value['id'])->where('deleted_at', null)->where('stock', '>', 0)->orderBy('id', 'ASC')->get();
 
-                    foreach ($cant as  $item) {
-                        if($item->stock >= $aux)
-                        {
+                    foreach ($cant as $item) {
+                        if ($item->stock >= $aux) {
                             SaleDetailItemSaleStock::create([
-                                'saleDetail_id'=>$saleDetail->id,
-                                'itemSaleStock_id'=>$item->id,
-                                'quantity'=>$aux
+                                'saleDetail_id' => $saleDetail->id,
+                                'itemSaleStock_id' => $item->id,
+                                'quantity' => $aux,
                             ]);
                             $item->decrement('stock', $aux);
-                            $aux=0;                        
-                        }
-                        else
-                        {                            
-                            $aux = $aux-$item->stock;
+                            $aux = 0;
+                        } else {
+                            $aux = $aux - $item->stock;
                             SaleDetailItemSaleStock::create([
-                                'saleDetail_id'=>$saleDetail->id,
-                                'itemSaleStock_id'=>$item->id,
-                                'quantity'=>$item->stock
+                                'saleDetail_id' => $saleDetail->id,
+                                'itemSaleStock_id' => $item->id,
+                                'quantity' => $item->stock,
                             ]);
                             $item->update([
-                                'stock'=>0
+                                'stock' => 0,
                             ]);
                         }
-                        if($aux == 0)
-                        {
+                        if ($aux == 0) {
                             break;
                         }
-                    } 
+                    }
                 }
             }
 
             DB::commit();
-            return redirect()->route('sales.index')->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success', 'sale_id' => $sale->id,]);
+            return redirect()
+                ->route('sales.index')
+                ->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success', 'sale_id' => $sale->id]);
         } catch (\Throwable $e) {
             DB::rollBack();
             return 0;
-            return redirect()->route('sales.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+            return redirect()
+                ->route('sales.index')
+                ->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
-
     }
-
 
     public function destroy($id)
     {
-        $sale = Sale::with(['saleDetails' => function($q){
+        $sale = Sale::with([
+            'saleDetails' => function ($q) {
                 $q->where('deleted_at', null)
                     ->where('typeSaleItem', 'Venta Con Stock')
                     ->with(['saleDetailItemSaleStock']);
-            }])
-            ->where('id',$id)
+            },
+        ])
+            ->where('id', $id)
             ->first();
         $cashier = Cashier::where('status', 'abierta')->where('id', $sale->cashier_id)->first();
-        if(!$cashier)
-        {
-            return redirect()->back()->with(['message' => 'La caja se encuentra cerrada..', 'alert-type' => 'error']);
+        if (!$cashier) {
+            return redirect()
+                ->back()
+                ->with(['message' => 'La caja se encuentra cerrada..', 'alert-type' => 'error']);
         }
-     
+
         DB::beginTransaction();
-        try {        
+        try {
             foreach ($sale->saleDetails as $detail) {
                 foreach ($detail->saleDetailItemSaleStock as $item) {
                     $itemSale = ItemSaleStock::where('id', $item->itemSaleStock_id)->first();
@@ -256,83 +261,138 @@ class SaleController extends Controller
             $sale->delete();
             DB::commit();
             // return redirect()->route('sales.index')->with(['message' => 'Eliminado exitosamente.', 'alert-type' => 'success']);
-            return redirect()->back()->with(['message' => 'Eliminado exitosamente.', 'alert-type' => 'success']);
-            
+            return redirect()
+                ->back()
+                ->with(['message' => 'Eliminado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->route('sales.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+            return redirect()
+                ->route('sales.index')
+                ->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }
 
     public function saleSuccess($id)
     {
         $this->custom_authorize('add_sales');
-        $sale=Sale::where('id', $id)->first();
+        $sale = Sale::where('id', $id)->first();
         DB::beginTransaction();
         try {
             $sale->update([
-                'status'=>'Entregado'
+                'status' => 'Entregado',
             ]);
             DB::commit();
-            return redirect()->route('sales.index')->with(['message' => 'Entregado exitosamente.', 'alert-type' => 'success']);
+            return redirect()
+                ->route('sales.index')
+                ->with(['message' => 'Entregado exitosamente.', 'alert-type' => 'success']);
         } catch (\Throwable $e) {
             DB::rollBack();
             return 0;
-            return redirect()->route('sales.index')->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
+            return redirect()
+                ->route('sales.index')
+                ->with(['message' => 'Ocurrió un error.', 'alert-type' => 'error']);
         }
     }
 
-
     public function printTicket($id)
     {
-        $sale = Sale::with(['person', 'register', 'saleDetails' => function($q){
-                $q->where('deleted_at', null)
-                ->with(['itemSale']);
-            }])
-            ->where('id',$id)
+        // return 1;
+        $sale = Sale::with([
+            'person',
+            'register',
+            'saleDetails' => function ($q) {
+                $q->where('deleted_at', null)->with(['itemSale']);
+            },
+        ])
+            ->where('id', $id)
             ->first();
 
-        return view('sales.print.ticket',compact('sale'));
+        // return $sale->saleDetails;
+        $array = [];
+        foreach ($sale->saleDetails as $item) {
+            array_push($array, [
+                'quantity' => $item->quantity,
+                'product' => $item->itemSale->name,
+                'total' => $item->amount,
+            ]);
+        }
+
+        $data = [
+            'template' => 'ticket', // Asegúrate de usar 'template' en lugar de 'templeate'
+            'sale_number' => $sale->ticket,
+            'sale_type' => $sale->typeSale,
+            'details' => $array,
+        ];
+
+        // return$data;
+        // $serviceStatus = $this->checkServiceStatus(setting('servidores.print'));
+
+        // if ($serviceStatus) {
+        Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+        ])->post(setting('servidores.print'), $data);
+        // }
+
+        return view('sales.print.ticket', compact('sale'));
     }
+
+    // function checkServiceStatus($url) {
+
+    //     $parsedUrl = parse_url($url);
+
+    //     $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+
+    //     if (isset($parsedUrl['port'])) {
+    //         $baseUrl .= ':' . $parsedUrl['port'];
+    //     }
+
+    //     $context = stream_context_create([
+    //         'http' => ['timeout' => 3] // tiempo de espera de 3 segundos para verificar 127.0.0.1:port
+    //     ]);
+
+    //     $response = @file_get_contents($baseUrl, false, $context);
+
+    //     return ($response !== false) ? true : false;
+    // }
+
     public function printComanda($id)
     {
         $sale = Sale::with([
-                'person', 
-                'register', 
-                'saleDetails' => function($q) {
-                    $q->where('deleted_at', null)
-                    ->with(['itemSale.category']);
-                }
-            ])
+            'person',
+            'register',
+            'saleDetails' => function ($q) {
+                $q->where('deleted_at', null)->with(['itemSale.category']);
+            },
+        ])
             ->where('id', $id)
             ->first();
-            
+
         // Agrupar automáticamente por categoría sin orden específico
-        $groupedItems = $sale->saleDetails->groupBy(function($item) {
+        $groupedItems = $sale->saleDetails->groupBy(function ($item) {
             return optional($item->itemSale->category)->name ?? 'Otros';
         });
-        
+
         return view('sales.print.comanda', compact('sale', 'groupedItems'));
     }
 
     public function fullPrint($id)
     {
         $sale = Sale::with([
-                'person', 
-                'register', 
-                'saleDetails' => function($q) {
-                    $q->where('deleted_at', null)
-                    ->with(['itemSale.category']);
-                }
-            ])
+            'person',
+            'register',
+            'saleDetails' => function ($q) {
+                $q->where('deleted_at', null)->with(['itemSale.category']);
+            },
+        ])
             ->where('id', $id)
             ->first();
-            
+
         // Agrupar automáticamente por categoría sin orden específico
-        $groupedItems = $sale->saleDetails->groupBy(function($item) {
+        $groupedItems = $sale->saleDetails->groupBy(function ($item) {
             return optional($item->itemSale->category)->name ?? 'Otros';
         });
-        
+
         return view('sales.print.fullPrint', compact('sale', 'groupedItems'));
     }
 }
