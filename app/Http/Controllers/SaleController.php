@@ -16,9 +16,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use App\Traits\Loggable;
+
 
 class SaleController extends Controller
 {
+    use Loggable;
+
     public $storageController;
     public function __construct()
     {
@@ -296,45 +300,55 @@ class SaleController extends Controller
 
     public function printTicket($id)
     {
-        // return 1;
-        $sale = Sale::with([
-            'person',
-            'register',
-            'saleDetails' => function ($q) {
-                $q->where('deleted_at', null)->with(['itemSale']);
-            },
-        ])
-            ->where('id', $id)
-            ->first();
+        DB::beginTransaction();
+        try {
+            $sale = Sale::with([
+                'person',
+                'register',
+                'saleDetails' => function ($q) {
+                    $q->where('deleted_at', null)->with(['itemSale']);
+                },
+            ])
+                ->where('id', $id)
+                ->first();
 
-        // return $sale->saleDetails;
-        $array = [];
-        foreach ($sale->saleDetails as $item) {
-            array_push($array, [
-                'quantity' => $item->quantity,
-                'product' => $item->itemSale->name,
-                'total' => $item->amount,
-            ]);
+            $array = [];
+            foreach ($sale->saleDetails as $item) {
+                array_push($array, [
+                    // 'quantity' => $item->quantity,
+                    'quantity' => (float)$item->quantity == (int)$item->quantity 
+                        ? (int)$item->quantity 
+                        : (float)$item->quantity,
+                    'product' => $item->itemSale->name,
+                    'total' => $item->amount,
+                ]);
+            }
+
+            $data = [
+                'template' => 'ticket', // Asegúrate de usar 'template' en lugar de 'templeate'
+                'sale_number' => $sale->ticket,
+                'sale_type' => $sale->typeSale,
+                'details' => $array,
+            ];
+
+
+            Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ])->post(setting('servidores.print'), $data);
+
+
+            DB::commit();
+            return view('sales.print.ticket', compact('sale'));
+        } catch (\Throwable $th) {
+            //throw $th
+            DB::rollBack();
+            $this->logError($th, '');
+
+            return 0;
+
         }
-
-        $data = [
-            'template' => 'ticket', // Asegúrate de usar 'template' en lugar de 'templeate'
-            'sale_number' => $sale->ticket,
-            'sale_type' => $sale->typeSale,
-            'details' => $array,
-        ];
-
-        // return$data;
-        // $serviceStatus = $this->checkServiceStatus(setting('servidores.print'));
-
-        // if ($serviceStatus) {
-        Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-        ])->post(setting('servidores.print'), $data);
-        // }
-
-        return view('sales.print.ticket', compact('sale'));
+        
     }
 
     // function checkServiceStatus($url) {
