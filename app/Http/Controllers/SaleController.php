@@ -344,7 +344,10 @@ class SaleController extends Controller
             //throw $th
             DB::rollBack();
             // $this->logError($th, $id);
-            log($th->getMessage());
+            \Log::error('Error al imprimir ticket: ' . $th->getMessage(), [
+                'sale_id' => $id,
+                'exception' => $th
+            ]);
 
             return 0;
 
