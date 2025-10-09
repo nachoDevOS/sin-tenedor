@@ -187,10 +187,6 @@
         checkPrintServiceStatus();
     });
 
-    /**
-     * Detecta si el servicio de impresión local está activo.
-     * Utiliza un timeout para no esperar indefinidamente si el servicio no responde.
-     */
     async function checkPrintServiceStatus() {
         const url = 'http://127.0.0.1:3010';
         const controller = new AbortController();
