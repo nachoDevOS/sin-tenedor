@@ -77,9 +77,7 @@
             </div>
             <div class="col-md-12 text-right">
                 <button onclick="javascript:$('#popup-button').fadeOut('fast')" class="btn btn-default">Cerrar</button>
-                <a id="btn-print" onclick="printDailyMoney()"  title="Imprimir" class="btn btn-danger">Imprimir <i class="glyphicon glyphicon-print"></i></a>
-                {{-- <button type="submit" id="btn-print" title="Imprimir" class="btn btn-danger" onclick="printDailyMoney()" class="btn btn-primary">Imprimir <i class="glyphicon glyphicon-print"></i></button> --}}
-
+                <a id="btn-print" onclick="printTicket()"  title="Imprimir" class="btn btn-danger">Imprimir <i class="glyphicon glyphicon-print"></i></a>
             </div>
         </div>
 
@@ -163,10 +161,17 @@
             setTimeout(() => {
                 $('#popup-button').fadeOut('fast');
             }, 8000);
+            
         });
-        function printDailyMoney()
+
+ 
+        function printTicket()
         {
            window.open("{{ url('admin/sales/ticket') }}/"+sale_id, "Recibo", `width=700, height=700`)
+        }
+        function printTicketItem(id)
+        {
+           window.open("{{ url('admin/sales/ticket') }}/"+id, "Recibo", `width=700, height=700`)
         }
 
         function list(page = 1){

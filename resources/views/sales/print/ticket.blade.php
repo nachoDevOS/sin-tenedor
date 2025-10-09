@@ -150,7 +150,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Llama a la función del archivo externo, pasando los datos de la venta
-        printTicket(@json($sale));
+        printTicket('{{setting("servidores.print")}}',@json($sale), 'manual');
     });
 </script>
 

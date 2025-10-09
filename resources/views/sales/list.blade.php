@@ -54,7 +54,10 @@
                         
                     </td>
                     <td style="width: 18%" class="no-sort no-click bread-actions text-right">
-                        <a href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank" title="Ticket" class="btn btn-sm btn-dark">
+                        {{-- <a onclick="printDailyMoney({{$item->loan}}, {{$item->transaction_id}})" href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank" title="Ticket" class="btn btn-sm btn-dark">
+                            <i class="fa-solid fa-print"></i>
+                        </a> --}}
+                        <a onclick="printTicketItem({{$item->id}})"  title="Ticket" class="btn btn-sm btn-dark">
                             <i class="fa-solid fa-print"></i>
                         </a>
                         @if ($item->status == 'Pendiente')
