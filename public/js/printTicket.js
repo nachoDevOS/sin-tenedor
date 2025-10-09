@@ -1,11 +1,11 @@
 async function printTicket(sale) {
     const printServiceUrl = 'http://127.0.0.1:3010';
-    toastr.success('Imprimiendo ticket...', 'Print');
-    alert('Iniciando proceso de impresión...');
+    toastr.options.escapeHtml = false;
 
+    // Muestra la notificación con el icono
+    toastr.success('Imprimiendo ticket...', '<i class="fa fa-print"></i> Exito...');
+    alert(sale.ticket)
 
-
-    // alert(sale.ticket);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000); // Timeout de 2 segundos
 
@@ -44,8 +44,8 @@ async function printTicket(sale) {
             },
             body: JSON.stringify(data)
         });
-        toast('Imprimiendo ticket...');
         console.log('✅ Datos enviados al servicio de impresión correctamente.');
+        toastr.success('Imprimiendo ticket...', '<i class="fa fa-print"></i> Exito...');
         
     } catch (error) {
         clearTimeout(timeoutId);

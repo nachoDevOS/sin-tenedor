@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket de Venta</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+    
+    <!-- Estilos de Toastr -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -136,18 +139,19 @@
         </div>
     </div>
 </body>
+
+<!-- jQuery y Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- Incluir el nuevo archivo JS de impresión -->
+<script src="{{ asset('js/printTicket.js') }}"></script>
+
 <script>
-    toastr.success('Imprimiendo ticket...', 'Print');
-    alert('Iniciando proceso de impresión...');
     document.addEventListener("DOMContentLoaded", function () {
         // Llama a la función del archivo externo, pasando los datos de la venta
         printTicket(@json($sale));
-
-        
     });
 </script>
-<!-- Incluir el nuevo archivo JS -->
-<script src="{{ asset('js/printTicket.js') }}"></script>
 
 </html>
