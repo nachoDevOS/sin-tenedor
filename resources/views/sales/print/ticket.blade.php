@@ -178,4 +178,50 @@
         </div>
     </div>
 </body>
+
+<script>
+
+    async function detectLocalService() {
+    const urlsToTry = [
+        'http://localhost:3010',
+        'http://127.0.0.1:3010',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000'
+    ];
+
+    for (const url of urlsToTry) {
+        try {
+            console.log(`🔍 Probando: ${url}`);
+            
+            const response = await fetch(`${url}/health`, {
+                method: 'GET',
+                mode: 'no-cors', // Para evitar problemas CORS
+                cache: 'no-cache'
+            });
+
+            // Si llegamos aquí, la conexión fue exitosa
+            console.log(`✅ Servicio local encontrado en: ${url}`);
+            return url;
+            
+        } catch (error) {
+            console.log(`❌ ${url} no disponible:`, error.message);
+            continue;
+        }
+    }
+    
+    console.log('❌ No se encontró ningún servicio local');
+    return null;
+}
+
+// Uso
+detectLocalService().then(url => {
+    if (url) {
+        document.getElementById('status').innerHTML = 
+            `✅ Conectado a: ${url}`;
+    } else {
+        document.getElementById('status').innerHTML = 
+            '❌ Servicio local no encontrado';
+    }
+});
+</script>
 </html>

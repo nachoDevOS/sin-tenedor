@@ -332,10 +332,10 @@ class SaleController extends Controller
             ];
 
 
-            Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ])->post('http://localhost:3010/print', $data);
+            // Http::withHeaders([
+            //     'Content-Type' => 'application/json',
+            //     'Accept' => 'application/json',
+            // ])->post('http://localhost:3010/print', $data);
 
 
             DB::commit();
