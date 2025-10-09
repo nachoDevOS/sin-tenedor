@@ -21,9 +21,9 @@
             text-align: center;
             margin-bottom: 10px;
         }
-        .restaurant-name {
+        .title-name {
             font-weight: bold;
-            font-size: 18px;
+            font-size: 15px;
             margin-bottom: 5px;
         }
         .restaurant-info {
@@ -61,7 +61,7 @@
         .total {
             text-align: right;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
             margin-top: 10px;
             border-top: 1px solid #000;
             padding-top: 5px;
@@ -93,31 +93,13 @@
 <body>
     <div class="ticket">
         <div class="header">
-            <div class="restaurant-name">{{ setting('admin.title') }}</div>
-            <div class="restaurant-info">
-                Dirección: Calle Principal #123<br>
-                Tel: 555-1234<br>
-                {{-- RUC: 12345678901 --}}
-            </div>
-        </div>
-        
-        <div class="ticket-info">
-            <div>Ticket #: {{$sale->ticket}}</div>
-            <div>Fecha: {{date('d/m/Y h:i:s a', strtotime($sale->dateSale))}}</div>
-        </div>
-        
-        <div class="ticket-info">
-            <div>Codigo: {{$sale->code}}</div>
-            <div>Atendido por: {{$sale->register->name}}</div>
-        </div>
-        
+            <div class="title-name">Ticket #{{$sale->ticket}}</div>
+            <div class="title-name">{{$sale->typeSale}}</div>
+        </div>      
         <table class="items-table">
             <thead>
                 <tr>
-                    <th>Cant</th>
-                    <th>Descripción</th>
-                    <th class="price">P.Unit</th>
-                    <th class="price">Total</th>
+                    <th colspan="3"></th>
                 </tr>
             </thead>
             <tbody>
@@ -126,10 +108,9 @@
                 @endphp
                 @foreach ($sale->saleDetails as $item)
                     <tr>
-                        <td class="quantity">{{ number_format($item->quantity, 2, ',', '.') }}</td>
+                        <td class="quantity">{{ (float)$item->quantity == (int)$item->quantity? (int)$item->quantity:(float)$item->quantity }}</td>
                         <td>{{$item->itemSale->name}}</td>
-                        <td class="price">{{ number_format($item->price, 2, ',', '.') }}</td>
-                        <td class="price">Bs. {{ number_format($item->amount, 2, ',', '.') }}</td>
+                        <td class="price">{{ number_format($item->amount, 2, ',', '.') }}</td>
                     </tr>
                     @php
                         $total+=$item->amount;
@@ -140,41 +121,17 @@
         </table>
         
         <div class="total">
-            {{-- Subtotal: S/ 117.00<br>
-            IGV (18%): S/ 21.06<br> --}}
-            Total a Pagar: Bs. {{ number_format($total, 2, ',', '.') }}
-        </div>
-        
-        <div class="payment-method">
-            Método de pago: Efectivo<br>
-            Recibido: Bs. {{ number_format($sale->amountReceived, 2, ',', '.') }}<br>
-            Vuelto: Bs. {{ number_format($sale->amountChange, 2, ',', '.') }}
-        </div>
-        
-
-        
-        <div class="qr-container">
-            <div class="qr-code">
-                @php
-                    $qrContent = "TICKET #{$sale->ticket}\n";
-                    $qrContent .= "FECHA: " . date('d/m/Y H:i', strtotime($sale->dateSale)) . "\n";
-                    $qrContent .= "PRODUCTOS:\n";
-                    foreach ($sale->saleDetails as $item) {
-                        $qrContent .= "- {$item->itemSale->name} x{$item->quantity} Bs.{$item->price}\n";
-                    }
-                    $qrContent .= "TOTAL: Bs." . number_format($total, 2, ',', '.') . "\n";
-                @endphp
-                {!! QrCode::size(80)->generate($qrContent) !!}
-            </div>
-            <div>
-                Escanea para verificar tu compra <br>
-                <small>{{ date('d/M/Y h:i:s a') }}</small>
-            </div>
+            TOTAL. {{ number_format($total, 2, ',', '.') }}
         </div>
         
         <div class="footer">
-            ¡Gracias por su visita!<br>
-            Vuelva pronto<br>
+            ¡Gracias por su preferencia!<br>
+            soluciondigital.dev<br>
+        </div>
+        <div class="footer">
+            <div style="text-align: right">
+                <small>{{date('d/m/Y h:i:s a', strtotime($sale->dateSale))}}</small>
+            </div>
         </div>
     </div>
 </body>

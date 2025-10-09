@@ -54,17 +54,9 @@
                         
                     </td>
                     <td style="width: 18%" class="no-sort no-click bread-actions text-right">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">
-                                <span class="glyphicon glyphicon-print">
-                                {{-- </span> Impresión <span class="caret"></span> --}}
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank"><i class="fa-solid fa-print"></i> Ticket</a></li>
-                                <li><a href="{{route('sales-comanda.print', ['id'=>$item->id])}}" target="_blank"><i class="fa-solid fa-print"></i> Comanda</a></li>
-                                
-                            </ul>
-                        </div>
+                        <a href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank" title="Ticket" class="btn btn-sm btn-dark">
+                            <i class="fa-solid fa-print"></i>
+                        </a>
                         @if ($item->status == 'Pendiente')
                             <a onclick="successItem('{{ route('sales-status.success', ['id' => $item->id]) }}')" data-toggle="modal" data-target="#success-modal" title="Entregar Pedido" class="btn btn-sm btn-success">
                                 <i class="fa-solid fa-cart-shopping"></i>

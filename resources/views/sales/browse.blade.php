@@ -166,7 +166,7 @@
         });
         function printDailyMoney()
         {
-           window.open("{{ url('admin/sales/fullprint') }}/"+sale_id, "Recibo", `width=700, height=700`)
+           window.open("{{ url('admin/sales/ticket') }}/"+sale_id, "Recibo", `width=700, height=700`)
         }
 
         function list(page = 1){
