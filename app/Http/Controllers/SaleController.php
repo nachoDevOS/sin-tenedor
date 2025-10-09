@@ -343,7 +343,8 @@ class SaleController extends Controller
         } catch (\Throwable $th) {
             //throw $th
             DB::rollBack();
-            $this->logError($th, $id);
+            // $this->logError($th, $id);
+            log($th->getMessage());
 
             return 0;
 
