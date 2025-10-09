@@ -58,7 +58,7 @@ class Sale extends Model
             (int) substr($lastSale->code, -5) + 1 : 
             1;
             
-        return 'VTA-' . $date . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
+        return 'VTA-' . $date . str_pad($sequence, 5, '0', STR_PAD_LEFT);
     }
 
 

@@ -106,9 +106,11 @@ class SaleController extends Controller
     public function ticket($typeSale)
     {
         $prefix = $typeSale == 'Mesa' ? 'M' : 'L';
-        $count = Sale::withTrashed()->where('typeSale', $typeSale)->whereDate('created_at', today())->count();
+        // $count = Sale::withTrashed()->where('typeSale', $typeSale)->whereDate('created_at', today())->count();
+        $count = Sale::withTrashed()->whereDate('created_at', today())->count();
 
-        return $prefix . '-' . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        // return $prefix . '-' . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        return str_pad($count + 1, 4, '0', STR_PAD_LEFT);
     }
 
     public function store(Request $request)
