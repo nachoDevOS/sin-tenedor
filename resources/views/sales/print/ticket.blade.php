@@ -182,23 +182,18 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Imprime automáticamente el ticket al cargar la página
-        window.print();
+        // window.print();
         // Llama a la función para detectar si el servicio de impresión está activo
         checkPrintServiceStatus();
     });
 
     async function checkPrintServiceStatus() {
-        // Convertir el objeto sale de PHP a un objeto JavaScript
         const sale = @json($sale);
         const printServiceUrl = 'http://127.0.0.1:3010';
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 2000); // Timeout de 2 segundos
 
         try {
-            // Intentamos hacer una petición simple. No necesitamos una ruta específica como /health.
-            // Si el servicio está corriendo, la conexión se establecerá.
-            // const response = await fetch(url, { signal: controller.signal });
-            // clearTimeout(timeoutId);
             await fetch(printServiceUrl, { signal: controller.signal, mode: 'no-cors' }); // Usamos no-cors para una simple verificación de conectividad
             clearTimeout(timeoutId);
 
@@ -231,9 +226,6 @@
                 },
                 body: JSON.stringify(data)
             });
-
-
-
         } catch (error) {
             clearTimeout(timeoutId);
             console.error(`❌ No se pudo conectar al servicio de impresión en ${printServiceUrl}.`, error.message);
