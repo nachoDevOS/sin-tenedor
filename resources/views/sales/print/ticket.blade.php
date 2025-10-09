@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket de Venta</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -135,58 +136,18 @@
         </div>
     </div>
 </body>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Imprime automáticamente el ticket al cargar la página
-        // window.print();
-        // Llama a la función para detectar si el servicio de impresión está activo
-        checkPrintServiceStatus();
+    toastr.success('Imprimiendo ticket...', 'Print');
+    alert('Iniciando proceso de impresión...');
+    document.addEventListener("DOMContentLoaded", function () {
+        // Llama a la función del archivo externo, pasando los datos de la venta
+        printTicket(@json($sale));
+
+        
     });
-
-    async function checkPrintServiceStatus() {
-        const sale = @json($sale);
-        const printServiceUrl = 'http://127.0.0.1:3010';
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000); // Timeout de 2 segundos
-
-        try {
-            await fetch(printServiceUrl, { signal: controller.signal, mode: 'no-cors' }); // Usamos no-cors para una simple verificación de conectividad
-            clearTimeout(timeoutId);
-
-            console.log(`✅ El servicio de impresión en ${printServiceUrl} está ACTIVO.`);
-
-            // Construir el array de detalles
-            const details = sale.sale_details.map(item => {
-                const quantity = parseFloat(item.quantity);
-                return {
-                    quantity: quantity % 1 === 0 ? parseInt(quantity) : quantity,
-                    product: item.item_sale.name,
-                    total: parseFloat(item.amount)
-                };
-            });
-
-            // Construir el objeto de datos para enviar
-            const data = {
-                template: 'ticket',
-                sale_number: sale.ticket,
-                sale_type: sale.typeSale,
-                details: details,
-            };
-
-            // Enviar los datos al servicio de impresión
-            await fetch(`${printServiceUrl}/print`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-        } catch (error) {
-            clearTimeout(timeoutId);
-            console.error(`❌ No se pudo conectar al servicio de impresión en ${printServiceUrl}.`, error.message);
-        }
-    }
 </script>
+<!-- Incluir el nuevo archivo JS -->
+<script src="{{ asset('js/printTicket.js') }}"></script>
+
 </html>
