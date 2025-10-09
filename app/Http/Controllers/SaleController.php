@@ -312,30 +312,30 @@ class SaleController extends Controller
                 ->where('id', $id)
                 ->first();
 
-            $array = [];
-            foreach ($sale->saleDetails as $item) {
-                array_push($array, [
-                    // 'quantity' => $item->quantity,
-                    'quantity' => (float)$item->quantity == (int)$item->quantity 
-                        ? (int)$item->quantity 
-                        : (float)$item->quantity,
-                    'product' => $item->itemSale->name,
-                    'total' => $item->amount,
-                ]);
-            }
+            // $array = [];
+            // foreach ($sale->saleDetails as $item) {
+            //     array_push($array, [
+            //         // 'quantity' => $item->quantity,
+            //         'quantity' => (float)$item->quantity == (int)$item->quantity 
+            //             ? (int)$item->quantity 
+            //             : (float)$item->quantity,
+            //         'product' => $item->itemSale->name,
+            //         'total' => $item->amount,
+            //     ]);
+            // }
 
-            $data = [
-                'template' => 'ticket', // Asegúrate de usar 'template' en lugar de 'templeate'
-                'sale_number' => $sale->ticket,
-                'sale_type' => $sale->typeSale,
-                'details' => $array,
-            ];
+            // $data = [
+            //     'template' => 'ticket', // Asegúrate de usar 'template' en lugar de 'templeate'
+            //     'sale_number' => $sale->ticket,
+            //     'sale_type' => $sale->typeSale,
+            //     'details' => $array,
+            // ];
 
 
-            Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ])->post('http://localhost:3010/print', $data);
+            // Http::withHeaders([
+            //     'Content-Type' => 'application/json',
+            //     'Accept' => 'application/json',
+            // ])->post('http://localhost:3010/print', $data);
 
 
             DB::commit();

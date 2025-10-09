@@ -188,19 +188,55 @@
     });
 
     async function checkPrintServiceStatus() {
-        const url = 'http://127.0.0.1:3010';
+        // Convertir el objeto sale de PHP a un objeto JavaScript
+        const sale = @json($sale);
+        const printServiceUrl = 'http://127.0.0.1:3010';
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 2000); // Timeout de 2 segundos
 
         try {
             // Intentamos hacer una petición simple. No necesitamos una ruta específica como /health.
             // Si el servicio está corriendo, la conexión se establecerá.
-            const response = await fetch(url, { signal: controller.signal });
+            // const response = await fetch(url, { signal: controller.signal });
+            // clearTimeout(timeoutId);
+            await fetch(printServiceUrl, { signal: controller.signal, mode: 'no-cors' }); // Usamos no-cors para una simple verificación de conectividad
             clearTimeout(timeoutId);
-            console.log(`✅ El servicio de impresión en ${url} está ACTIVO.`);
+
+            console.log(`✅ El servicio de impresión en ${printServiceUrl} está ACTIVO.`);
+
+            // Construir el array de detalles
+            const details = sale.sale_details.map(item => {
+                const quantity = parseFloat(item.quantity);
+                return {
+                    quantity: quantity % 1 === 0 ? parseInt(quantity) : quantity,
+                    product: item.item_sale.name,
+                    total: parseFloat(item.amount)
+                };
+            });
+
+            // Construir el objeto de datos para enviar
+            const data = {
+                template: 'ticket',
+                sale_number: sale.ticket,
+                sale_type: sale.typeSale,
+                details: details,
+            };
+
+            // Enviar los datos al servicio de impresión
+            await fetch(`${printServiceUrl}/print`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+
+
         } catch (error) {
             clearTimeout(timeoutId);
-            console.error(`❌ No se pudo conectar al servicio de impresión en ${url}.`, error.message);
+            console.error(`❌ No se pudo conectar al servicio de impresión en ${printServiceUrl}.`, error.message);
         }
     }
 </script>
