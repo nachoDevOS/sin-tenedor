@@ -180,48 +180,32 @@
 </body>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Imprime automáticamente el ticket al cargar la página
+        window.print();
+        // Llama a la función para detectar si el servicio de impresión está activo
+        checkPrintServiceStatus();
+    });
 
-    async function detectLocalService() {
-    const urlsToTry = [
-        'http://localhost:3010',
-        'http://127.0.0.1:3010',
-        'http://localhost:3000',
-        'http://127.0.0.1:3000'
-    ];
+    /**
+     * Detecta si el servicio de impresión local está activo.
+     * Utiliza un timeout para no esperar indefinidamente si el servicio no responde.
+     */
+    async function checkPrintServiceStatus() {
+        const url = 'http://127.0.0.1:3010';
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // Timeout de 2 segundos
 
-    for (const url of urlsToTry) {
         try {
-            console.log(`🔍 Probando: ${url}`);
-            
-            const response = await fetch(`${url}/health`, {
-                method: 'GET',
-                mode: 'no-cors', // Para evitar problemas CORS
-                cache: 'no-cache'
-            });
-
-            // Si llegamos aquí, la conexión fue exitosa
-            console.log(`✅ Servicio local encontrado en: ${url}`);
-            return url;
-            
+            // Intentamos hacer una petición simple. No necesitamos una ruta específica como /health.
+            // Si el servicio está corriendo, la conexión se establecerá.
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            console.log(`✅ El servicio de impresión en ${url} está ACTIVO.`);
         } catch (error) {
-            console.log(`❌ ${url} no disponible:`, error.message);
-            continue;
+            clearTimeout(timeoutId);
+            console.error(`❌ No se pudo conectar al servicio de impresión en ${url}.`, error.message);
         }
     }
-    
-    console.log('❌ No se encontró ningún servicio local');
-    return null;
-}
-
-// Uso
-detectLocalService().then(url => {
-    if (url) {
-        document.getElementById('status').innerHTML = 
-            `✅ Conectado a: ${url}`;
-    } else {
-        document.getElementById('status').innerHTML = 
-            '❌ Servicio local no encontrado';
-    }
-});
 </script>
 </html>
