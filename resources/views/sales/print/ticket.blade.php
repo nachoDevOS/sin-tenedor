@@ -111,6 +111,10 @@
             body {
                 margin: 0;
             }
+            html, body {
+                height: auto; /* Ajusta la altura al contenido para evitar páginas extra */
+                overflow: hidden; /* Oculta cualquier desbordamiento */
+            }
         }
         
         /* Estilos para pantalla */
