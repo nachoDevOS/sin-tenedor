@@ -497,21 +497,21 @@
                                 <a style="font-size: 18px" title="Actualizar" onclick="location.reload()"><i
                                         class="fa-solid fa-arrows-rotate"></i></a>
                             </h4>
-                            @if ($global_index['amountQrDay'] + $global_index['amountEfectivoDay'] == 0)
+                            @if (!$globalFuntion_cashierMoney['cashier'])
                                 <div class="alert alert-info">
                                     <strong>Información:</strong>
-                                    <p>No tiene ventas registrada el dia de hoy.</p>
+                                    <p>No tienes cajas abierta...</p>
                                 </div>
                             @else
                                 <table class="table">
                                     <tbody>
                                         <tr>
                                             <th style="text-align: left">
-                                                <small style="font-size: 15px">Saldo Disponible:</small>
+                                                <small style="font-size: 15px">Disponible Efectivo:</small>
                                             </th>
                                             <th style="text-align: right">
                                                 <small
-                                                    style="font-size: 15px">{{ number_format($global_index['amountQrDay'] + $global_index['amountEfectivoDay'], 2, ',', '.') }}</small>
+                                                    style="font-size: 15px">{{ number_format($globalFuntion_cashierMoney['paymentEfectivo'] + $globalFuntion_cashierMoney['cashierIn'], 2, ',', '.') }}</small>
                                             </th>
                                         </tr>
                                         <tr>
@@ -520,7 +520,7 @@
                                             </th>
                                             <th style="text-align: right">
                                                 <small style="font-size: 15px"><i class="fa-solid fa-dollar-sign"></i>
-                                                    {{ number_format($global_index['amountEfectivoDay'], 2, ',', '.') }}</small>
+                                                    {{ number_format($globalFuntion_cashierMoney['paymentEfectivo'], 2, ',', '.') }}</small>
                                             </th>
                                         </tr>
                                         <tr>
@@ -529,7 +529,25 @@
                                             </th>
                                             <th style="text-align: right">
                                                 <small style="font-size: 15px"><i class="fa-solid fa-qrcode"></i>
-                                                    {{ number_format($global_index['amountQrDay'], 2, ',', '.') }}</small>
+                                                    {{ number_format($globalFuntion_cashierMoney['paymentQr'], 2, ',', '.') }}</small>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align: left">
+                                                <small style="font-size: 15px">Gastos:</small>
+                                            </th>
+                                            <th style="text-align: right">
+                                                <small style="font-size: 15px"><i class="fa-solid fa-qrcode"></i>
+                                                    {{ number_format($globalFuntion_cashierMoney['cashierOut'], 2, ',', '.') }}</small>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align: left">
+                                                <small style="font-size: 15px">Asignado a Caja:</small>
+                                            </th>
+                                            <th style="text-align: right">
+                                                <small style="font-size: 15px"><i class="fa-solid fa-qrcode"></i>
+                                                    {{ number_format($globalFuntion_cashierMoney['cashierIn'], 2, ',', '.') }}</small>
                                             </th>
                                         </tr>
                                     </tbody>

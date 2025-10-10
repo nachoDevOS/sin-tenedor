@@ -114,7 +114,7 @@ class Controller extends BaseController
 
         return response()->json([
             'return' => $cashier?true:false,
-            // 'cashier' => $cashier?$cashier:null,
+            'cashier' => $cashier?$cashier:null,
             // // datos en valores
             'paymentEfectivo' => $cashier?$paymentEfectivo:null,//Para obtener el total de dinero en efectivo recaudado en general
             'paymentQr' => $cashier?$paymentQr:null, //Para obtener el total de dinero en QR recaudado en general
