@@ -51,7 +51,7 @@
         }
         .items-table th {
             text-align: left;
-            border-bottom: 1px solid #000;
+            border-bottom: 1px dashed #000;
             padding: 3px 0;
         }
         .items-table td {
@@ -70,7 +70,7 @@
             font-weight: bold;
             font-size: 12px;
             margin-top: 10px;
-            border-top: 1px solid #000;
+            border-top: 1px dashed #000;
             padding-top: 5px;
         }
         .footer {
