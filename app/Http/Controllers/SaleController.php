@@ -102,7 +102,7 @@ class SaleController extends Controller
 
         $cashier = $this->cashier('user', Auth::user()->id, 'status = "abierta"');
 
-        return view('sales.edit-add', compact('categories', 'cashier'));
+        return view('sales.add', compact('categories', 'cashier'));
     }
 
     public function ticket($typeSale)
