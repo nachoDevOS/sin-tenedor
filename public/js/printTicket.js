@@ -34,14 +34,14 @@ async function printTicket(url, sale, fallbackUrl) {
         };
 
         // Enviar los datos al servicio de impresión
-        // await fetch(`${printServiceUrl}/print`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Accept': 'application/json',
-        //     },
-        //     body: JSON.stringify(data)
-        // });
+        await fetch(`${printServiceUrl}/print`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
         console.log('✅ Datos enviados al servicio de impresión correctamente.');
         toastr.success('Imprimiendo ticket...', '<i class="fa fa-print"></i> Exito...');
     } catch (error) {
