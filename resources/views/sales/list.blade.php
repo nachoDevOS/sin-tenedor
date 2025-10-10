@@ -57,7 +57,7 @@
                         {{-- <a onclick="printDailyMoney({{$item->loan}}, {{$item->transaction_id}})" href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank" title="Ticket" class="btn btn-sm btn-dark">
                             <i class="fa-solid fa-print"></i>
                         </a> --}}
-                        <a onclick="printTicket('{{ setting('servidores.print') }}',{{ json_encode($item) }}, '{{ url('admin/sales/ticket') }}')"  title="Ticket" class="btn btn-sm btn-dark">
+                        <a onclick="handlePrintClick(this, '{{ setting('servidores.print') }}',{{ json_encode($item) }}, '{{ url('admin/sales/ticket') }}')"  title="Imprimiendo..." class="btn btn-sm btn-dark print-btn">
                             <i class="fa-solid fa-print"></i>
                         </a>
                         
@@ -110,6 +110,30 @@
 </div>
 
 <script>
+    async function handlePrintClick(element, printUrl, sale, fallbackUrl) {
+        const button = $(element);
+        const icon = button.find('i');
+        const originalIconClass = icon.attr('class');
+
+        // Evitar múltiples clics si ya se está procesando
+        if (button.hasClass('disabled')) {
+            return;
+        }
+
+        // Cambiar ícono a spinner y desactivar botón
+        button.addClass('disabled');
+        icon.removeClass(originalIconClass).addClass('fa-solid fa-spinner fa-spin');
+
+        try {
+            await printTicket(printUrl, sale, fallbackUrl);
+        } finally {
+            // Restaurar el botón después de un par de segundos para que el usuario vea el resultado (toastr)
+            setTimeout(() => {
+                button.removeClass('disabled');
+                icon.removeClass('fa-solid fa-spinner fa-spin').addClass(originalIconClass);
+            }, 2000);
+        }
+    }
    
    var page = "{{ request('page') }}";
     $(document).ready(function(){
