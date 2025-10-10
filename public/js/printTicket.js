@@ -1,6 +1,6 @@
 async function printTicket(url, sale) {
-    alert(sale);
-    alert(url);
+    // alert(sale);
+    // alert(url);
     const printServiceUrl = url;
     toastr.options.escapeHtml = false;
 
