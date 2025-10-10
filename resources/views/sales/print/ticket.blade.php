@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket de Venta</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
-    <!-- Estilos de Toastr -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <title>Ticket de Venta #{{ $sale->ticket }}</title>
 
     <style>
         body {
@@ -15,8 +11,7 @@
             font-size: 12px;
             width: 80mm; /* Ancho para impresora de 80mm */
             margin: 0;
-            padding: 5px;
-            background-color: #fff;
+            padding: 0;
         }
         .ticket {
             width: 100%;
@@ -24,13 +19,13 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             border-bottom: 1px dashed #000;
-            padding-bottom: 10px;
+            padding-bottom: 5px;
         }
         .title-name {
             font-weight: bold;
-            font-size: 15px;
+            font-size: 16px;
             margin-bottom: 5px;
         }
         .restaurant-info {
@@ -39,10 +34,10 @@
         }
         .ticket-info {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
+            justify-content: left;
+            margin-bottom: 5px;
             border-bottom: 1px dashed #000;
-            padding-bottom: 5px;
+            padding-bottom: 3px;
         }
         .items-table {
             width: 100%;
@@ -52,10 +47,10 @@
         .items-table th {
             text-align: left;
             border-bottom: 1px dashed #000;
-            padding: 3px 0;
+            padding: 2px 0;
         }
         .items-table td {
-            padding: 3px 0;
+            padding: 2px 0;
         }
         .items-table .quantity {
             text-align: center;
@@ -67,7 +62,7 @@
         }
         .total {
             text-align: right;
-            font-weight: bold;
+            font-weight: 900;
             font-size: 12px;
             margin-top: 10px;
             border-top: 1px dashed #000;
@@ -75,7 +70,7 @@
         }
         .footer {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 10px;
             border-top: 1px dashed #000;
             padding-top: 10px;
@@ -86,16 +81,11 @@
         }
         .qr-container {
             text-align: center;
-            margin: 10px 0;
-        }
-        .qr-code {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto;
+            margin: 5px 0;
         }
         .payment-method {
             margin-top: 5px;
-            font-weight: bold;
+            font-weight: 900;
         }
         .hide-print {
             text-align: right;
@@ -107,29 +97,10 @@
             cursor: pointer;
         }
         .client-info {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             border-bottom: 1px dashed #000;
-            padding-bottom: 5px;
-        }
-        .client-info table {
-            width: 100%;
-        }
-        .border {
-            border: solid 1px black;
-        }
-        .border-bottom {
-            border-bottom: 1px solid rgb(90, 90, 90);
-            padding: 20px 0px;
-        }
-        .signature-section {
-            margin-top: 15px;
-            font-size: 10px;
-        }
-        .signature-section table {
-            width: 100%;
-        }
-        .signature-section th {
-            text-align: center;
+            padding-bottom: 3px;
+            font-size: 11px;
         }
         
         /* Estilos para impresión */
@@ -137,8 +108,8 @@
             .hide-print, .btn-print {
                 display: none;
             }
-            .show-print {
-                display: block;
+            body {
+                margin: 0;
             }
         }
         
@@ -156,22 +127,19 @@
 </head>
 <body>
     <div class="hide-print">
-        <button class="btn-print" onclick="window.close()">Cancelar <i class="fa fa-close"></i></button>
-        <button class="btn-print" onclick="window.print()">Imprimir <i class="fa fa-print"></i></button>
+        <button class="btn-print" onclick="window.close()">Cancelar (Esc)</button>
+        <button class="btn-print" onclick="window.print()">Imprimir (Enter)</button>
     </div>
     
     <div class="ticket">
         <div class="header">
-            <div class="title-name">TICKET #{{$sale->ticket}}</div>
-            <div class="title-name">{{$sale->typeSale}}</div>
-           
+            <div class="title-name" style="margin-top: 10px;">TICKET #{{$sale->ticket}}</div>
+            <div class="title-name" style="text-transform: uppercase;">{{$sale->typeSale}}</div>
         </div>
         
-     
-        
-        <!-- Información de la venta -->
-        <div class="ticket-info">
-            <div>FECHA: {{date('d/m/Y h:i:s a', strtotime($sale->dateSale))}}</div>
+        <!-- Información del cliente y cajero -->
+        <div class="client-info">
+            <b>Fecha:</b> {{date('d/m/Y h:i:s a', strtotime($sale->dateSale))}}<br>
         </div>
         
         <!-- Detalles de los productos -->
@@ -205,37 +173,25 @@
             TOTAL: {{ number_format($total, 2, ',', '.') }}
         </div>
         
-      
-        
         <!-- Pie de página -->
         <div class="footer">
             ¡Gracias por su preferencia!<br>
-            soluciondigital.dev<br>
+            soluciondigital.dev
         </div>
     </div>
 
-    <!-- jQuery y Toastr JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Configuración de Toastr
-            toastr.options = {
-                "closeButton": true,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "timeOut": "3000"
-            };
-            
-            // Mostrar mensaje de éxito al cargar el ticket
-            toastr.success('Ticket generado correctamente');
+            // Imprimir automáticamente al cargar la página
+            window.print();
         });
         
         // Control de teclado para impresión y cierre
         document.body.addEventListener('keypress', function(e) {
             switch (e.key) {
                 case 'Enter':
+                case 'p':
+                case 'P':
                     window.print();
                     break;
                 case 'Escape':
@@ -245,6 +201,11 @@
                     break;
             }
         });
+
+        // Cerrar la ventana después de imprimir (o si se cancela la impresión)
+        window.onafterprint = function() {
+            window.close();
+        }
     </script>
 </body>
 </html>
