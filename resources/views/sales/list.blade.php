@@ -28,8 +28,7 @@
                                 <img src="{{ $image }}" alt="{{ $item->person->first_name }}" class="image-expandable"
                                     style="width: 60px; height: 60px; border-radius: 30px; margin-right: 10px; object-fit: cover;">
                                 <div>
-                                    { strtoupper($item->person->first_name) }} {{ $item->person->middle_name??strtoupper($item->person->middle_name) }} {{ strtoupper($item->person->paternal_surname) }}  {{ strtoupper($item->person->maternal_surname) }} 
-
+                                    {{ strtoupper($item->person->first_name) }} {{ $item->person->middle_name??strtoupper($item->person->middle_name) }} {{ strtoupper($item->person->paternal_surname) }}  {{ strtoupper($item->person->maternal_surname) }} 
                                 </div>
                             </div>
                         @else
