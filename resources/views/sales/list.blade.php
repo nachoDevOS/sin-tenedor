@@ -57,9 +57,10 @@
                         {{-- <a onclick="printDailyMoney({{$item->loan}}, {{$item->transaction_id}})" href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank" title="Ticket" class="btn btn-sm btn-dark">
                             <i class="fa-solid fa-print"></i>
                         </a> --}}
-                        <a onclick="printTicketItem({{$item->id}})"  title="Ticket" class="btn btn-sm btn-dark">
+                        <a onclick="printTicket('{{ setting('servidores.print') }}',{{ json_encode($item) }})"  title="Ticket" class="btn btn-sm btn-dark">
                             <i class="fa-solid fa-print"></i>
                         </a>
+                        
                         @if ($item->status == 'Pendiente')
                             <a onclick="successItem('{{ route('sales-status.success', ['id' => $item->id]) }}')" data-toggle="modal" data-target="#success-modal" title="Entregar Pedido" class="btn btn-sm btn-success">
                                 <i class="fa-solid fa-cart-shopping"></i>

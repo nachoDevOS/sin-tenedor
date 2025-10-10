@@ -1,6 +1,6 @@
 async function printTicket(url, sale) {
+    alert(sale);
     alert(url);
-    // console.log(sale);
     const printServiceUrl = url;
     toastr.options.escapeHtml = false;
 
@@ -33,7 +33,6 @@ async function printTicket(url, sale) {
 
         // Enviar los datos al servicio de impresión
         // await fetch(`${printServiceUrl}/print`, {
-        // await fetch(`${printServiceUrl}`, {
         //     method: 'POST',
         //     headers: {
         //         'Content-Type': 'application/json',
@@ -43,14 +42,13 @@ async function printTicket(url, sale) {
         // });
         console.log('✅ Datos enviados al servicio de impresión correctamente.');
         toastr.success('Imprimiendo ticket...', '<i class="fa fa-print"></i> Exito...');
-        // setTimeout(() => {
-        //     window.close();
-        // }, 2000);
-        
     } catch (error) {
         clearTimeout(timeoutId);
         console.error(`❌ No se pudo conectar al servicio de impresión en ${printServiceUrl}. Imprimiendo desde el navegador.`, error.message);
- 
+        console.log('Abriendo ventana de impresión del navegador...');
+        // alert(sale.id);
+        // window.open("{{ url('admin/sales/ticket') }}/"+sale.id, "Recibo", `width=700, height=700`)
+        // toastr.warning('No se pudo conectar al servicio de impresión. Usando impresión del navegador.', '<i class="fa fa-exclamation-triangle"></i> Advertencia');
         // window.print(); // Si el servicio falla, usa la impresión del navegador como respaldo.
     }
 }

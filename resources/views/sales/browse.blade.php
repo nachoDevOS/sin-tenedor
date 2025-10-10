@@ -160,28 +160,12 @@
                 list();
             });
 
+
             @if(session('sale'))
-
-            
-                // alert("{{ session('sale') }}");
-
-                // const saleData = @json(session('sale'));
-                // console.log("{{ session('sale') }}"); // Objeto JavaScript
-                // console.log(typeof saleData); // "object"
-
-
-
-                // printTicket('{{setting("servidores.print")}}',@json("{{ session('sale') }}"));
-
-                sale_id = "{{ session('sale') }}";
-
-
-                console.log(@json(json_decode(session('sale'), true)).id); // Objeto JavaScript
-
-                printTicket('{{setting("servidores.print")}}',@json(json_decode(session('sale'), true)));
-
-
+                // alert(@json(json_decode(session('sale'), true)));
+                printTicket('{{setting("servidores.print")}}', @json(json_decode(session('sale'), true)));
             @endif
+   
 
             // Ocultar popup de impresión
             setTimeout(() => {
@@ -190,15 +174,6 @@
             
         });
 
- 
-        function printTicket()
-        {
-           window.open("{{ url('admin/sales/ticket') }}/"+sale_id, "Recibo", `width=700, height=700`)
-        }
-        function printTicketItem(id)
-        {
-           window.open("{{ url('admin/sales/ticket') }}/"+id, "Recibo", `width=700, height=700`)
-        }
 
         function list(page = 1){
             $('#div-results').loading({message: 'Cargando...'});

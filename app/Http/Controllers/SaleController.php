@@ -63,6 +63,7 @@ class SaleController extends Controller
             ->whereRaw($status ? "status = '$status'" : 1)
             ->orderBy('id', 'DESC')
             ->paginate($paginate);
+            
 
         return view('sales.list', compact('data'));
     }
@@ -324,44 +325,13 @@ class SaleController extends Controller
                 ->where('id', $id)
                 ->first();
 
-            // $array = [];
-            // foreach ($sale->saleDetails as $item) {
-            //     array_push($array, [
-            //         // 'quantity' => $item->quantity,
-            //         'quantity' => (float)$item->quantity == (int)$item->quantity 
-            //             ? (int)$item->quantity 
-            //             : (float)$item->quantity,
-            //         'product' => $item->itemSale->name,
-            //         'total' => $item->amount,
-            //     ]);
-            // }
-
-            // $data = [
-            //     'template' => 'ticket', // Asegúrate de usar 'template' en lugar de 'templeate'
-            //     'sale_number' => $sale->ticket,
-            //     'sale_type' => $sale->typeSale,
-            //     'details' => $array,
-            // ];
-
-
-            // Http::withHeaders([
-            //     'Content-Type' => 'application/json',
-            //     'Accept' => 'application/json',
-            // ])->post('http://localhost:3010/print', $data);
-
-
             DB::commit();
             return view('sales.print.ticket', compact('sale'));
         } catch (\Throwable $th) {
             //throw $th
             DB::rollBack();
-            // $this->logError($th, $id);
-            \Log::error('Error al imprimir ticket: ' . $th->getMessage(), [
-                'sale_id' => $id,
-                'exception' => $th
-            ]);
 
-            return 0;
+            return 1;
 
         }
         
