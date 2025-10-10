@@ -16,6 +16,7 @@
             width: 80mm; /* Ancho para impresora de 80mm */
             margin: 0;
             padding: 5px;
+            background-color: #fff;
         }
         .ticket {
             width: 100%;
@@ -24,6 +25,8 @@
         .header {
             text-align: center;
             margin-bottom: 10px;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 10px;
         }
         .title-name {
             font-weight: bold;
@@ -74,6 +77,8 @@
             text-align: center;
             margin-top: 15px;
             font-size: 10px;
+            border-top: 1px dashed #000;
+            padding-top: 10px;
         }
         .barcode {
             text-align: center;
@@ -92,18 +97,90 @@
             margin-top: 5px;
             font-weight: bold;
         }
+        .hide-print {
+            text-align: right;
+            padding: 10px 0px;
+        }
+        .btn-print {
+            padding: 5px 10px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .client-info {
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 5px;
+        }
+        .client-info table {
+            width: 100%;
+        }
+        .border {
+            border: solid 1px black;
+        }
+        .border-bottom {
+            border-bottom: 1px solid rgb(90, 90, 90);
+            padding: 20px 0px;
+        }
+        .signature-section {
+            margin-top: 15px;
+            font-size: 10px;
+        }
+        .signature-section table {
+            width: 100%;
+        }
+        .signature-section th {
+            text-align: center;
+        }
+        
+        /* Estilos para impresión */
+        @media print {
+            .hide-print, .btn-print {
+                display: none;
+            }
+            .show-print {
+                display: block;
+            }
+        }
+        
+        /* Estilos para pantalla */
+        @media screen {
+            body {
+                width: auto;
+                max-width: 80mm;
+                margin: 0 auto;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="hide-print">
+        <button class="btn-print" onclick="window.close()">Cancelar <i class="fa fa-close"></i></button>
+        <button class="btn-print" onclick="window.print()">Imprimir <i class="fa fa-print"></i></button>
+    </div>
+    
     <div class="ticket">
         <div class="header">
-            <div class="title-name">Ticket #{{$sale->ticket}}</div>
+            <div class="title-name">TICKET #{{$sale->ticket}}</div>
             <div class="title-name">{{$sale->typeSale}}</div>
-        </div>      
+           
+        </div>
+        
+     
+        
+        <!-- Información de la venta -->
+        <div class="ticket-info">
+            <div>FECHA: {{date('d/m/Y h:i:s a', strtotime($sale->dateSale))}}</div>
+        </div>
+        
+        <!-- Detalles de los productos -->
         <table class="items-table">
             <thead>
                 <tr>
-                    <th colspan="3"></th>
+                    <th class="quantity">CANT</th>
+                    <th>DESCRIPCIÓN</th>
+                    <th class="price">PRECIO</th>
                 </tr>
             </thead>
             <tbody>
@@ -120,40 +197,54 @@
                         $total+=$item->amount;
                     @endphp
                 @endforeach
-                
             </tbody>
         </table>
         
+        <!-- Total y método de pago -->
         <div class="total">
-            TOTAL. {{ number_format($total, 2, ',', '.') }}
+            TOTAL: {{ number_format($total, 2, ',', '.') }}
         </div>
         
+      
+        
+        <!-- Pie de página -->
         <div class="footer">
             ¡Gracias por su preferencia!<br>
             soluciondigital.dev<br>
         </div>
-        <div class="footer">
-            <div style="text-align: right">
-                <small>{{date('d/m/Y h:i:s a', strtotime($sale->dateSale))}}</small>
-            </div>
-        </div>
     </div>
+
+    <!-- jQuery y Toastr JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Configuración de Toastr
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "3000"
+            };
+            
+            // Mostrar mensaje de éxito al cargar el ticket
+            toastr.success('Ticket generado correctamente');
+        });
+        
+        // Control de teclado para impresión y cierre
+        document.body.addEventListener('keypress', function(e) {
+            switch (e.key) {
+                case 'Enter':
+                    window.print();
+                    break;
+                case 'Escape':
+                    window.close();
+                    break;
+                default:
+                    break;
+            }
+        });
+    </script>
 </body>
-
-<!-- jQuery y Toastr JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-<!-- Incluir el nuevo archivo JS de impresión -->
-<script src="{{ asset('js/printTicket.js') }}"></script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Llama a la función del archivo externo, pasando los datos de la venta
-        alert(@json($sale));
-        console.log(@json($sale).id);
-        printTicket('{{setting("servidores.print")}}',@json($sale));
-    });
-</script>
-
 </html>
