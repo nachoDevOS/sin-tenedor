@@ -85,6 +85,40 @@ class SaleController extends Controller
         return view('sales.read', compact('sale'));
     }
 
+    public function edit($id)
+    {
+        $this->custom_authorize('edit_sales');
+
+        $sale = Sale::with([
+            'person',
+            'saleDetails.itemSale',
+            'saleTransactions'
+        ])->findOrFail($id);
+
+        $cashier = $this->cashier('user', Auth::user()->id, 'status = "abierta"');
+        if (!$cashier || $cashier->id !== $sale->cashier_id) {
+            return redirect()
+                ->route('sales.index')
+                ->with(['message' => 'No puedes editar esta venta porque no pertenece a tu caja actual o tu caja está cerrada.', 'alert-type' => 'warning']);
+        }
+
+        $categories = Category::with([
+            'itemSales' => function ($query) {
+                $query
+                    ->where('deleted_at', null)
+                    ->with([
+                        'itemSalestocks' => function ($q) {
+                            $q->where('deleted_at', null);
+                        },
+                    ]);
+            },
+        ])->get();
+
+        // return $sale;
+
+        return view('sales.edit', compact('sale', 'categories', 'cashier'));
+    }
+
     public function create()
     {
         $this->custom_authorize('add_sales');
@@ -250,9 +284,143 @@ class SaleController extends Controller
         }
     }
 
+    public function update(Request $request, $id)
+    {
+        $this->custom_authorize('edit_sales');
+
+        $amountReceivedEfectivo = $request->amountReceivedEfectivo ? $request->amountReceivedEfectivo : 0;
+        $amountReceivedQr = $request->amountReceivedQr ? $request->amountReceivedQr : 0;
+
+        if ($request->amountTotalSale > $amountReceivedEfectivo + $amountReceivedQr) {
+            return redirect()
+                ->route('sales.edit', ['sale' => $id])
+                ->with(['message' => 'El monto recibido es menor al total de la venta.', 'alert-type' => 'error']);
+        }
+
+        $sale = Sale::findOrFail($id);
+        $cashier = $this->cashier('user', Auth::user()->id, 'status = "abierta"');
+
+        if (!$cashier || $cashier->id !== $sale->cashier_id) {
+            return redirect()
+                ->route('sales.index')
+                ->with(['message' => 'No puedes editar esta venta porque no pertenece a tu caja actual o tu caja está cerrada.', 'alert-type' => 'warning']);
+        }
+
+        // Validar stock antes de empezar
+        $ok = false;
+        foreach ($request->products as $key => $value) {
+            if ($value['typeSale'] == 'Venta Con Stock') {
+                $cant = ItemSaleStock::where('itemSale_id', $value['id'])->where('deleted_at', null)->where('stock', '>', 0)->get()->sum('stock');
+                if ($value['quantity'] > $cant) {
+                    $ok = true;
+                }
+            }
+        }
+        if ($ok) {
+            return redirect()
+                ->route('sales.edit', ['sale' => $id])
+                ->with(['message' => 'No hay stock suficiente para uno de los productos.', 'alert-type' => 'error']);
+        }
+
+        DB::beginTransaction();
+        try {
+            // 1. Revertir stock de la venta original
+            $old_sale_details = SaleDetail::where('sale_id', $id)->where('typeSaleItem', 'Venta Con Stock')->with('saleDetailItemSaleStock')->get();
+            foreach ($old_sale_details as $detail) {
+                foreach ($detail->saleDetailItemSaleStock as $item) {
+                    $itemSaleStock = ItemSaleStock::find($item->itemSaleStock_id);
+                    if ($itemSaleStock) {
+                        $itemSaleStock->increment('stock', $item->quantity);
+                    }
+                }
+            }
+
+            // 2. Eliminar detalles y transacciones antiguas
+            SaleDetailItemSaleStock::whereIn('saleDetail_id', $sale->saleDetails->pluck('id'))->delete();
+            SaleDetail::where('sale_id', $id)->delete();
+            SaleTransaction::where('sale_id', $id)->delete();
+
+            // 3. Actualizar la venta
+            $sale->update([
+                'typeSale' => $request->typeSale,
+                'person_id' => $request->person_id ?? null,
+                'amountReceived' => $amountReceivedQr + $amountReceivedEfectivo,
+                'amountChange' => $amountReceivedEfectivo + $amountReceivedQr - $request->amountTotalSale,
+                'dateSale' => Carbon::now(),
+                'amount' => $request->amountTotalSale,
+                'observation' => $request->observation,
+            ]);
+
+            // 4. Crear nuevas transacciones de pago
+            $transaction = Transaction::create(['status' => 'Completado']);
+
+            if ($request->paymentType == 'Efectivo' || $request->paymentType == 'Ambos') {
+                SaleTransaction::create([
+                    'sale_id' => $sale->id,
+                    'transaction_id' => $transaction->id,
+                    'amount' => $request->amountTotalSale - $amountReceivedQr,
+                    'paymentType' => 'Efectivo',
+                ]);
+            }
+            if ($request->paymentType == 'Qr' || $request->paymentType == 'Ambos') {
+                SaleTransaction::create([
+                    'sale_id' => $sale->id,
+                    'transaction_id' => $transaction->id,
+                    'amount' => $amountReceivedQr,
+                    'paymentType' => 'Qr',
+                ]);
+            }
+
+            // 5. Crear nuevos detalles de venta y descontar stock
+            foreach ($request->products as $key => $value) {
+                $saleDetail = SaleDetail::create([
+                    'sale_id' => $sale->id,
+                    'item_id' => $value['id'],
+                    'typeSaleItem' => $value['typeSale'],
+                    'price' => $value['price'],
+                    'quantity' => $value['quantity'],
+                    'amount' => $value['quantity'] * $value['price'],
+                ]);
+
+                if ($value['typeSale'] == 'Venta Con Stock') {
+                    $aux = $value['quantity'];
+                    $item_stocks = ItemSaleStock::where('itemSale_id', $value['id'])->where('deleted_at', null)->where('stock', '>', 0)->orderBy('id', 'ASC')->get();
+
+                    foreach ($item_stocks as $item) {
+                        if ($aux == 0) break;
+                        
+                        $quantity_to_decrement = min($aux, $item->stock);
+
+                        SaleDetailItemSaleStock::create([
+                            'saleDetail_id' => $saleDetail->id,
+                            'itemSaleStock_id' => $item->id,
+                            'quantity' => $quantity_to_decrement,
+                        ]);
+                        $item->decrement('stock', $quantity_to_decrement);
+                        $aux -= $quantity_to_decrement;
+                    }
+                }
+            }
+
+            DB::commit();
+            return redirect()
+                ->route('sales.index')
+                ->with(['message' => 'Venta actualizada exitosamente.', 'alert-type' => 'success']);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            \Log::error("Error al actualizar venta: " . $e->getMessage());
+            // return 0;
+            return redirect()
+                ->route('sales.edit', ['sale' => $id])
+                ->with(['message' => 'Ocurrió un error al actualizar la venta.', 'alert-type' => 'error']);
+        }
+    }
+
     public function destroy($id)
     {
         $sale = Sale::with([
+
             'saleDetails' => function ($q) {
                 $q->where('deleted_at', null)
                     ->where('typeSaleItem', 'Venta Con Stock')

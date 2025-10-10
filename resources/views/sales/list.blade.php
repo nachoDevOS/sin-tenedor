@@ -66,10 +66,16 @@
                                 <i class="fa-solid fa-cart-shopping"></i>
                             </a>
                         @endif
+                        
                         @if (auth()->user()->hasPermission('read_sales'))
                             <a href="{{ route('sales.show', ['sale' => $item->id]) }}" title="Ver" class="btn btn-sm btn-warning view">
                                 <i class="voyager-eye"></i>
                                 {{-- <span class="hidden-xs hidden-sm">Ver</span> --}}
+                            </a>
+                        @endif
+                        @if (auth()->user()->hasPermission('edit_sales'))
+                            <a href="{{ route('sales.edit', ['sale' => $item->id]) }}" title="Editar" class="btn btn-sm btn-primary edit">
+                                <i class="voyager-edit"></i>
                             </a>
                         @endif
                         
