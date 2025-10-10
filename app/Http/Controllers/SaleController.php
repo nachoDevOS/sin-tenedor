@@ -51,6 +51,7 @@ class SaleController extends Controller
             'saleDetails' => function ($q) {
                 $q->where('deleted_at', null);
             },
+            'saleDetails.itemSale',
         ])
             ->where(function ($query) use ($search) {
                 $query
@@ -321,6 +322,7 @@ class SaleController extends Controller
                 'saleDetails' => function ($q) {
                     $q->where('deleted_at', null)->with(['itemSale']);
                 },
+                'saleDetails.itemSale',
             ])
                 ->where('id', $id)
                 ->first();

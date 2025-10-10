@@ -16,6 +16,7 @@ async function printTicket(url, sale) {
 
         // Construir el array de detalles para el servicio de impresión
         const details = sale.sale_details.map(item => {
+            // alert(item.item_sale.name);
             const quantity = parseFloat(item.quantity);
             return {
                 quantity: quantity % 1 === 0 ? parseInt(quantity) : quantity,
@@ -23,6 +24,8 @@ async function printTicket(url, sale) {
                 total: parseFloat(item.amount)
             };
         });
+        alert(sale.sale_details);
+
         // Construir el objeto de datos para enviar
         const data = {
             template: 'ticket',
@@ -48,7 +51,7 @@ async function printTicket(url, sale) {
         console.log('Abriendo ventana de impresión del navegador...');
         // alert(sale.id);
         // window.open("{{ url('admin/sales/ticket') }}/"+sale.id, "Recibo", `width=700, height=700`)
-        // toastr.warning('No se pudo conectar al servicio de impresión. Usando impresión del navegador.', '<i class="fa fa-exclamation-triangle"></i> Advertencia');
+        toastr.warning('No se pudo conectar al servicio de impresión. Usando impresión del navegador.', '<i class="fa fa-exclamation-triangle"></i> Advertencia');
         // window.print(); // Si el servicio falla, usa la impresión del navegador como respaldo.
     }
 }
