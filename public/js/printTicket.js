@@ -1,4 +1,6 @@
-async function printTicket(url, sale, printType) {
+async function printTicket(url, sale) {
+    alert(url);
+    // console.log(sale);
     const printServiceUrl = url;
     toastr.options.escapeHtml = false;
 
@@ -30,31 +32,25 @@ async function printTicket(url, sale, printType) {
         };
 
         // Enviar los datos al servicio de impresión
-        await fetch(`${printServiceUrl}/print`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
+        // await fetch(`${printServiceUrl}/print`, {
+        // await fetch(`${printServiceUrl}`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Accept': 'application/json',
+        //     },
+        //     body: JSON.stringify(data)
+        // });
         console.log('✅ Datos enviados al servicio de impresión correctamente.');
         toastr.success('Imprimiendo ticket...', '<i class="fa fa-print"></i> Exito...');
-        setTimeout(() => {
-            window.close();
-        }, 2000);
+        // setTimeout(() => {
+        //     window.close();
+        // }, 2000);
         
     } catch (error) {
         clearTimeout(timeoutId);
         console.error(`❌ No se pudo conectar al servicio de impresión en ${printServiceUrl}. Imprimiendo desde el navegador.`, error.message);
-        
-        if(printType == 'manual')
-        {
-            window.print(); // Si el servicio falla, usa la impresión del navegador como respaldo.
-        }
-        else
-        {
-            toastr.error(`No se pudo conectar al servicio de impresión. Asegúrese de que el servicio esté activo en <strong>${printServiceUrl}</strong> e intente nuevamente.`, '<i class="fa fa-exclamation-triangle"></i> Error...');
-        }
+ 
+        // window.print(); // Si el servicio falla, usa la impresión del navegador como respaldo.
     }
 }

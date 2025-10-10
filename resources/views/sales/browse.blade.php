@@ -105,7 +105,7 @@
             z-index: 1000;
 
             /* Mostrar/ocultar popup */
-            /* @if(session('sale_id')) */
+            /* @if(session('sale')) */
                 animation: show-animation 1s;
             /* @else */
             right: -500px;
@@ -125,6 +125,13 @@
 
 @section('javascript')
     <script src="{{ url('js/main.js') }}"></script>
+
+        <!-- jQuery y Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- Incluir el nuevo archivo JS de impresión -->
+    <script src="{{ asset('js/printTicket.js') }}"></script>
         
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
     <script>
@@ -153,8 +160,27 @@
                 list();
             });
 
-            @if(session('sale_id'))
-                sale_id = "{{ session('sale_id') }}";
+            @if(session('sale'))
+
+            
+                // alert("{{ session('sale') }}");
+
+                // const saleData = @json(session('sale'));
+                // console.log("{{ session('sale') }}"); // Objeto JavaScript
+                // console.log(typeof saleData); // "object"
+
+
+
+                // printTicket('{{setting("servidores.print")}}',@json("{{ session('sale') }}"));
+
+                sale_id = "{{ session('sale') }}";
+
+
+                console.log(@json(json_decode(session('sale'), true)).id); // Objeto JavaScript
+
+                printTicket('{{setting("servidores.print")}}',@json(json_decode(session('sale'), true)));
+
+
             @endif
 
             // Ocultar popup de impresión

@@ -225,10 +225,20 @@ class SaleController extends Controller
                 }
             }
 
+            $sale = Sale::with([
+                'person',
+                'register',
+                'saleDetails' => function ($q) {
+                    $q->where('deleted_at', null)->with(['itemSale']);
+                },
+            ])
+                ->where('id', $sale->id)
+                ->first();
+
             DB::commit();
             return redirect()
                 ->route('sales.index')
-                ->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success', 'sale_id' => $sale->id]);
+                ->with(['message' => 'Registrado exitosamente.', 'alert-type' => 'success', 'sale' => $sale]);
         } catch (\Throwable $e) {
             DB::rollBack();
             return 0;
