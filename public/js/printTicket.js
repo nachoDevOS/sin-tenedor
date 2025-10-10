@@ -1,4 +1,4 @@
-async function printTicket(url, sale) {
+async function printTicket(url, sale, fallbackUrl) {
     // alert(sale);
     // alert(url);
     const printServiceUrl = url;
@@ -49,7 +49,7 @@ async function printTicket(url, sale) {
         console.error(`❌ No se pudo conectar al servicio de impresión en ${printServiceUrl}. Imprimiendo desde el navegador.`, error.message);
         console.log('Abriendo ventana de impresión del navegador...');
         // alert(sale.id);
-        window.open("{{ url('admin/sales/ticket') }}/"+sale.id, "Recibo", `width=700, height=700`)
+        window.open(`${fallbackUrl}/${sale.id}`, "Recibo", `width=700, height=700`)
         toastr.warning('No se pudo conectar al servicio de impresión. Usando impresión del navegador.', '<i class="fa fa-exclamation-triangle"></i> Advertencia');
         // window.print(); // Si el servicio falla, usa la impresión del navegador como respaldo.
     }

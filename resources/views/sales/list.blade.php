@@ -57,7 +57,7 @@
                         {{-- <a onclick="printDailyMoney({{$item->loan}}, {{$item->transaction_id}})" href="{{route('sales-ticket.print', ['id'=>$item->id])}}" target="_blank" title="Ticket" class="btn btn-sm btn-dark">
                             <i class="fa-solid fa-print"></i>
                         </a> --}}
-                        <a onclick="printTicket('{{ setting('servidores.print') }}',{{ json_encode($item) }})"  title="Ticket" class="btn btn-sm btn-dark">
+                        <a onclick="printTicket('{{ setting('servidores.print') }}',{{ json_encode($item) }}, '{{ url('admin/sales/ticket') }}')"  title="Ticket" class="btn btn-sm btn-dark">
                             <i class="fa-solid fa-print"></i>
                         </a>
                         

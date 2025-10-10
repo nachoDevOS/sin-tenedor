@@ -77,7 +77,7 @@
             </div>
             <div class="col-md-12 text-right">
                 <button onclick="javascript:$('#popup-button').fadeOut('fast')" class="btn btn-default">Cerrar</button>
-                <a id="btn-print" onclick="printTicket('{{ setting('servidores.print') }}',{{ json_encode(session('sale')) }})" title="Imprimir" class="btn btn-danger">Imprimir <i
+                <a id="btn-print" onclick="printTicket('{{ setting('servidores.print') }}',{{ json_encode(session('sale')) }}, '{{ url('admin/sales/ticket') }}')" title="Imprimir" class="btn btn-danger">Imprimir <i
                         class="glyphicon glyphicon-print"></i></a>
             </div>
         </div>
@@ -170,7 +170,7 @@
 
             @if (session('sale'))
                 // alert(@json(json_decode(session('sale'), true)));
-                printTicket('{{ setting('servidores.print') }}', @json(json_decode(session('sale'), true)));
+                printTicket('{{ setting('servidores.print') }}', @json(json_decode(session('sale'), true)), '{{ url('admin/sales/ticket') }}');
             @endif
 
 
