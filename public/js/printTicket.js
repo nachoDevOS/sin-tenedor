@@ -31,6 +31,7 @@ async function printTicket(url, sale, fallbackUrl) {
             sale_number: sale.ticket,
             sale_type: sale.typeSale,
             details: details,
+            date: sale.created_at,
         };
 
         // Enviar los datos al servicio de impresión
