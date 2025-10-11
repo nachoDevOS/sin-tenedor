@@ -12,7 +12,8 @@
             
             <img src="{{ $image }}" class="img-responsive">
             <div class="product-info">
-                <h5>{{ $product->name }}</h5>
+                {{-- <h5>{{ $product->name }}</h5> --}}
+                <p>{{$product->name}}</p>
                 <p class="text-success">Bs. {{ number_format($product->price, 2, ',', '.') }}</p>
                 @if ($product->typeSale == 'Venta Con Stock')
                     Stock: <small class="{{ $cantStock == 0 ? 'text-danger' : '' }}">{{ number_format($cantStock, 2, ',', '.') }}</small>
